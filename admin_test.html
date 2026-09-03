@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="sw" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Agnes Herbal Supplements</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="icon" href="assets/icons/icon-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v20">
+<link rel="stylesheet" href="css/ahs-extra.css?v20">
+<meta name="theme-color" content="#0f4d34">
+</head>
+<body>
+
+<div class="admin-login" id="loginBox">
+  <div style="text-align:center; margin-bottom:20px;">
+    <img src="assets/images/logo.png" width="56" height="56" style="border-radius:50%; margin:0 auto 10px;" alt="">
+    <h2 style="font-family:'Fraunces',serif; color:var(--green-deep);">Admin Login</h2>
+  </div>
+  <div class="field" style="margin-bottom:14px;">
+    <label style="display:block; font-size:.8rem; font-weight:700; color:var(--green-deep); margin-bottom:6px;">Email ya Admin (kwa sync ya live)</label>
+    <input type="email" id="adminEmail" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--line); background:var(--cream); color:var(--ink);" placeholder="admin@mfano.com" autocomplete="username">
+  </div>
+  <div class="field" style="margin-bottom:14px;">
+    <label style="display:block; font-size:.8rem; font-weight:700; color:var(--green-deep); margin-bottom:6px;">Nenosiri (Password)</label>
+    <input type="password" id="adminPass" style="width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--line); background:var(--cream); color:var(--ink);" placeholder="Weka nenosiri" autocomplete="current-password">
+  </div>
+  <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="tryLogin()">Ingia</button>
+  <p id="loginStatus" style="font-size:.78rem; color:var(--ink-soft); margin-top:10px; text-align:center;"></p>
+  <p style="font-size:.72rem; color:var(--ink-soft); margin-top:14px; text-align:center;">Ukiwa hujaweka Firebase Auth bado, weka Email lolote — nenosiri la ndani litakuruhusu kuona bidhaa/oda za localStorage tu (bila sync ya live).</p>
+  <p style="text-align:center; margin-top:10px;"><a href="index.html" style="font-size:.8rem; color:var(--green-deep);">← Rudi kwenye Duka</a></p>
+</div>
+
+<div class="admin-shell" id="adminShell" style="display:none;">
+  <div class="admin-sidebar">
+    <h2>Agnes Admin</h2>
+    <div id="cloudAdminBanner" style="display:none; font-size:.72rem; font-weight:700; padding:8px 10px; border-radius:8px; margin-bottom:12px; line-height:1.4;"></div>
+    <button class="active" data-tab="dashboard">📊 Dashibodi</button>
+    <button data-tab="products">🛒 Bidhaa</button>
+    <button data-tab="addproduct">➕ Ongeza Bidhaa</button>
+    <button data-tab="orders">📦 Oda <span class="order-notif-badge" id="orderNotifBadge" style="display:none;">0</span></button>
+    <button data-tab="messages">✉️ Ujumbe</button>
+    <button data-tab="newsletter">📧 Jarida</button>
+    <button data-tab="reviews">⭐ Maoni</button>
+    <button data-tab="mpangilio">🎯 Mpangilio wa Duka</button>
+    <div style="border-top:1px solid rgba(255,255,255,.15); margin:14px 0 10px;"></div>
+    <button onclick="exportAllProductsJSON()" style="background:#c98a2c; color:#fff; font-weight:700;">⬇️ Export Bidhaa (JSON)</button>
+    <button onclick="adminLogout()">🚪 Toka</button>
+  </div>
+  <div class="admin-main">
+    <div id="tab-dashboard" class="tab-content"></div>
+    <div id="tab-products" class="tab-content" style="display:none;"></div>
+    <div id="tab-addproduct" class="tab-content" style="display:none;"></div>
+    <div id="tab-orders" class="tab-content" style="display:none;"></div>
+    <div id="tab-messages" class="tab-content" style="display:none;"></div>
+    <div id="tab-newsletter" class="tab-content" style="display:none;"></div>
+    <div id="tab-reviews" class="tab-content" style="display:none;"></div>
+    <div id="tab-mpangilio" class="tab-content" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- PRODUCT EDIT OVERLAY: images, cover, caption, MOQ -->
+<div class="pedit-overlay" id="peditOverlay">
+  <div class="pedit-box">
+    <h3 id="peditTitle">Hariri Bidhaa</h3>
+    <div class="pedit-field">
+      <label>Picha za Bidhaa — hadi picha 5 (bofya picha kuiweka kama Profaili)</label>
+      <div class="pedit-thumbs" id="peditThumbs"></div>
+      <input type="file" id="peditFileInput" accept="image/*" multiple>
+      <div class="pedit-progress" id="peditProgressWrap" style="display:none;"><div class="pedit-progress-bar" id="peditProgressBar"></div></div>
+      <p style="font-size:.72rem; color:var(--ink-soft); margin-top:6px;" id="peditCloudNote"></p>
+    </div>
+    <div class="pedit-field">
+      <label>Caption ya Bidhaa (herufi 900 kiwango cha juu)</label>
+      <textarea id="peditCaption" rows="5" maxlength="900" placeholder="Andika maelezo ya bidhaa hapa, au tumia kitufe cha AI kutengeneza mfano..."></textarea>
+      <div class="pedit-charcount" id="peditCharCount">0 / 900</div>
+      <label style="margin-top:10px; display:block;">Maelekezo ya ziada kwa AI (hiari — mfano "andika kwa mtindo wa WhatsApp", "fupisha zaidi", "sisitiza ofa ya leo")</label>
+      <input type="text" id="peditCaptionPrompt" maxlength="200" placeholder="Mfano: naomba caption fupi ya matangazo ya WhatsApp yenye emoji..." style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); margin-bottom:8px;">
+      <button class="btn btn-ghost" style="margin-top:2px;" onclick="peditGenerateCaption()">🤖 Tengeneza Caption kwa AI (kutoka picha)</button>
+    </div>
+    <div class="pedit-field">
+      <label>Bei ya Jumla — MOQ (Minimum Order Quantity)</label>
+      <div style="display:flex; gap:10px;">
+        <input type="number" id="peditW5" placeholder="Bei 5+ vipande">
+        <input type="number" id="peditW10" placeholder="Bei 10+ vipande">
+      </div>
+    </div>
+    <div class="pedit-field">
+      <label>Idadi ya Stock Iliyobaki (acha wazi kama hutaki kufuatilia stock)</label>
+      <input type="number" id="peditStock" placeholder="mfano: 20" min="0">
+    </div>
+    <div class="pedit-field">
+      <label>YouTube Video ID (hiari) — sehemu iliyo baada ya "v=" kwenye link ya YouTube</label>
+      <input type="text" id="peditVideoId" placeholder="mfano: dQw4w9WgXcQ">
+      <p style="font-size:.72rem; color:var(--ink-soft); margin-top:6px;">Ukiweka hii, video itaonekana kwenye ukurasa wa bidhaa hii. Acha wazi kuficha sehemu ya video.</p>
+    </div>
+    <div class="pedit-field">
+      <label>Picha "Kabla" na "Baada" (hiari)</label>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="peditBeforeImg" placeholder="URL ya picha ya Kabla">
+        <input type="text" id="peditAfterImg" placeholder="URL ya picha ya Baada">
+      </div>
+      <p style="font-size:.72rem; color:var(--ink-soft); margin-top:6px;">Weka picha halisi za wateja tu (kwa idhini yao). Acha wazi kuficha sehemu ya Kabla/Baada kwa bidhaa hii.</p>
+    </div>
+    <p id="peditSaveStatus" style="font-size:.78rem; font-weight:700; margin:4px 0 0; display:none;"></p>
+    <div class="pedit-actions">
+      <button class="btn btn-ghost" onclick="closePeditOverlay()">Ghairi</button>
+      <button class="btn btn-primary" id="peditSaveBtn" onclick="savePeditOverlay()">Hifadhi</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script src="js/onesignal-config.js"></script>
+<script src="js/ai-config.js"></script>
+<script src="js/products-data.js"></script>
+<script src="js/effect-i18n.js"></script>
+<script src="js/ai-vision.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/sw-register.js" defer></script>
+<div id="cloudStatusBadge" class="cloud-status-badge checking"></div>
+<script>window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ try { showDashboard(); } catch(e){ document.title = 'ERR:' + e.message; console.error(e); } }, 500); });</script>
+</body>
+</html>

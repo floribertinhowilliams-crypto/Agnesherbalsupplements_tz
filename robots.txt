@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+
+Sitemap: https://agnesherbalsupplements.com/sitemap.xml
+Sitemap: https://agnesherbalsupplements.com/sitemap-products-live.xml

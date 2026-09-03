@@ -1,0 +1,38 @@
+# Netlify edge/browser cache rules.
+#
+# sw.js, the HTML shells, and the JS/CSS bundles must NEVER be served stale
+# from Netlify's CDN or the browser's HTTP cache — otherwise the app's
+# auto-update logic (js/app.js "SERVICE WORKER (auto-update)" block) can
+# call registration.update() and still receive an old cached sw.js/app.js,
+# making already-installed apps appear stuck on an old version after a new
+# deploy. no-cache still allows a fast conditional/304 response — it does
+# not disable caching, it just forces a freshness check on every request.
+
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(self), microphone=()
+
+/sw.js
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/*.html
+  Cache-Control: no-cache
+
+/js/*
+  Cache-Control: no-cache
+
+/css/*
+  Cache-Control: no-cache
+
+# Product photos and static brand assets change far less often and are
+# safe to cache longer for speed.
+/images/*
+  Cache-Control: public, max-age=3600
+
+/assets/*
+  Cache-Control: public, max-age=3600

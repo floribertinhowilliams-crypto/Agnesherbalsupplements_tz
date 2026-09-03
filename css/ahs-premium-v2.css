@@ -1,0 +1,108 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 2
+   Section-title/typography system + premium product cards + hero slider
+   polish + new 3-product showcase.
+   Additive only: no existing selectors are removed, no existing HTML/JS
+   changed. The one new HTML block (ahs-showcase, added separately in
+   index.html) is self-contained and safe to delete on its own.
+   Safe to delete this single <link> to fully revert Phase 2.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) SECTION TITLES: consistent premium treatment across every section
+      that already uses .section-title-deco / .fs-head h2 / .leaf-divider.
+   -------------------------------------------------------------------------- */
+.section-title-deco { margin-bottom: 10px; }
+.section-title-deco h2,
+.fs-head h2,
+.section-head h2 {
+  font-family: 'Fraunces', serif;
+  letter-spacing: .01em;
+  position: relative;
+}
+.section-title-deco .st-star {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 2px 6px rgba(198,154,58,.35));
+}
+.fs-head, .section-head { margin-bottom: 30px !important; }
+
+/* --------------------------------------------------------------------------
+   2) PRODUCT CARDS: premium rounded shadow treatment, consistent image
+      ratio (portrait, matches the brief's 9:16 product presentation),
+      smoother hover, cleaner caption typography. Reuses existing .pg-item
+      markup — no JS changes needed.
+   -------------------------------------------------------------------------- */
+.pg-item {
+  border-radius: 18px;
+  border-color: var(--line);
+  box-shadow: 0 3px 14px -10px rgba(15, 77, 52, .3);
+  transition: transform .22s cubic-bezier(.22,1,.36,1), box-shadow .22s ease, border-color .22s ease;
+}
+.pg-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 34px -18px rgba(15, 77, 52, .45);
+  border-color: var(--gold-soft);
+}
+.pg-item img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: var(--cream);
+  transition: transform .35s ease;
+}
+.pg-item:hover img { transform: scale(1.045); }
+
+.pg-caption { padding: 12px 14px 16px; }
+.pg-caption b {
+  font-family: 'Fraunces', serif;
+  font-size: .92rem;
+  font-weight: 600;
+  letter-spacing: .005em;
+}
+.pg-caption em {
+  display: inline-block;
+  margin-top: 2px;
+  font-size: .88rem;
+}
+.pg-badges .deal-badge,
+.pg-badges .pg-badge {
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  box-shadow: 0 4px 10px -4px rgba(0,0,0,.35);
+}
+
+/* Deal / new-products rows keep their own portrait ratio, just made consistent */
+.deal-grid .pg-item img,
+.new-products-row .pg-item img { aspect-ratio: 3 / 4; object-fit: cover; }
+
+/* --------------------------------------------------------------------------
+   3) HERO SLIDER: richer gradient depth, premium tag chip, gold-accented
+      heading rule. No structural change — same 4 existing slides.
+   -------------------------------------------------------------------------- */
+.hs-slide {
+  background-blend-mode: multiply;
+}
+.hs-tag {
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,.4);
+  border-color: rgba(255,255,255,.55);
+}
+.hs-inner h2 {
+  text-shadow: 0 4px 18px rgba(0,0,0,.35);
+}
+.hs-inner h2::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 14px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  border-radius: 2px;
+}
+.hs-nav {
+  backdrop-filter: blur(4px);
+  box-shadow: 0 8px 20px -8px rgba(0,0,0,.35);
+}
+.hs-dots span.active { box-shadow: 0 0 0 3px rgba(255,255,255,.25); }
+
+/* Section 4 (3-product showcase) removed per request — see ahs-premium-v3.css
+   for the full-width layout pass that replaces it. */

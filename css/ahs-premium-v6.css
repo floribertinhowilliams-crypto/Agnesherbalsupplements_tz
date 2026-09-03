@@ -1,0 +1,48 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 6
+   Replaces the two separate buttons ("Ongeza" cart button + "Nunua Sasa"
+   buy button) with a SINGLE green "Shop Now" button with a cart icon
+   beside the label. The HTML was already changed in js/app.js
+   (productCardHTML) and js/homepage-v2.js (hpCardHTML) to render one
+   <button class="qb-shopnow" data-qbuy="..."> instead of the old pair —
+   this file is just its look. Tapping it adds the item to the cart and
+   opens the cart drawer (same action the old "Nunua Sasa" button did).
+   Safe to delete this single <link> to revert Phase 6 (though, like
+   Phase 5, the actual button HTML lives in the JS files, so a full
+   revert to the two-button layout needs those JS edits reverted too).
+   ========================================================================== */
+
+.pg-quickbar { justify-content: stretch; }
+
+.pg-quickbar .qb-shopnow {
+  width: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--green-deep);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .02em;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: .78rem;
+  border: none;
+  box-shadow: 0 4px 12px -6px rgba(15,77,52,.55);
+  transition: filter .15s ease, transform .1s ease;
+}
+.pg-quickbar .qb-shopnow:active { filter: brightness(.92); transform: translateY(1px); }
+
+.qb-shopnow-label { white-space: nowrap; }
+.qb-shopnow-ico {
+  font-size: .95rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+@media (max-width: 560px) {
+  .pg-quickbar .qb-shopnow { font-size: .72rem; padding: 9px 10px; gap: 6px; }
+}
+@media (max-width: 380px) {
+  .pg-quickbar .qb-shopnow { font-size: .68rem; padding: 8px 8px; }
+}

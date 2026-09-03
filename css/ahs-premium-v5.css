@@ -1,0 +1,66 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 5
+   User asked for the "🛒 Ongeza" / "⚡ Nunua" buttons to sit BELOW the
+   price, not on top of the product photo.
+
+   The HTML for these buttons has been MOVED in js/app.js (productCardHTML)
+   and js/homepage-v2.js (hpCardHTML): .pg-quickbar is no longer inside
+   .pg-img-wrap — it's now a sibling AFTER .pg-caption (price/name/effect).
+   This file only adjusts the CSS so that relocated bar lays out correctly
+   as a normal row instead of an absolute overlay, and removes the old
+   image-bottom shadow (css/ahs-premium-v4.css) that is no longer needed
+   now that nothing sits on top of the photo.
+   Safe to delete this single <link> to revert Phase 5 (buttons will fall
+   back to Phase 4's on-image styling — but the HTML move in the JS files
+   is what actually relocated them, so for a full revert the JS edits
+   would need reverting too).
+   ========================================================================== */
+
+/* No longer needed: the gradient scrim from Phase 4 was there to keep the
+   overlay buttons legible against the photo. Buttons don't overlay the
+   photo anymore, so drop the scrim. */
+.pg-img-wrap::after { content: none; }
+
+/* .pg-quickbar is now a normal-flow row below .pg-caption, not an absolute
+   overlay on the image. */
+.pg-quickbar {
+  position: static;
+  left: auto; right: auto; bottom: auto;
+  margin: 0 14px 14px;
+  border-radius: 10px;
+  box-shadow: none;
+  opacity: 1;
+  gap: 8px;
+}
+.pg-quickbar button {
+  border-radius: 8px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.pg-quickbar .qb-cart {
+  background: var(--cream, #f4efe4);
+  border: 1px solid var(--line);
+}
+html[data-theme="dark"] .pg-quickbar .qb-cart {
+  background: rgba(255,255,255,.06);
+}
+.pg-quickbar .qb-buy {
+  background: var(--green-deep);
+}
+
+/* Tighten the gap between the price and the buttons now sitting right
+   under it. */
+.pg-caption { padding-bottom: 4px !important; }
+
+/* Labels have a full-width row to breathe in now (not squeezed onto the
+   photo), so keep them visible at all card sizes. The existing base
+   button rule (style.css) already truncates with an ellipsis if a label
+   is still too long for the width — step the font down progressively on
+   narrower cards so that almost never has to kick in. */
+.pg-quickbar button span { display: inline; }
+@media (max-width: 560px) {
+  .pg-quickbar button { font-size: .6rem; padding: 8px 3px; }
+}
+@media (max-width: 380px) {
+  .pg-quickbar button { font-size: .56rem; padding: 7px 2px; }
+}

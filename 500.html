@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hitilafu ya Mfumo | Agnes Herbal Supplements</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/icons/icon-96.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="lang-switch" style="position:absolute; top:16px; right:16px;">
+  <button class="lang-btn" data-lang="sw" onclick="setLang('sw')">SW</button>
+  <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+  <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button>
+  <button class="lang-btn" data-lang="rn" onclick="setLang('rn')">RN</button>
+</div>
+<div class="error-page">
+  <div>
+    <img src="assets/images/logo.png" alt="Agnes Herbal Supplements" width="64" height="64" style="border-radius:50%; margin:0 auto 20px;">
+    <div class="code">500</div>
+    <h1 data-i18n="error_500_title">Hitilafu ya Mfumo</h1>
+    <p data-i18n="error_500_msg">Samahani, kuna hitilafu ya kiufundi imetokea. Tafadhali jaribu tena baada ya muda kidogo, au wasiliana nasi kwa WhatsApp kama tatizo litaendelea.</p>
+    <div class="cta-row" style="justify-content:center;">
+      <a class="btn btn-primary" href="index.html" data-i18n="back_home">← Rudi Nyumbani</a>
+      <a class="btn btn-ghost" href="https://wa.me/255678883675" target="_blank" rel="noopener" data-i18n="contact_us_wa">Wasiliana Nasi</a>
+    </div>
+  </div>
+</div>
+<script src="js/i18n.js"></script>
+<script>document.addEventListener('DOMContentLoaded', applyLang);</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+// ============================================================================
+// Agnes Herbal Store — Firestore Security Rules
+// ============================================================================
+// JINSI YA KUWEKA:
+// 1) Firebase Console → Firestore Database → tab "Rules" (juu)
+// 2) Futa yaliyopo, bandika YOTE ya faili hili
+// 3) BADILISHA "PASTE_YOUR_ADMIN_EMAIL_HERE" na email HALISI utakayoitumia
+//    kuingia kwenye admin.html (lazima ifanane kabisa na email uliyosajili
+//    kwenye Authentication → Users)
+// 4) "Publish"
+//
+// KABLA YA HAPA: hakikisha umewasha Authentication → Sign-in method →
+// Email/Password, kisha Authentication → Users → Add user, ukatumia email
+// na password uliyoichagua wewe mwenyewe (siyo iliyoko kwenye code yoyote).
+// ============================================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "floribertinhowilliams@gmail.com";
+    }
+
+    // ---------- ORDERS ----------
+    // Wateja: wanaweza kuUNDA oda mpya (checkout) na kuSOMA oda MOJA
+    // wanayoijua namba yake (track-order.html) — lakini SIWEZI kuorodhesha
+    // (list) oda zote za wengine.
+    // Admin: anaweza kusoma zote (list, kwa ajili ya Orders tab), kubadilisha
+    // hali, na kufuta.
+    match /orders/{orderId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if request.resource.data.status == 'placed'
+        && request.resource.data.id is string
+        && request.resource.data.id == orderId
+        && request.resource.data.items is list
+        && request.resource.data.total is number
+        && request.resource.data.date is string;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---------- PRODUCT OVERRIDES (picha, caption, MOQ, stock) ----------
+    // Kila mtu anaweza kusoma (ili storefront ionyeshe bidhaa/picha/caption),
+    // lakini ni admin PEKEE anayeweza kuandika/kubadilisha.
+    match /productOverrides/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- BIDHAA MPYA (customProducts, alizoongeza admin "➕ Ongeza Bidhaa") ----------
+    // Kila mtu anaweza kusoma (ili zionekane dukani), admin pekee anaweza
+    // kuongeza/kubadilisha/kufuta. "meta/productCounter" (namba inayofuata ya
+    // id) tayari inalindwa na rule ya "meta/{docId}" chini.
+    match /customProducts/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- NEWSLETTER SUBSCRIPTIONS ----------
+    // Wateja: wanaweza kuJIONGEZA tu (create), hawawezi kusoma orodha ya
+    // wengine (faragha). Admin: anaweza kuona orodha nzima (list) kwenye
+    // admin.html ili aweze kuwatumia matangazo/WhatsApp broadcast.
+    match /newsletter/{emailId} {
+      allow create: if request.resource.data.email is string
+        && request.resource.data.email.matches('^[^@\\\\s]+@[^@\\\\s]+\\\\.[^@\\\\s]+$')
+        && request.resource.data.date is string;
+      allow get: if false;
+      allow list: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    // ---------- ADMIN PRESENCE ("Niko Mtandaoni") ----------
+    match /meta/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- APP UPDATE PUSH ("Tuma Update kwa Vifaa Vyote") ----------
+    // meta/appVersion: admin pekee anaweza kuandika toleo jipya (linalowasha
+    // ukaguzi wa haraka wa Service Worker kwenye vifaa vyote vilivyo wazi/mtandaoni).
+    // meta/appVersion/acks/{deviceId}: kila kifaa cha mteja kinaandika hati YAKE
+    // TU (deviceId ya nasibu iliyozalishwa kwenye kivinjari chake) kuthibitisha
+    // kimepokea toleo hilo — hii ndiyo msingi wa kaunta ya "X vifaa vimethibitisha"
+    // kwenye admin.html. Hakuna anayeweza kusoma/kuandika hati za vifaa vingine.
+    match /meta/appVersion/acks/{deviceId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.deviceId == deviceId
+        && request.resource.data.version is string;
+    }
+
+    // ---------- WATEJA WALIO ONLINE (visitorPresence) ----------
+    // Kila kivinjari cha mteja kinaandika/kusasisha hati YAKE TU (deviceId
+    // yake) kuonyesha "bado nipo hapa" — hakuna anayeweza kusoma/kubadilisha
+    // hati za wengine. Admin PEKEE anaweza ku-"list" hati zote (kuhesabu
+    // wangapi wapo online) kwenye admin.html.
+    match /visitorPresence/{deviceId} {
+      allow get: if false;
+      allow list: if isAdmin();
+      allow create, update: if request.resource.data.deviceId == deviceId
+        && request.resource.data.keys().hasOnly(['deviceId', 'lastSeen']);
+      allow delete: if isAdmin();
+    }
+
+    // Kila kitu kingine: kimefungwa kabisa kwa chaguo-msingi.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

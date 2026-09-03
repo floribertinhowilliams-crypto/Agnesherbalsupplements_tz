@@ -1,0 +1,383 @@
+/* ============================================================
+   Agnes Herbal Store — Extra styles for new features
+   (kept separate from style.css so the original file stays clean)
+   ============================================================ */
+
+/* ---------- language switch: allow wrap on small screens ---------- */
+.lang-switch{flex-wrap:wrap; max-width:220px;}
+@media (max-width:600px){ .lang-switch{max-width:160px;} }
+
+/* ---------- display mode toggle (portrait / landscape) ---------- */
+.display-mode-toggle{display:flex; align-items:center; gap:6px; background:var(--green-soft); border-radius:20px; padding:4px 10px; font-size:.72rem; font-weight:700; color:var(--green-deep);}
+.display-mode-toggle button{border:none; background:none; cursor:pointer; padding:5px 9px; border-radius:14px; font-size:.9rem; color:var(--ink-soft);}
+.display-mode-toggle button.active{background:var(--green-deep); color:#fff;}
+
+.gallery-grid.mode-portrait .pg-item img{aspect-ratio:3/4; object-fit:cover;}
+.gallery-grid.mode-landscape .pg-item img{aspect-ratio:16/10; object-fit:cover;}
+.gallery-grid.mode-portrait{grid-template-columns:repeat(auto-fit, minmax(180px,1fr));}
+.gallery-grid.mode-landscape{grid-template-columns:repeat(auto-fit, minmax(260px,1fr));}
+
+/* ---------- search-by-image button ---------- */
+.img-search-btn{position:absolute; right:44px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.05rem; color:var(--green-deep); padding:4px;}
+.img-search-banner{background:var(--gold-soft); border:1px solid var(--gold); border-radius:12px; padding:10px 16px; font-size:.8rem; color:var(--ink); margin:12px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.img-search-banner button{background:none; border:none; color:var(--green-deep); font-weight:700; cursor:pointer;}
+
+/* ---------- product modal: image slider ---------- */
+.pm-slider{position:relative;}
+.pm-slider .pm-slide-track{display:flex; overflow:hidden; border-radius:16px;}
+.pm-slider .pm-slide-track img{width:100%; flex-shrink:0; display:none;}
+.pm-slider .pm-slide-track img.pm-active{display:block;}
+.pm-slide-nav{position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.9); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; color:var(--green-deep); z-index:2;}
+.pm-slide-prev{left:8px;}
+.pm-slide-next{right:8px;}
+.pm-slide-dots{display:flex; justify-content:center; gap:6px; margin-top:10px;}
+.pm-slide-dots span{width:8px; height:8px; border-radius:50%; background:var(--line); cursor:pointer;}
+.pm-slide-dots span.active{background:var(--green-deep);}
+
+/* ---------- product modal: caption ---------- */
+.pm-caption{font-size:.86rem; color:var(--ink-soft); line-height:1.5; margin:12px 0; padding:12px 14px; background:var(--green-soft); border-radius:12px;}
+
+/* ---------- wholesale / MOQ tier table (Alibaba style) ---------- */
+.moq-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:.82rem;}
+.moq-table th{background:var(--green-soft); color:var(--green-deep); text-align:left; padding:8px 10px; font-size:.72rem; text-transform:uppercase; letter-spacing:.03em;}
+.moq-table td{padding:8px 10px; border-bottom:1px solid var(--line);}
+.moq-table tr:last-child td{border-bottom:none;}
+.moq-table .moq-badge{display:inline-block; background:var(--gold-soft); border:1px solid var(--gold); color:var(--green-deep); font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:10px; margin-left:6px;}
+
+/* ---------- stock badges ---------- */
+.pg-badge.stock-out{background:#d64545; color:#fff;}
+.pg-badge.stock-low{background:#f1a83a; color:#3a2600;}
+.admin-sidebar button[data-tab]{position:relative;}
+.order-notif-badge{position:absolute; right:10px; top:8px; background:#d64545; color:#fff; font-size:.68rem; font-weight:700; min-width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0 4px;}
+.presence-toggle{display:flex; align-items:center; gap:8px; font-size:.8rem; color:var(--green-deep); font-weight:600; margin-bottom:16px;}
+.presence-dot{width:10px; height:10px; border-radius:50%; background:#bbb;}
+.presence-dot.online{background:#2fae5c; box-shadow:0 0 0 4px rgba(47,174,92,.2);}
+.cloud-status{font-size:.72rem; padding:6px 10px; border-radius:8px; margin-bottom:14px; display:inline-block;}
+.cloud-status.ready{background:#e7f6ec; color:#1e7d3d; border:1px solid #b7e4c7;}
+.cloud-status.local{background:#fdf3e0; color:#8a5a00; border:1px solid #f1d9a8;}
+
+/* ---------- admin: product edit panel (images + caption) ---------- */
+.pedit-overlay{position:fixed; inset:0; background:rgba(15,25,20,.55); display:none; align-items:center; justify-content:center; z-index:400; padding:20px;}
+.pedit-overlay.open{display:flex;}
+.pedit-box{background:var(--card-bg); border-radius:18px; max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:26px;}
+.pedit-box h3{color:var(--green-deep); font-family:'Fraunces',serif; margin-bottom:16px;}
+.pedit-thumbs{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:14px;}
+.pedit-thumb{position:relative; width:78px; height:78px; border-radius:10px; overflow:hidden; border:2px solid var(--line);}
+.pedit-thumb.is-cover{border-color:var(--green-deep);}
+.pedit-thumb img{width:100%; height:100%; object-fit:cover;}
+.pedit-thumb .pedit-cover-badge{position:absolute; bottom:2px; left:2px; background:var(--green-deep); color:#fff; font-size:.6rem; padding:1px 5px; border-radius:6px;}
+.pedit-thumb .pedit-del{position:absolute; top:2px; right:2px; background:#d64545; color:#fff; border:none; width:18px; height:18px; border-radius:50%; font-size:.68rem; cursor:pointer; line-height:1;}
+.pedit-thumb .pedit-setcover{position:absolute; inset:0; background:rgba(0,0,0,0); border:none; cursor:pointer;}
+
+/* Ongeza Bidhaa: kadi ya picha yenye vitufe (Piga Upya / Badilisha / Futa / Weka Profaili) */
+.ap-photocard{width:104px; display:flex; flex-direction:column; gap:5px;}
+.ap-photocard .ap-thumb-img{position:relative; width:104px; height:104px; border-radius:10px; overflow:hidden; border:2px solid var(--line);}
+.ap-photocard.is-cover .ap-thumb-img{border-color:var(--green-deep);}
+.ap-photocard .ap-thumb-img img{width:100%; height:100%; object-fit:cover; display:block;}
+.ap-photo-actions{display:flex; flex-wrap:wrap; gap:4px; justify-content:center;}
+.ap-photo-actions button{border:1px solid var(--line); background:#fff; border-radius:7px; font-size:.85rem; padding:6px 7px; cursor:pointer; line-height:1; min-width:32px; min-height:32px;}
+.ap-photo-actions button.ap-del{border-color:#d64545; color:#d64545;}
+.ap-photo-actions button.ap-primary{border-color:var(--green-deep); color:var(--green-deep);}
+#apCameraBtn:disabled, #apGalleryBtn:disabled{pointer-events:none;}
+.pedit-field{margin-bottom:14px;}
+.pedit-field label{display:block; font-size:.78rem; font-weight:700; color:var(--green-deep); margin-bottom:6px;}
+.pedit-field textarea, .pedit-field input[type=file], .pedit-field input[type=number]{width:100%; padding:10px; border-radius:8px; border:1px solid var(--line); font-family:inherit; font-size:.85rem;}
+.pedit-charcount{font-size:.7rem; color:var(--ink-soft); text-align:right; margin-top:4px;}
+.pedit-charcount.over{color:#d64545; font-weight:700;}
+.pedit-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:18px;}
+.pedit-progress{height:6px; background:var(--green-soft); border-radius:4px; overflow:hidden; margin-top:8px;}
+.pedit-progress-bar{height:100%; background:var(--green-deep); width:0%; transition:width .2s;}
+
+/* ---------- admin: orders live tools ---------- */
+.order-status-select{padding:6px 8px; border-radius:8px; border:1px solid var(--line); font-size:.78rem;}
+.order-confirm-btn{background:var(--green-deep); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-size:.75rem; font-weight:700; cursor:pointer;}
+.order-row-new{background:#fff8e1;}
+
+/* ---------- track order: live status pill ---------- */
+.track-live-pill{display:inline-flex; align-items:center; gap:6px; font-size:.72rem; font-weight:700; color:#1e7d3d; background:#e7f6ec; padding:4px 10px; border-radius:12px; margin-bottom:10px;}
+.track-live-pill .dot{width:7px; height:7px; border-radius:50%; background:#2fae5c;}
+
+/* ============================================================
+   Phase 1 — Payments, checkout, and social follow buttons
+   ============================================================ */
+
+/* --- Payment cards v2 --- */
+.pay-grid-v2{grid-template-columns:repeat(4,1fr);}
+.pay-card-v2{position:relative; background:var(--card-bg); box-shadow:0 6px 20px -12px rgba(0,0,0,.25); transition:transform .18s ease, box-shadow .18s ease;}
+.pay-card-v2:hover{transform:translateY(-3px); box-shadow:0 14px 28px -14px rgba(0,0,0,.3);}
+.pay-card-v2 .pay-icon{font-size:1.6rem;}
+.pay-card-v2 .pay-icon.mix{background:#fde7c8;}
+.pay-card-v2 .pay-icon.mpesa{background:#d7f3df;}
+.pay-card-v2 .pay-icon.halo{background:#e0e9fb;}
+.pay-card-v2 .pay-icon.bank{background:var(--gold-soft);}
+.pay-card-v2 .pay-holder{font-size:.74rem; color:var(--ink-soft); margin-bottom:8px;}
+.pay-card-v2 .pay-num-row{display:flex; align-items:center; justify-content:center; gap:8px;}
+.pay-card-v2 .pay-num{font-family:'Fraunces',serif; font-size:1.02rem; color:var(--gold); font-weight:600; letter-spacing:.3px;}
+.copy-btn{border:1px solid var(--line); background:var(--card-bg); border-radius:8px; width:30px; height:30px; font-size:.85rem; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:background .15s ease, transform .1s ease, border-color .15s ease;}
+.copy-btn:hover{background:var(--green-soft); border-color:var(--green);}
+.copy-btn:active{transform:scale(.92);}
+.copy-btn.copied{background:var(--green-deep); border-color:var(--green-deep); color:#fff;}
+
+/* --- Confirmation instructions box --- */
+.payment-confirm-box{display:flex; gap:12px; align-items:flex-start; background:var(--green-soft); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-top:22px; font-size:.85rem; color:var(--ink); max-width:760px; margin-left:auto; margin-right:auto;}
+.payment-confirm-box .pcb-icon{font-size:1.2rem; line-height:1;}
+.payment-confirm-box a{color:var(--green-deep); font-weight:700; text-decoration:underline;}
+
+/* --- Social follow buttons (Facebook / Instagram) --- */
+.social-follow-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:18px;}
+.footer .social-follow-row, .footer-grid .social-follow-row{justify-content:flex-start;}
+.contact-info-card .social-follow-row{justify-content:flex-start;}
+.social-follow-row .lbl{font-size:.78rem; color:var(--ink-soft); font-weight:600;}
+.social-follow-btn{width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; transition:transform .15s ease, filter .15s ease;}
+.social-follow-btn:hover{transform:translateY(-2px); filter:brightness(1.08);}
+.social-follow-btn.fb{background:#1877F2;}
+.social-follow-btn.ig{background:radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);}
+
+/* --- Floating social buttons --- */
+.float-btn.fb-float{background:#1877F2;}
+.float-btn.ig-float{background:radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);}
+
+/* --- Invoice payment rows: holder name + copy button --- */
+.invoice-pay .inv-holder{display:block; font-size:.7rem; color:var(--ink-soft); margin-top:2px;}
+.invoice-pay .copy-btn{float:right; width:24px; height:24px; font-size:.7rem; margin-top:-22px;}
+
+@media(max-width:980px){
+  .pay-grid-v2{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:640px){
+  .pay-grid-v2{grid-template-columns:1fr;}
+  .payment-confirm-box{flex-direction:column; align-items:flex-start;}
+  .float-actions{gap:8px; left:10px; bottom:14px;}
+  .float-btn{width:36px; height:36px; font-size:1rem;}
+}
+
+/* ============================================================
+   Part 01 — Product Page 2026 Upgrade
+   ============================================================ */
+
+/* ---------- gold CTA button (Buy Now) ---------- */
+.btn-gold{background:var(--gold); color:var(--green-deep); box-shadow:0 8px 22px -6px rgba(198,154,58,.5);}
+.btn-gold:hover{filter:brightness(1.05);}
+.modal-cta-row{display:flex; gap:10px; margin-top:4px;}
+.modal-cta-row .btn{flex:1; justify-content:center;}
+@media(max-width:420px){ .modal-cta-row{flex-direction:column;} }
+
+/* ---------- image zoom: hover-follow magnifier (desktop) ---------- */
+.zoom-wrap.hover-zoom .pm-slide-track img.pm-active{transform:scale(1.7); transition:transform .05s linear;}
+.zoom-wrap .pm-slide-track img{transition:transform .25s ease;}
+.zoom-wrap.zoomed .pm-slide-track img.pm-active{transform:scale(1.9); transition:transform .25s ease;}
+.zoom-wrap.zoomed{cursor:zoom-out;}
+.pm-swipe{touch-action:pan-y;}
+
+/* ---------- availability badge ---------- */
+.availability-badge{display:inline-flex; align-items:center; gap:6px; font-size:.74rem; font-weight:700; padding:5px 12px; border-radius:20px; margin:8px 0; width:fit-content;}
+.availability-badge.in{background:#e7f6ec; color:#1e7d3d;}
+.availability-badge.low{background:#fdf3e0; color:#8a5a00;}
+.availability-badge.out{background:#fde6e6; color:#b83030;}
+.availability-badge .dot{width:7px; height:7px; border-radius:50%; background:currentColor;}
+
+/* ---------- benefit icons row ---------- */
+.benefits-row{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:14px 0;}
+.benefit-chip{display:flex; align-items:center; gap:8px; background:var(--green-soft); border-radius:10px; padding:8px 10px; font-size:.74rem; font-weight:600; color:var(--ink);}
+.benefit-chip .b-icon{font-size:1rem;}
+
+/* ---------- trust badges ---------- */
+.trust-badges-row{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:18px 0 6px; padding-top:16px; border-top:1px solid var(--line);}
+.trust-badge{display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; font-size:.66rem; font-weight:600; color:var(--ink-soft);}
+.trust-badge .t-icon{font-size:1.3rem;}
+@media(max-width:560px){ .trust-badges-row{grid-template-columns:repeat(2,1fr);} }
+
+/* ---------- ingredients / usage / storage ---------- */
+.pdp-tabs{padding:24px 0; border-top:1px solid var(--line);}
+.pdp-tab-title{color:var(--green-deep); font-size:1.02rem; margin:18px 0 10px;}
+.pdp-tabs .pdp-tab-title:first-child{margin-top:0;}
+.pdp-list{font-size:.86rem; color:var(--ink-soft); line-height:1.7; padding-left:20px;}
+.pdp-list li{margin-bottom:4px;}
+.pdp-list.numbered{list-style:decimal;}
+.pdp-list:not(.numbered){list-style:disc;}
+
+/* ---------- before/after (product-level) reuses .ba-slider look ---------- */
+.ba-product-wrap{border-top:1px solid var(--line); padding-top:24px;}
+.ba-slider-product{max-width:520px;}
+
+/* ---------- video (product-level) ---------- */
+.video-product-wrap{border-top:1px solid var(--line); padding-top:24px;}
+#videoProductFrame iframe, #videoProductFrame video{width:100%; aspect-ratio:16/9; border-radius:16px; border:none; display:block;}
+
+/* ---------- frequently bought together ---------- */
+.fbt-wrap{border-top:1px solid var(--line); padding-top:24px;}
+.fbt-title{color:var(--green-deep); font-size:1.02rem; margin-bottom:14px;}
+.fbt-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;}
+.fbt-item{display:flex; flex-direction:column; align-items:center; gap:6px; width:120px; text-align:center;}
+.fbt-item img{width:88px; height:88px; object-fit:cover; border-radius:12px; border:1px solid var(--line);}
+.fbt-check{display:flex; align-items:center; gap:5px; font-size:.7rem; font-weight:600; color:var(--ink);}
+.fbt-price{font-size:.74rem; color:var(--gold); font-weight:700;}
+.fbt-plus{font-size:1.3rem; color:var(--ink-soft); font-weight:700;}
+.fbt-total-row{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; background:var(--green-soft); border-radius:14px; padding:14px 18px;}
+.fbt-total-row b{color:var(--green-deep); font-size:1.05rem;}
+
+/* ---------- delivery / return policy cards ---------- */
+.delivery-return-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; border-top:1px solid var(--line); padding-top:24px;}
+.dr-card{background:var(--green-soft); border-radius:14px; padding:18px 20px;}
+.dr-card .dr-icon{font-size:1.4rem; margin-bottom:6px;}
+.dr-card h4{color:var(--green-deep); font-size:.92rem; margin-bottom:6px;}
+.dr-card p{font-size:.8rem; color:var(--ink-soft); line-height:1.6;}
+@media(max-width:640px){ .delivery-return-grid{grid-template-columns:1fr;} }
+
+/* ---------- better reviews layout: rating distribution bars ---------- */
+.reviews-summary-v2{display:flex; gap:22px; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap;}
+.rs-score-block{text-align:center; min-width:90px;}
+.rs-score-block .score{font-family:'Fraunces',serif; font-size:2.2rem; color:var(--green-deep); line-height:1;}
+.rs-bars{flex:1; min-width:180px; display:flex; flex-direction:column; gap:4px;}
+.rs-bar-row{display:flex; align-items:center; gap:8px; font-size:.7rem; color:var(--ink-soft);}
+.rs-bar-row .rs-star-lbl{width:34px; flex-shrink:0;}
+.rs-bar-track{flex:1; height:7px; background:var(--green-soft); border-radius:6px; overflow:hidden;}
+.rs-bar-fill{height:100%; background:var(--gold); border-radius:6px;}
+.rs-bar-row .rs-count{width:26px; text-align:right; flex-shrink:0;}
+.review-item{display:flex; gap:10px; align-items:flex-start;}
+.review-item .rav{width:34px; height:34px; border-radius:50%; background:var(--green-deep); color:#fff; display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700; flex-shrink:0;}
+.review-item .rbody{flex:1;}
+
+/* ---------- product FAQ (reuses .faq-item look defined in style.css) ---------- */
+#productFaqList .faq-item{margin-bottom:2px;}
+
+/* ---------- sticky mobile Add-to-Cart / Buy-Now bar ---------- */
+.sticky-buy-bar{position:fixed; left:0; right:0; bottom:0; z-index:210; background:var(--card-bg); border-top:1px solid var(--line); box-shadow:0 -10px 30px -14px rgba(0,0,0,.3); padding:10px 14px; display:none; align-items:center; justify-content:space-between; gap:12px;}
+.sticky-buy-bar.show{display:flex;}
+.sticky-buy-price{font-family:'Fraunces',serif; font-weight:600; color:var(--green-deep); font-size:1rem; white-space:nowrap;}
+.sticky-buy-actions{display:flex; gap:8px; flex:1; justify-content:flex-end;}
+.sticky-buy-actions .btn{padding:11px 16px; font-size:.78rem; white-space:nowrap;}
+@media(min-width:769px){ .sticky-buy-bar{display:none !important;} }
+
+/* Cloud connection status badge — small, unobtrusive, no dev tools needed */
+.cloud-status-badge{
+  position:fixed; bottom:8px; left:8px; z-index:40;
+  font-size:.68rem; font-weight:700; padding:4px 9px; border-radius:12px;
+  background:rgba(0,0,0,.55); color:#fff; pointer-events:none;
+  transition:opacity .3s;
+}
+.cloud-status-badge.online{background:rgba(15,157,88,.85);}
+.cloud-status-badge.offline{background:rgba(214,69,69,.85);}
+.cloud-status-badge.checking{background:rgba(0,0,0,.55);}
+
+/* ============================================================
+   UI/UX PREMIUM PASS — LIVE badge, hamburger drawer, category
+   chips, section-title decoration, product card polish.
+   Additive only: does not remove or rename any existing class,
+   ID, button, or JS function used elsewhere in the app.
+   ============================================================ */
+
+/* ---------- Admin link hidden from all customer-facing views (still reachable by direct URL) ---------- */
+#footerAdminBtn{display:none !important;}
+/* Header admin button: kept in the same spot but fully invisible — no
+   icon, no border, no background, no tooltip. Tapping it 5 times within
+   3 seconds opens the admin panel (see js/app.js initAdminSecretTap). */
+.admin-secret-btn{background:transparent !important; border:none !important; box-shadow:none !important;}
+.admin-secret-btn svg{display:none;}
+
+/* ---------- Header spacing fix for hamburger + LIVE badge on small screens ---------- */
+@media(max-width:560px){
+  nav{padding:12px 16px; gap:8px;}
+  .brand-name{font-size:.92rem;}
+  .brand img{width:38px; height:38px;}
+  .live-badge{padding:4px 8px 4px 7px; font-size:.65rem;}
+  .live-badge .live-dot{width:7px; height:7px;}
+}
+/* Sehemu ya header ilikuwa na vitu vingi mno kwa simu (lugha, simu, LIVE,
+   n.k) vikiwa kwenye mstari mmoja bila ku-wrap, na kusababisha maandishi
+   kugongana. Vitu vinavyopatikana pia ndani ya menyu ya ☰ (lugha, Piga
+   Simu, Fuatilia Oda) vinafichwa hapa kwenye simu ndogo — bado vinafanya
+   kazi kikamilifu ndani ya drawer, hakuna kilichoondolewa. */
+@media(max-width:768px){
+  header .util-bar, header .track-btn, header .nav-cta{display:none;}
+  .brand-name span{display:none;}
+}
+/* Simu ndogo sana: jina "Agnes Herbal Store" linaondoka kabisa (logo pekee
+   inatosha kutambulika, na jina bado lipo ndani ya ☰ Menu), ili LIVE badge
+   isigongane na maandishi tena. */
+@media(max-width:480px){
+  .brand-name{display:none;}
+  .brand{gap:0;}
+}
+@media(max-width:400px){
+  .icon-btn{width:34px; height:34px;}
+  .cart-btn{width:38px; height:38px;}
+  .nav-right{gap:8px;}
+}
+
+/* ---------- LIVE indicator (header) ---------- */
+.live-badge{display:none; align-items:center; gap:6px; font-size:.72rem; font-weight:700; letter-spacing:.04em; color:#d64545; padding:5px 10px 5px 8px; border-radius:20px; background:rgba(214,69,69,.09); border:1px solid rgba(214,69,69,.25); white-space:nowrap;}
+.live-badge.show{display:inline-flex;}
+.live-dot{width:8px; height:8px; border-radius:50%; background:#d64545; box-shadow:0 0 0 rgba(214,69,69,.6); animation:liveDotPulse 1.6s ease-out infinite;}
+@keyframes liveDotPulse{0%{box-shadow:0 0 0 0 rgba(214,69,69,.55);}70%{box-shadow:0 0 0 8px rgba(214,69,69,0);}100%{box-shadow:0 0 0 0 rgba(214,69,69,0);}}
+
+/* ---------- Hamburger menu button (mobile) ---------- */
+.menu-toggle{display:none; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; border:1px solid var(--line); background:var(--card-bg); cursor:pointer; flex-shrink:0;}
+.menu-toggle svg{width:19px; height:19px; stroke:var(--green-deep);}
+@media(max-width:980px){ .menu-toggle{display:inline-flex;} }
+
+/* ---------- Mobile nav drawer ---------- */
+.nav-drawer-overlay{position:fixed; inset:0; background:rgba(0,0,0,.42); z-index:400; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+.nav-drawer-overlay.open{opacity:1; pointer-events:auto;}
+.nav-drawer{position:fixed; top:0; left:0; height:100%; width:300px; max-width:86vw; background:var(--card-bg); z-index:401; transform:translateX(-100%); transition:transform .28s ease; box-shadow:10px 0 40px rgba(0,0,0,.2); display:flex; flex-direction:column; overflow-y:auto;}
+.nav-drawer.open{transform:translateX(0);}
+.nav-drawer-head{display:flex; align-items:center; justify-content:space-between; padding:18px 18px 14px; border-bottom:1px solid var(--line);}
+.nav-drawer-head .brand-name{font-family:'Fraunces',serif; font-weight:600; color:var(--green-deep); font-size:1.05rem;}
+.nav-drawer-close{width:32px; height:32px; border-radius:50%; border:1px solid var(--line); background:transparent; font-size:1rem; cursor:pointer; color:var(--ink-soft);}
+.nav-drawer-links{list-style:none; padding:10px 8px; margin:0; flex:1;}
+.nav-drawer-links li a{display:flex; align-items:center; gap:12px; padding:14px 12px; border-radius:10px; font-weight:600; font-size:.95rem; color:var(--ink); text-decoration:none;}
+.nav-drawer-links li a:active, .nav-drawer-links li a:hover{background:var(--green-soft); color:var(--green-deep);}
+.nav-drawer-links li a .dr-ico{font-size:1.05rem; width:22px; text-align:center; flex-shrink:0;}
+.nav-drawer-foot{padding:14px 18px 22px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:10px;}
+.nav-drawer-foot .lang-switch{justify-content:flex-start;}
+@media(min-width:981px){ .nav-drawer, .nav-drawer-overlay{display:none;} }
+
+/* ---------- Category chips (mirrors #categorySelect, additive) ---------- */
+.category-chips{display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; margin-bottom:2px; scrollbar-width:none;}
+.category-chips::-webkit-scrollbar{display:none;}
+.cat-chip{flex-shrink:0; padding:9px 16px; border-radius:20px; border:1px solid var(--line); background:var(--card-bg); font-size:.8rem; font-weight:600; color:var(--ink-soft); cursor:pointer; white-space:nowrap; transition:all .15s ease;}
+.cat-chip:hover{border-color:var(--green);}
+.cat-chip.active{background:var(--green-deep); border-color:var(--green-deep); color:#fff; box-shadow:0 4px 12px -4px rgba(15,77,52,.5);}
+
+/* ---------- Section title decoration (reusable everywhere) ---------- */
+.section-title-deco{display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:6px;}
+.section-title-deco .stl{flex:0 0 42px; height:1px; background:linear-gradient(90deg, transparent, var(--gold));}
+.section-title-deco .str{flex:0 0 42px; height:1px; background:linear-gradient(90deg, var(--gold), transparent);}
+.section-title-deco .st-star{color:var(--gold); font-size:.95rem;}
+
+/* ---------- Product card polish (visual only — no logic touched) ---------- */
+.pg-item{border-radius:16px !important; overflow:hidden; box-shadow:0 2px 14px -6px rgba(15,77,52,.16); transition:transform .2s ease, box-shadow .2s ease;}
+.pg-item:hover{transform:translateY(-3px); box-shadow:0 14px 30px -12px rgba(15,77,52,.28);}
+
+/* ---------- Search bar premium polish ---------- */
+.search-wrap .search-input{border-radius:26px !important; padding-top:15px !important; padding-bottom:15px !important; border:1.5px solid var(--line) !important; font-size:.95rem !important; transition:border-color .18s ease, box-shadow .18s ease;}
+.search-wrap .search-input:focus{border-color:var(--green) !important; box-shadow:0 0 0 4px rgba(21,117,79,.12);}
+
+/* ---------- New Products row (horizontal scroll on mobile) ---------- */
+.new-products-row{display:flex; gap:14px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x proximity;}
+.new-products-row::-webkit-scrollbar{display:none;}
+.new-products-row .pg-item{flex:0 0 168px; scroll-snap-align:start;}
+@media(min-width:900px){ .new-products-row{flex-wrap:wrap; overflow:visible;} .new-products-row .pg-item{flex:0 0 calc(20% - 12px);} }
+
+/* ---------- WELCOME BANNER — fills the gap above the hero slider with an
+   animated, on-brand (green/gold) "shine sweep" title + twinkling sparkles,
+   giving a premium decorative-lights feel without touching any existing
+   section, logic, or button. ---------- */
+.welcome-banner{position:relative; text-align:center; padding:24px 18px 18px; background:var(--cream); overflow:hidden;}
+.wb-title{
+  font-family:'Fraunces',serif; font-weight:700; letter-spacing:.02em;
+  font-size:1.15rem; margin:0 0 6px; line-height:1.3;
+  background:linear-gradient(100deg, var(--green-deep) 28%, var(--gold) 44%, #fff6da 50%, var(--gold) 56%, var(--green-deep) 72%);
+  background-size:240% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.06)) drop-shadow(0 2px 6px rgba(15,77,52,.12));
+  animation:wbShine 5s linear infinite;
+}
+@keyframes wbShine{0%{background-position:0% 50%;}100%{background-position:-240% 50%;}}
+.wb-sub{font-size:.8rem; font-weight:600; color:var(--ink-soft); letter-spacing:.03em; margin:0;}
+.wb-sparkle{position:absolute; font-size:.9rem; opacity:0; pointer-events:none; animation:wbTwinkle 3.2s ease-in-out infinite;}
+.wb-s1{top:12px; left:10%; animation-delay:.2s;}
+.wb-s2{top:16px; right:12%; animation-delay:1.1s;}
+.wb-s3{bottom:10px; left:46%; animation-delay:2s;}
+@keyframes wbTwinkle{0%,100%{opacity:0; transform:scale(.6);}50%{opacity:1; transform:scale(1);}}
+@media(min-width:640px){ .wb-title{font-size:1.6rem;} .wb-sub{font-size:.9rem;} }

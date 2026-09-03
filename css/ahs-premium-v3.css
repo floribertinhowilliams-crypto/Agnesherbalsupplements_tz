@@ -1,0 +1,57 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 3
+   Full-width layout correction: smaller side gutters, denser responsive
+   product grid, tighter vertical spacing. Layout/spacing only — no
+   product logic, search, categories, cart, admin, or Firebase touched.
+   Safe to delete this single <link> to fully revert Phase 3.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) CONTAINER: smaller, size-appropriate gutter instead of a flat 28px
+      everywhere. Same .wrap class used site-wide, so header/hero/footer
+      all benefit too — a small consistent gutter, never edge-to-edge.
+   -------------------------------------------------------------------------- */
+.wrap { padding: 0 16px; }
+
+@media (min-width: 561px) {
+  .wrap { padding: 0 22px; }
+}
+@media (min-width: 981px) {
+  .wrap { max-width: 1360px; padding: 0 32px; }
+}
+
+/* --------------------------------------------------------------------------
+   2) PRODUCT GRID DENSITY: use the freed-up width for more columns
+      instead of empty margin. Mobile stays a clean 2-up (existing rule),
+      tablet steps up to 3, desktop/wide gets more columns automatically
+      via a smaller auto-fill minimum.
+   -------------------------------------------------------------------------- */
+.gallery-grid,
+.gallery-grid.mode-portrait {
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 14px;
+}
+@media (max-width: 560px) {
+  .gallery-grid,
+  .gallery-grid.mode-portrait { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+}
+@media (min-width: 561px) and (max-width: 900px) {
+  .gallery-grid,
+  .gallery-grid.mode-portrait { grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); }
+}
+
+/* New Products / Recommendation Products rows: same denser card width */
+.new-products-row .pg-item { flex: 0 0 152px; }
+@media (min-width: 900px) {
+  .new-products-row .pg-item { flex: 0 0 calc(16.66% - 12px); }
+}
+.deal-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+
+/* --------------------------------------------------------------------------
+   3) VERTICAL SPACING: trim oversized section padding on small screens
+      only (desktop spacing kept as-is).
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .flash-sale, .daily-deals { padding: 40px 0; }
+  .fs-head, .section-head { margin-bottom: 22px !important; }
+}

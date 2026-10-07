@@ -128,7 +128,7 @@ function cloudListenOneOrder(orderId, callback) {
 function cloudSaveProduct(id, data) {
   if (!AHS_CLOUD_READY) return Promise.resolve(false);
   return ahsDb.collection('productOverrides').doc(String(id)).set(data, { merge: true })
-    .then(() => true).catch(err => { console.warn('cloudSaveProduct', err); return false; });
+    .then(() => { ahsPingIndexNow(); return true; }).catch(err => { console.warn('cloudSaveProduct', err); return false; });
 }
 function cloudListenProducts(callback) {
   if (!AHS_CLOUD_READY) return () => {};
@@ -145,20 +145,101 @@ function cloudListenProducts(callback) {
 // wakati mmoja) — inaendelea moja kwa moja baada ya bidhaa 288 za mwisho
 // zilizopo kwenye js/products-data.js (yaani 288, 289, 290...) ili ionekane
 // kama orodha MOJA inayoendelea, siyo namba kubwa zisizoeleweka.
-function cloudNextProductId() {
+function cloudNextProductIdWithRetry(retries = 3, delay = 500) {
   if (!AHS_CLOUD_READY) return Promise.reject(new Error('Firebase haijaanzishwa bado.'));
-  const counterRef = ahsDb.collection('meta').doc('productCounter');
-  return ahsDb.runTransaction(tx => tx.get(counterRef).then(doc => {
-    const current = (doc.exists && typeof doc.data().next === 'number') ? doc.data().next : PRODUCTS.length;
-    tx.set(counterRef, { next: current + 1 }, { merge: true });
-    return current;
-  }));
+  
+  const attempt = (attemptsLeft) => {
+    const counterRef = ahsDb.collection('meta').doc('productCounter');
+    return ahsDb.runTransaction(tx => tx.get(counterRef).then(doc => {
+      const current = (doc.exists && typeof doc.data().next === 'number') ? doc.data().next : PRODUCTS.length;
+      tx.set(counterRef, { next: current + 1 }, { merge: true });
+      return current;
+    })).catch(err => {
+      // Kama hitilafu ni "quota-exceeded", jaribu tena baada ya kusubiri
+      if (attemptsLeft > 0 && (err.code === 'resource-exhausted' || /quota|rate|limit/.test(String(err.message || '')))) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            attempt(attemptsLeft - 1).then(resolve).catch(err => {
+              if (attemptsLeft > 1) {
+                resolve(attempt(attemptsLeft - 1));
+              } else {
+                throw err;
+              }
+            });
+          }, delay * (3 - attemptsLeft)); // Exponential backoff
+        });
+      }
+      throw err;
+    });
+  };
+  
+  return attempt(retries);
 }
-function cloudSaveNewProduct(product) {
+
+// IndexNow: inaarifu Bing/Yandex/n.k. (na hivyo injini nyingi za AI zinazotumia Bing) kuhusu bidhaa mpya/zilizobadilika.
+// Inaitwa na admin TU baada ya kuhifadhi/kufuta bidhaa; kimya kabisa kikishindwa (haiathiri kuhifadhi bidhaa).
+let _ahsIndexNowTimer = null;
+// URL ya ukurasa wa bidhaa ya admin (sawa na productSlug() kwenye functions/_lib/seo.js).
+function ahsCustomProductUrl(p) {
+  if (!p || !p.name) return null;
+  var sl = function (x) { return String(x || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''); };
+  var slug = sl(p.slug) || (sl(p.name) ? 'p' + p.id + '-' + sl(p.name) : 'bidhaa-' + p.id);
+  if (/^\d+-/.test(slug)) slug = 'p' + slug;
+  return 'https://agnesherbalsupplements.com/products/' + slug;
+}
+
+// urls (hiari): orodha ya URL za kutuma. Bila urls = tuma kila kitu (kitufe cha admin).
+// Bidhaa mpya hutuma URL yake + sitemap TU, ili injini ziipate haraka.
+function ahsPingIndexNow(force, urls) {
+  try {
+    clearTimeout(_ahsIndexNowTimer);
+    var body = (urls && urls.length) ? JSON.stringify({ urls: urls }) : '{}';
+    const run = () => fetch('/api/indexnow', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body })
+      .then(r => r.json()).catch(() => null);
+    if (force) return run();
+    _ahsIndexNowTimer = setTimeout(run, 2000);
+  } catch (e) { /* hakuna madhara */ }
+  return Promise.resolve(null);
+}
+
+function cloudNextProductId() {
+  return cloudNextProductIdWithRetry();
+}
+
+function cloudSaveNewProductWithRetry(product, retries = 3, delay = 500) {
   if (!AHS_CLOUD_READY) return Promise.resolve(false);
-  return ahsDb.collection('customProducts').doc(String(product.id)).set({
-    ...product, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  }).then(() => true);
+  
+  const attempt = (attemptsLeft) => {
+    return ahsDb.collection('customProducts').doc(String(product.id)).set({
+      ...product, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+      var u = ahsCustomProductUrl(product);
+      ahsPingIndexNow(false, (u ? [u] : []).concat(['https://agnesherbalsupplements.com/', 'https://agnesherbalsupplements.com/orodha/', 'https://agnesherbalsupplements.com/sitemap-products-live.xml']));
+      return true;
+    }).catch(err => {
+      // Kama hitilafu ni "quota-exceeded", jaribu tena baada ya kusubiri
+      if (attemptsLeft > 0 && (err.code === 'resource-exhausted' || /quota|rate|limit/.test(String(err.message || '')))) {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            attempt(attemptsLeft - 1).then(resolve).catch(err => {
+              if (attemptsLeft > 1) {
+                resolve(attempt(attemptsLeft - 1));
+              } else {
+                throw err;
+              }
+            });
+          }, delay * (3 - attemptsLeft)); // Exponential backoff
+        });
+      }
+      throw err;
+    });
+  };
+  
+  return attempt(retries);
+}
+
+function cloudSaveNewProduct(product) {
+  return cloudSaveNewProductWithRetry(product);
   // Kwa makusudi HATUNASI (catch) hitilafu hapa — tunaiacha ipande kwenda
   // js/admin.js ili iweze kuonyesha sababu halisi (mfano "permission-denied"
   // ikiwa hujaingia kama admin wa kweli) badala ya kusema tu "imeshindwa".
@@ -174,7 +255,7 @@ function cloudListenCustomProducts(callback) {
 function cloudDeleteCustomProduct(id) {
   if (!AHS_CLOUD_READY) return Promise.resolve(false);
   return ahsDb.collection('customProducts').doc(String(id)).delete()
-    .then(() => true).catch(err => { console.warn('cloudDeleteCustomProduct', err); return false; });
+    .then(() => { ahsPingIndexNow(); return true; }).catch(err => { console.warn('cloudDeleteCustomProduct', err); return false; });
 }
 
 /* ===================== MPANGILIO WA DUKA (Bidhaa za Leo + Ofa za Kundi) ===================== */
@@ -194,6 +275,22 @@ function cloudListenHomepageSettings(callback) {
   return ahsDb.collection('meta').doc('homepageSettings').onSnapshot(doc => {
     callback(doc.exists ? doc.data() : { featuredToday: [], categoryOffers: {} });
   }, err => console.warn('cloudListenHomepageSettings', err));
+}
+// Usomaji wa MARA MOJA (si listener) unaotumika admin.html kabla ya kuruhusu
+// "🎯 Mpangilio wa Duka" kuhifadhi chochote — TATIZO lililorekebishwa: admin
+// alipofungua tab hiyo haraka mno baada ya kuingia (kabla listener ya
+// onSnapshot() haijapokea data ya kwanza kutoka Firestore — jambo la kawaida
+// kwenye mtandao dhaifu), mpLoadSettings() ilikuwa ikisoma "ahs_homepage_settings"
+// ya ZAMANI/tupu kwenye localStorage badala ya ile HALISI iliyohifadhiwa
+// Firestore — akihifadhi (save) chochote hapo, alikuwa akifuta (overwrite,
+// merge:false) mpangilio halisi wa sehemu kwa ule wa zamani/default bila
+// kukusudia. cloudGetHomepageSettings() inasoma moja kwa moja kutoka
+// Firestore papo hapo tab inapofunguliwa, si kutegemea muda wa listener.
+function cloudGetHomepageSettings() {
+  if (!AHS_CLOUD_READY) return Promise.resolve(null);
+  return ahsDb.collection('meta').doc('homepageSettings').get()
+    .then(doc => doc.exists ? doc.data() : { featuredToday: [], categoryOffers: {}, sectionOrder: [], goalOrder: [], goalHidden: [], goalCustom: [], goalLabels: {}, goalAssign: {}, sectionMeta: {} })
+    .catch(err => { console.warn('cloudGetHomepageSettings', err); return null; });
 }
 
 /* ===================== ADMIN ONLINE PRESENCE ===================== */

@@ -93,6 +93,7 @@ function showDashboard() {
     ['renderNewsletterTab', renderNewsletterTab],
     ['renderReviewsTab', renderReviewsTab],
     ['renderMpangilioTab', renderMpangilioTab],
+    ['renderMakundiTab', renderMakundiTab],
     ['initPresenceUI', initPresenceUI],
     ['initAdminOrderSync', initAdminOrderSync],
     ['initAdminProductSync', initAdminProductSync],
@@ -117,7 +118,8 @@ const ADMIN_TAB_RENDERERS = {
   messages: () => renderMessagesTab(),
   newsletter: () => renderNewsletterTab(),
   reviews: () => renderReviewsTab(),
-  mpangilio: () => renderMpangilioTab()
+  mpangilio: () => renderMpangilioTab(),
+  makundi: () => renderMakundiTab()
 };
 document.querySelectorAll('.admin-sidebar button[data-tab]').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -158,6 +160,13 @@ function renderDashboard() {
   }
   document.getElementById('tab-dashboard').innerHTML = `
     <h2 style="color:var(--green-deep); margin-bottom:20px; font-family:'Fraunces',serif;">Muhtasari (Dashboard)</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+      <button class="btn btn-primary" onclick="mpOpenMakundiTab()">🗂 Panga Makundi ya Kazi</button>
+      <button class="btn btn-ghost" onclick="document.querySelector('.admin-sidebar button[data-tab=\\'mpangilio\\']').click()">🎯 Mpangilio wa Duka</button>
+      <a class="btn btn-ghost" href="/orodha/" target="_blank" rel="noopener">📋 Orodha Kamili</a>
+      <a class="btn btn-ghost" href="/je-ipo/" target="_blank" rel="noopener">🔎 Je, Ipo?</a>
+    </div>
+    <p style="font-size:.72rem; color:var(--ink-soft); margin-bottom:14px;">Toleo la admin: <b>${AHS_ADMIN_VERSION}</b> ✓</p>
     ${cloudStatusHtml}
     <div class="presence-toggle">
       <span class="presence-dot" id="presenceDot"></span>
@@ -326,6 +335,7 @@ function renderProductsTab(filter) {
 
   document.getElementById('tab-products').innerHTML = `
     <h2 style="color:var(--green-deep); margin-bottom:16px; font-family:'Fraunces',serif;">Bidhaa (${allAdminProducts().length})</h2>
+    <button class="btn btn-primary" style="margin-bottom:14px;" onclick="mpOpenMakundiTab()">🗂 Panga Makundi ya Kazi (weka bidhaa kwenye kundi)</button>
     <input type="text" class="admin-search" id="productSearch" placeholder="Tafuta bidhaa..." value="${escapeHtmlA(filter||'')}">
     <p style="font-size:.78rem; color:var(--ink-soft); margin:10px 0;">Onyesha/ficha bidhaa dukani, au badilisha bei ya rejareja. Mabadiliko yanahifadhiwa kwenye kivinjari hiki na yataonekana kwenye tovuti kuu papo hapo. Bidhaa zenye lebo "mpya" ndizo ulizoongeza kwenye "➕ Ongeza Bidhaa" — "Futa Kabisa" kwazo huondoa milele (siyo kuficha tu).</p>
     <div style="overflow:auto;"><table class="admin-table">
@@ -636,7 +646,7 @@ function updateApSeoPreview() {
   const slug = name ? slugifyA(name) : '';
 
   document.getElementById('apSeoTitle').textContent = name ? `${name} | Agnes Herbal Supplements Tanzania` : '—';
-  document.getElementById('apSeoUrl').textContent = 'agnesherbalsupplements.com/products/' + (slug || '—');
+  document.getElementById('apSeoUrl').textContent = 'agnesherbalsupplements.com/products/' + (slug ? ('p<namba>-' + slug) : '—');
 
   let desc = caption || (name ? `${name} - ${effect || category || ''} - ${category || ''}.` : '');
   if (desc && !/agnes herbal/i.test(desc)) desc += ' Bidhaa ya asili kutoka Agnes Herbal Supplements, Tanzania.';
@@ -787,6 +797,8 @@ async function handleAddProductSubmit(e) {
     const product = {
       id, name, category, effect: effect || category, catSlug: slugifyA(category),
       prefix: 'CUSTOM',
+      // URL ya kudumu ya bidhaa: <namba>-<jina>. Inatumiwa na ukurasa wa SEO, sitemap na link ya Ad.
+      slug: (slugifyA(name) ? ('p' + id + '-' + slugifyA(name)) : ('bidhaa-' + id)),
       prices: { retail, w5, w10 },
       // Hatuhifadhi "cover" kama nakala tofauti ya picha ya kwanza — hilo
       // lingerudufisha data na kuongeza uwezekano wa kuvuka ukomo wa 1MB wa
@@ -794,7 +806,7 @@ async function handleAddProductSubmit(e) {
       // profaili kila mahali kwenye tovuti (angalia getEffectiveProduct/
       // productCardHTML kwenye js/app.js).
       images: apNewImages,
-      rating: 4.5, reviewCount: 0, bestseller: false,
+      bestseller: false,
       dateAdded: new Date().toISOString().slice(0, 10),
       // Firestore haikubali thamani "undefined" — tunaongeza funguo hizi mbili
       // TU ikiwa admin aliwajaza (badala ya kuziweka "undefined"). "videoClip"
@@ -809,7 +821,8 @@ async function handleAddProductSubmit(e) {
     const ok = await cloudSaveNewProduct(product);
     if (ok) {
       statusEl.style.color = 'var(--green-deep)';
-      statusEl.textContent = `✅ Bidhaa "${name}" imeongezwa (namba ${id}) — inaonekana dukani sasa hivi. Itaonekana pia kwenye tab "🛒 Bidhaa" hapo juu, pamoja na zote nyingine.`;
+      const adLink = window.location.origin + '/products/' + product.slug;
+      statusEl.innerHTML = `✅ Bidhaa "${escapeHtmlA(name)}" imeongezwa (namba ${id}) — inaonekana dukani sasa hivi. Itaonekana pia kwenye tab "🛒 Bidhaa" hapo juu, pamoja na zote nyingine.<br><br>📢 <b>Link ya Ad (Facebook/Instagram/TikTok) kwa bidhaa hii:</b><br><input type="text" readonly value="${escapeHtmlA(adLink)}" onclick="this.select();" style="width:100%; padding:8px; margin-top:4px; border-radius:8px; border:1px solid var(--line); font-size:.78rem;">`;
       e.target.reset();
       apNewImages = [];
       apNewVideo = null;
@@ -829,6 +842,8 @@ async function handleAddProductSubmit(e) {
     statusEl.style.color = '#b23a3a';
     if (code === 'permission-denied') {
       statusEl.textContent = '❌ Umezuiwa (permission-denied): hujaingia kama "Admin wa kweli" wa Firebase. Toka (🚪) kisha Ingia tena ukijaza EMAIL yako halisi ya Firebase pamoja na password inayolingana kabisa na ile uliyoisajili kwenye Firebase Console → Authentication → Users. Nenosiri la ukurasa wa Admin peke yake HALITOSHI.';
+    } else if (code === 'resource-exhausted' || /quota|rate limit|resource.exhausted/i.test(msg)) {
+      statusEl.innerHTML = '⏳ <b>Jaribu tena — Firebase inapumzika kwa sasa:</b><br>Hii ni tatizo la AWS (haiwezi kuzuiwa). Subiri sekunde 10-30 kisha jaribu tena. Ikiwa tatizo linaendelea, ingia kwenye Firebase Console > Firestore > \"Quotas\" kila sekunde kadhaa. Kama data irudi kukamatia, tatizo limasuluhishwa.<br><br>💡 Ikiwa hii inatokea mara kwa mara, bidhaa zako zinaweza kuhitaji mpango wa bei zaidi ya Spark (Firebase Blaze). Spark yenye quota ndogo kubwa hufikia kwa umeme mwenye wateja wengi, lakini inaweza kusambea.';
     } else if (/longer than|exceeds|too large|invalid-argument/i.test(msg)) {
       statusEl.textContent = '❌ Picha ni kubwa mno kwa hati moja ya Firestore (ukomo 1MB). Futa picha 1-2 kisha jaribu tena.';
     } else {
@@ -859,13 +874,17 @@ function initAdminCustomProductsSync() {
 
 /* ===================== ORDERS TAB ===================== */
 const ORDER_STAGES = [
-  { key: 'placed', label: 'Imepokelewa' },
-  { key: 'confirmed', label: 'Imethibitishwa' },
-  { key: 'packed', label: 'Imefungashwa' },
-  { key: 'shipped', label: 'Imesafirishwa' },
-  { key: 'delivered', label: 'Imewasilishwa' },
+  { key: 'placed', label: '1. Oda Mpya (New Order)' },
+  { key: 'confirmed', label: '2. Imethibitishwa (Confirmed)' },
+  { key: 'processing', label: '3. Inaandaliwa (Processing)' },
+  { key: 'packed', label: '4. Tayari Kusafirishwa (Ready for Delivery)' },
+  { key: 'shipped', label: '5. Iko Njiani (Out for Delivery)' },
+  { key: 'delivered', label: '6. Imewasilishwa (Delivered)' },
+  { key: 'cancelled', label: '7. Imefutwa (Cancelled)' },
 ];
 let seenOrderIds = new Set(lsGetA('ahs_seen_orders', []));
+let orderSearchQuery = '';
+let orderStatusFilterKey = '';
 
 function mergeOrders(localOrders, cloudOrders) {
   const map = {};
@@ -874,21 +893,49 @@ function mergeOrders(localOrders, cloudOrders) {
   return Object.values(map).sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
+function orderMatchesSearch(o, q) {
+  if (!q) return true;
+  const hay = [
+    o.id, o.customerName, o.customerPhone, o.altPhone, o.customerRegion,
+    o.district, o.ward, ...(o.items || []).map(i => i.name)
+  ].filter(Boolean).join(' ').toLowerCase();
+  return hay.includes(q);
+}
+
+function filterOrdersTab(nextQuery, nextStatus) {
+  if (typeof nextQuery === 'string') orderSearchQuery = nextQuery;
+  if (typeof nextStatus === 'string') orderStatusFilterKey = nextStatus;
+  renderOrdersTab(lastCloudOrders);
+}
+
 function renderOrdersTab(cloudOrders) {
   const localOrders = lsGetA('ahs_orders', []);
-  const orders = cloudOrders ? mergeOrders(localOrders, cloudOrders) : localOrders;
-  const newCount = orders.filter(o => !seenOrderIds.has(o.id)).length;
+  const allOrders = cloudOrders ? mergeOrders(localOrders, cloudOrders) : localOrders;
+  const newCount = allOrders.filter(o => !seenOrderIds.has(o.id)).length;
   updateOrderBadge(newCount);
+
+  const q = orderSearchQuery.trim().toLowerCase();
+  const orders = allOrders.filter(o => {
+    if (orderStatusFilterKey && (o.status || 'placed') !== orderStatusFilterKey) return false;
+    return orderMatchesSearch(o, q);
+  });
+
+  // preserve focus/caret on the search box across re-renders (same pattern as productSearch)
+  const searchEl = document.getElementById('orderSearch');
+  const hadFocus = document.activeElement === searchEl;
+  const caretPos = hadFocus ? searchEl.selectionStart : null;
 
   const rows = orders.map(o => {
     const status = o.status || 'placed';
     const isNew = !seenOrderIds.has(o.id);
     const custName = o.customerName ? escapeHtmlA(o.customerName) : '<span style="color:var(--ink-soft);">—</span>';
-    const custPhone = o.customerPhone ? `<a href="tel:${escapeHtmlA(o.customerPhone)}" style="color:var(--green-deep); font-weight:600;">${escapeHtmlA(o.customerPhone)}</a>` : '<span style="color:var(--ink-soft);">—</span>';
-    const custRegion = o.customerRegion ? escapeHtmlA(o.customerRegion) : '<span style="color:var(--ink-soft);">—</span>';
+    const custPhone = o.customerPhone ? `<a href="tel:${escapeHtmlA(o.customerPhone)}" style="color:var(--green-deep); font-weight:600;">${escapeHtmlA(o.customerPhone)}</a>${o.altPhone ? `<br><a href="tel:${escapeHtmlA(o.altPhone)}" style="color:var(--ink-soft); font-size:.72rem;">${escapeHtmlA(o.altPhone)}</a>` : ''}` : '<span style="color:var(--ink-soft);">—</span>';
+    const locationParts = [o.customerRegion, o.district, o.ward].filter(Boolean).map(escapeHtmlA);
+    const custRegion = locationParts.length ? locationParts.join(', ') : '<span style="color:var(--ink-soft);">—</span>';
     const shipCost = o.shippingCost ? fmtA(o.shippingCost) : '<span style="color:var(--ink-soft);">Itathibitishwa</span>';
-    return `<tr class="${isNew ? 'order-row-new' : ''}">
-    <td><b>${escapeHtmlA(o.id)}</b>${isNew ? ' 🆕' : ''}</td>
+    const sourceBadge = o.source && o.source !== 'website' ? `<span class="order-source-badge order-source-${escapeHtmlA(o.source)}">${escapeHtmlA(o.source)}</span>` : '';
+    return `<tr class="${isNew ? 'order-row-new' : ''} ${status==='cancelled' ? 'order-row-cancelled' : ''}">
+    <td><b>${escapeHtmlA(o.id)}</b>${isNew ? ' 🆕' : ''}${sourceBadge}</td>
     <td>${new Date(o.date).toLocaleString('sw-TZ')}</td>
     <td>${custName}</td>
     <td>${custPhone}</td>
@@ -901,18 +948,25 @@ function renderOrdersTab(cloudOrders) {
         ${ORDER_STAGES.map(s => `<option value="${s.key}" ${s.key===status?'selected':''}>${s.label}</option>`).join('')}
       </select>
     </td>
-    <td>${status === 'placed' ? `<button class="order-confirm-btn" data-confirm="${escapeHtmlA(o.id)}">Thibitisha</button>` : '✅'}</td>
+    <td>${status === 'placed' ? `<button class="order-confirm-btn" data-confirm="${escapeHtmlA(o.id)}">Thibitisha</button>` : (status === 'cancelled' ? '❌' : '✅')}</td>
   </tr>`;
   }).join('');
 
   document.getElementById('tab-orders').innerHTML = `
-    <h2 style="color:var(--green-deep); margin-bottom:16px; font-family:'Fraunces',serif;">Oda (${orders.length}) ${newCount ? `<span class="order-notif-badge" style="position:static;">${newCount} mpya</span>` : ''}</h2>
-    <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:10px;">Badilisha hali ya oda hapa chini — mteja ataona hali hiyo papo hapo kwenye ukurasa wake wa "Fuatilia Oda" (ikiwa Firebase imewekwa). Safu ya "Usafiri" inaonyesha gharama ya usafiri kwa mkoa wa mteja (kiotomatiki kutoka orodha ya bei ya USIRI) — "Jijini" maana yake ni Dar es Salaam. Kanuni: kwa oda za mikoani, malipo hufanyika kabla ya kutuma bidhaa.</p>
-    ${orders.length===0 ? '<p style="color:var(--ink-soft);">Bado hakuna oda iliyorekodiwa.</p>' : `
+    <h2 style="color:var(--green-deep); margin-bottom:16px; font-family:'Fraunces',serif;">Oda (${orders.length}${orders.length!==allOrders.length ? ' / ' + allOrders.length : ''}) ${newCount ? `<span class="order-notif-badge" style="position:static;">${newCount} mpya</span>` : ''}</h2>
+    <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:10px;">Badilisha hali ya oda hapa chini — mteja ataona hali hiyo papo hapo kwenye ukurasa wake wa "Fuatilia Oda" (ikiwa Firebase imewekwa). Safu ya "Usafiri" inaonyesha gharama ya usafiri kwa mkoa wa mteja. Kanuni: kwa oda za mikoani, malipo hufanyika kabla ya kutuma bidhaa.</p>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+      <input type="text" class="admin-search" id="orderSearch" placeholder="Tafuta kwa Namba ya Oda, Jina, Simu au Bidhaa..." value="${escapeHtmlA(orderSearchQuery)}" style="flex:1; min-width:220px;">
+      <select id="orderStatusFilter" class="admin-search" style="max-width:220px;">
+        <option value="">Hali zote</option>
+        ${ORDER_STAGES.map(s => `<option value="${s.key}" ${s.key===orderStatusFilterKey?'selected':''}>${s.label}</option>`).join('')}
+      </select>
+    </div>
+    ${allOrders.length===0 ? '<p style="color:var(--ink-soft);">Bado hakuna oda iliyorekodiwa.</p>' : (orders.length===0 ? '<p style="color:var(--ink-soft);">Hakuna oda inayolingana na utafutaji/kichujio hiki.</p>' : `
     <div style="overflow:auto;"><table class="admin-table">
-      <thead><tr><th>Namba</th><th>Tarehe</th><th>Jina la Mteja</th><th>Simu</th><th>Mkoa</th><th>Usafiri</th><th>Bidhaa</th><th>Jumla</th><th>Hali</th><th></th></tr></thead>
+      <thead><tr><th>Namba</th><th>Tarehe</th><th>Jina la Mteja</th><th>Simu</th><th>Mkoa/Wilaya/Kata</th><th>Usafiri</th><th>Bidhaa</th><th>Jumla</th><th>Hali</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
-    </table></div>`}`;
+    </table></div>`)}`;
 
   document.querySelectorAll('[data-confirm]').forEach(btn => {
     btn.addEventListener('click', () => setOrderStatus(btn.dataset.confirm, 'confirmed'));
@@ -920,9 +974,16 @@ function renderOrdersTab(cloudOrders) {
   document.querySelectorAll('[data-status-for]').forEach(sel => {
     sel.addEventListener('change', () => setOrderStatus(sel.dataset.statusFor, sel.value));
   });
+  const newSearchEl = document.getElementById('orderSearch');
+  if (newSearchEl) {
+    newSearchEl.addEventListener('input', () => filterOrdersTab(newSearchEl.value));
+    if (hadFocus) { newSearchEl.focus(); newSearchEl.setSelectionRange(caretPos, caretPos); }
+  }
+  const statusFilterEl = document.getElementById('orderStatusFilter');
+  if (statusFilterEl) statusFilterEl.addEventListener('change', () => filterOrdersTab(undefined, statusFilterEl.value));
 
-  // mark all currently-shown orders as "seen" once rendered
-  orders.forEach(o => seenOrderIds.add(o.id));
+  // mark all currently-shown (unfiltered) orders as "seen" once rendered
+  allOrders.forEach(o => seenOrderIds.add(o.id));
   lsSetA('ahs_seen_orders', Array.from(seenOrderIds));
 }
 
@@ -1137,6 +1198,23 @@ function openPeditOverlay(id) {
   document.getElementById('peditVideoId').value = ov.videoId || '';
   document.getElementById('peditBeforeImg').value = ov.beforeImage || '';
   document.getElementById('peditAfterImg').value = ov.afterImage || '';
+  document.getElementById('peditSeoTitle').value = ov.seoTitle || '';
+  document.getElementById('peditMetaDesc').value = ov.metaDescription || '';
+  document.getElementById('peditImageAlt').value = ov.imageAlt || '';
+  document.getElementById('peditSlug').value = ov.slug || '';
+  const bArr = Array.isArray(ov.benefits) ? ov.benefits : [];
+  for (let i = 1; i <= 5; i++) document.getElementById('peditBenefit' + i).value = bArr[i - 1] || '';
+  const fArr = Array.isArray(ov.faq) ? ov.faq : [];
+  for (let i = 1; i <= 3; i++) {
+    document.getElementById('peditFaqQ' + i).value = (fArr[i - 1] && fArr[i - 1].q) || '';
+    document.getElementById('peditFaqA' + i).value = (fArr[i - 1] && fArr[i - 1].a) || '';
+  }
+  const scopeNoteEl = document.getElementById('peditSeoScopeNote');
+  if (scopeNoteEl) {
+    scopeNoteEl.textContent = (id <= 287)
+      ? 'Bidhaa hii ni miongoni mwa 288 za awali zenye ukurasa wake tuli wa SEO. Mipangilio hii inahifadhiwa lakini kwa sasa haibadilishi ukurasa huo tuli moja kwa moja.'
+      : 'Bidhaa hii ilioongezwa na admin — mipangilio hii ya SEO inatumika moja kwa moja kwenye ukurasa wake wa umma.';
+  }
   document.getElementById('peditCloudNote').textContent = (typeof AHS_CLOUD_READY !== 'undefined' && AHS_CLOUD_READY)
     ? 'Picha zitahifadhiwa kwenye database (Firestore) — zitaonekana kwa wateja wote papo hapo. Kikomo: picha 5 kwa kila bidhaa.'
     : '⚠️ Firebase haijawekwa: picha zitahifadhiwa kwenye kivinjari hiki tu (localStorage) na hazitaonekana kwa mteja kwenye kifaa kingine.';
@@ -1328,6 +1406,15 @@ async function savePeditOverlay() {
   const afterImg = document.getElementById('peditAfterImg').value.trim();
   const nameVal = document.getElementById('peditName').value.trim();
   if (!nameVal) { alert('Jina la bidhaa haliwezi kuachwa wazi.'); return; }
+  const seoTitle = document.getElementById('peditSeoTitle').value.trim();
+  const metaDescription = document.getElementById('peditMetaDesc').value.trim();
+  const imageAlt = document.getElementById('peditImageAlt').value.trim();
+  const slugVal = document.getElementById('peditSlug').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const benefits = [1, 2, 3, 4, 5].map(i => document.getElementById('peditBenefit' + i).value.trim()).filter(Boolean);
+  const faq = [1, 2, 3].map(i => ({
+    q: document.getElementById('peditFaqQ' + i).value.trim(),
+    a: document.getElementById('peditFaqA' + i).value.trim()
+  })).filter(f => f.q && f.a);
   const data = {
     name: nameVal,
     images: peditImages,
@@ -1337,6 +1424,12 @@ async function savePeditOverlay() {
     videoId: videoId || null,
     beforeImage: beforeImg || null,
     afterImage: afterImg || null,
+    seoTitle: seoTitle || null,
+    metaDescription: metaDescription || null,
+    imageAlt: imageAlt || null,
+    slug: slugVal || null,
+    benefits: benefits.length ? benefits : null,
+    faq: faq.length ? faq : null,
   };
   if (stockVal !== '') data.stock = parseInt(stockVal, 10);
   const approxBytes = JSON.stringify(data).length;
@@ -1407,20 +1500,146 @@ function initAdminProductSync() {
 // nyingine za admin panel hii.
 let mpFeaturedDraft = [];   // orodha ya ID za bidhaa "Leo Tunapendekeza", kwa mfuatano
 let mpOffersDraft = {};     // { "Jina la Kundi": asilimiaYaOfa }
-
-function mpLoadSettings() {
-  const s = lsGetA('ahs_homepage_settings', { featuredToday: [], categoryOffers: {} });
-  mpFeaturedDraft = Array.isArray(s.featuredToday) ? [...s.featuredToday] : [];
-  mpOffersDraft = { ...(s.categoryOffers || {}) };
+let mpSectionOrderDraft = []; // orodha ya "keys" za sehemu za homepage, kwa mfuatano
+let mpGoalOrderDraft = [];    // mfuatano wa makundi ya KAZI (immunity, weightloss, c_123...)
+let mpGoalHiddenDraft = [];   // makundi ambayo kitufe chake kimefichwa dukani
+let mpGoalMetaDraft = {};     // { key: {icon, sw, en} } majina/alama za makundi yote (mapya na yaliyopo)
+let mpGoalCustomKeys = [];    // funguo za makundi mapya aliyoyaunda admin
+let mpGoalAssignDraft = {};   // { productId: groupKey } bidhaa alizoweka mwenyewe
+let mpGoalAssignQuery = '', mpGoalAssignFilter = 'all';
+let mpSectionMetaDraft = {};  // { sectionKey: {title, sub, note} } majina/maelezo ya sehemu yaliyobadilishwa na admin
+// Majina na maelezo ya awali ya kila sehemu (Kiswahili) — yanaonyeshwa kama mwongozo; uwanja ukiachwa wazi, duka linatumia jina la awali.
+const MP_SECTION_DEFAULTS = {"flashSale": ["Ofa za Muda Mfupi — Zinaisha Leo!", "Bei za punguzo kwa muda mfupi tu. Nunua kabla hazijaisha."], "bidhaa": ["Bidhaa Zetu Zote", "Bofya bidhaa yoyote kusoma maelezo kamili, chagua idadi, na uiongeze kwenye kikapu chako."], "recentlyViewed": ["Umeangalia Hivi Karibuni", null], "newProductsSection": ["New Products", "Bidhaa mpya zilizoongezwa hivi karibuni."], "featuredToday": ["Recommendation Products", "Bidhaa alizochagua admin ziwe za kwanza kuonekana leo."], "shopByCategory": ["Nunua kwa Kazi ya Bidhaa", "Chagua kundi unalolitaka kuona bidhaa zake zote papo hapo."], "bestSellers": ["🔥 Bidhaa Zinazouzwa Zaidi", "Bidhaa zinazopendwa na kununuliwa zaidi na wateja wetu."], "newArrivals": ["✨ Bidhaa Mpya Zilizowasili", "Bidhaa za hivi karibuni kuongezwa dukani kwetu."], "trending": ["📈 Bidhaa Zinazovuma Sasa", "Bidhaa ambazo wateja wengi wanazizungumzia na kuzinunua wiki hii."], "dailyDeals": ["Daily Deals — Ofa Zinabadilika Kila Siku", "Angalia ofa maalum za leo kabla hazijabadilika kesho."], "recentlyAdded": ["🕒 Zilizoongezwa Hivi Karibuni", "Orodha ya haraka ya nyongeza za hivi karibuni dukani."]};
+function mpSectionMetaFromDraft() {
+  const out = {};
+  Object.keys(mpSectionMetaDraft).forEach(k => {
+    const m = mpSectionMetaDraft[k] || {};
+    const o = {};
+    ['title','sub','note'].forEach(f => { const v = (m[f] || '').trim(); if (v) o[f] = v; });
+    if (Object.keys(o).length) out[k] = o;
+  });
+  return out;
 }
 
-function renderMpangilioTab() {
-  mpLoadSettings();
+// Sawa na HOMEPAGE_SECTIONS ndani ya js/app.js — orodha hii inaeleza tu majina ya
+// kuonyesha kwenye admin (labels), si tabia ya storefront. Zikitofautiana, storefront
+// (app.js) ndiyo chanzo cha ukweli cha "id" halisi za DOM; hapa ni orodha ya UI tu.
+const MP_HOMEPAGE_SECTIONS = [
+  { key: 'flashSale',          label: '⚡ Flash Sale' },
+  { key: 'bidhaa',              label: '🛍 Bidhaa Zetu Zote (Our Products)' },
+  { key: 'recentlyViewed',      label: '🕒 Umeangalia Hivi Karibuni (Recently Viewed)' },
+  { key: 'newProductsSection',  label: '✦ New Products' },
+  { key: 'featuredToday',       label: '🌿 Recommendation Products' },
+  { key: 'shopByCategory',      label: '📦 Shop by Category' },
+  { key: 'bestSellers',         label: '🔥 Best Sellers' },
+  { key: 'newArrivals',         label: '✨ New Arrivals' },
+  { key: 'trending',            label: '📈 Trending Now' },
+  { key: 'dailyDeals',          label: '🗓️ Daily Deals (Today\'s Deals)' },
+  { key: 'recentlyAdded',       label: '🕒 Recently Added' },
+];
+
+function mpLoadSettings() {
+  const s = lsGetA('ahs_homepage_settings', { featuredToday: [], categoryOffers: {}, sectionOrder: [], goalOrder: [], goalHidden: [], goalCustom: [], goalLabels: {}, goalAssign: {}, sectionMeta: {} });
+  mpFeaturedDraft = Array.isArray(s.featuredToday) ? [...s.featuredToday] : [];
+  mpOffersDraft = { ...(s.categoryOffers || {}) };
+  mpGoalMetaDraft = {};
+  GOAL_GROUPS.forEach(g => { const o = (s.goalLabels || {})[g.key] || {}; mpGoalMetaDraft[g.key] = { icon: o.icon || g.icon, sw: o.sw || g.label.sw, en: o.en || '' }; });
+  mpGoalCustomKeys = [];
+  (Array.isArray(s.goalCustom) ? s.goalCustom : []).forEach(c => {
+    if (!c || !c.key) return;
+    mpGoalCustomKeys.push(c.key);
+    const o = (s.goalLabels || {})[c.key] || {};
+    mpGoalMetaDraft[c.key] = { icon: o.icon || c.icon || '⭐', sw: o.sw || c.sw || 'Kundi Jipya', en: o.en || c.en || '' };
+  });
+  const goalKeys = Object.keys(mpGoalMetaDraft);
+  const savedGoals = Array.isArray(s.goalOrder) ? s.goalOrder : [];
+  mpGoalOrderDraft = [...savedGoals.filter(k => goalKeys.includes(k)), ...goalKeys.filter(k => !savedGoals.includes(k))];
+  mpGoalHiddenDraft = Array.isArray(s.goalHidden) ? s.goalHidden.filter(k => goalKeys.includes(k)) : [];
+  mpGoalAssignDraft = { ...(s.goalAssign || {}) };
+  mpGoalSyncOverride();
+  const savedOrder = Array.isArray(s.sectionOrder) ? s.sectionOrder : [];
+  const known = new Set(MP_HOMEPAGE_SECTIONS.map(x => x.key));
+  mpSectionMetaDraft = {};
+  Object.keys(s.sectionMeta || {}).forEach(k => { if (known.has(k)) mpSectionMetaDraft[k] = { ...s.sectionMeta[k] }; });
+  mpSectionOrderDraft = [
+    ...savedOrder.filter(k => known.has(k)),
+    ...MP_HOMEPAGE_SECTIONS.map(x => x.key).filter(k => !savedOrder.includes(k)),
+  ];
+}
+
+// Tatizo lililorekebishwa: kama tab hii ilifunguliwa kabla ya listener ya
+// Firestore (initAdminHomepageSettingsSync) kupokea data yake ya kwanza,
+// mpLoadSettings() ingesoma localStorage ya ZAMANI/tupu — kisha "Hifadhi"
+// yoyote (hata ya sehemu nyingine, mfano Ofa) ingefuta mpangilio halisi wa
+// sehemu uliokuwa tayari umehifadhiwa. Sasa tab hii inasubiri kwanza usomaji
+// WA MOJA KWA MOJA kutoka Firestore (cloudGetHomepageSettings) kabla ya
+// kujenga fomu — localStorage inatumika tu kama fallback (bila mtandao/Firebase).
+/* ===================== 🗂 MAKUNDI YA KAZI (tab yake mwenyewe) ===================== */
+const AHS_ADMIN_VERSION = 'v54';
+function mpOpenMakundiTab() {
+  const b = document.querySelector('.admin-sidebar button[data-tab="makundi"]');
+  if (b) b.click();
+}
+function mpGoalCardHtml() {
+  return `
+    <div style="border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:24px; max-width:720px;">
+      <h3 style="color:var(--green-deep); font-size:1rem; margin-bottom:10px;">🗂 Makundi ya Kazi — Vichwa vya Habari vya Duka</h3>
+      <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:12px;">Hivi ndivyo vitufe vya duka vinavyoitwa. Unaweza <b>kubadilisha jina na alama</b> (andika moja kwa moja), <b>kupanga mfuatano</b> (⬆️⬇️), <b>kuficha kitufe</b> (👁), <b>kuongeza kundi jipya</b> (➕) na <b>kuweka kila bidhaa kwenye kundi unalotaka</b> (chini). Kundi la juu ndilo linaanza dukani. Bidhaa za Leo zinatangulia zote. Jina likiachwa wazi linarudi la awali. Bonyeza Hifadhi ili wateja waone.</p>
+      <div id="mpGoalOrderList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <button class="btn btn-ghost" style="margin-top:10px;" onclick="mpAddGoalGroup()">➕ Ongeza Kundi Jipya</button>
+      <h4 style="color:var(--green-deep); font-size:.9rem; margin:20px 0 8px;">📦 Weka Bidhaa kwenye Kundi</h4>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+        <input type="text" id="mpGoalAssignSearch" placeholder="Tafuta bidhaa..." style="flex:1; min-width:140px; padding:7px 10px; border:1px solid var(--line); border-radius:8px;" oninput="mpGoalAssignQuery=this.value; mpRenderGoalAssign();">
+        <select id="mpGoalAssignFilter" style="padding:7px; border:1px solid var(--line); border-radius:8px;" onchange="mpGoalAssignFilter=this.value; mpRenderGoalAssign();"></select>
+      </div>
+      <div id="mpGoalAssignList" style="max-height:340px; overflow-y:auto; border:1px solid var(--line); border-radius:8px;"></div>
+      <button class="btn btn-primary" style="margin-top:14px;" id="mpGoalSaveBtn" onclick="mpSaveSettings()">💾 Hifadhi Makundi ya Kazi</button>
+      <div style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);">
+        <b style="font-size:.85rem; color:var(--green-deep);">📣 Google / Bing / AI</b>
+        <p style="font-size:.76rem; color:var(--ink-soft); margin:6px 0 10px;">Bidhaa mpya na mabadiliko huarifiwa kiotomatiki Bing na injini zinazotumia IndexNow (Bing pia hulisha ChatGPT Search na Copilot). Bonyeza hapa kuarifu wewe mwenyewe. Google hupata bidhaa kupitia sitemap na Search Console (hana IndexNow).</p>
+        <button class="btn btn-ghost" onclick="mpPingIndexNow(this)">📣 Arifu Bing/AI Sasa</button>
+        <a class="btn btn-ghost" href="/orodha/" target="_blank" rel="noopener">📋 Ona Orodha Kamili</a>
+        <a class="btn btn-ghost" href="/je-ipo/" target="_blank" rel="noopener">🔎 Ona "Je, Ipo?"</a>
+      </div>
+      <p id="mpGoalStatus" style="font-size:.78rem; font-weight:700; margin-top:10px; display:none;"></p>
+    </div>
+`;
+}
+async function renderMakundiTab() {
+  const el = document.getElementById('tab-makundi');
+  if (!el) return;
+  // Hakikisha drafts zimepakiwa (kama tab hii imefunguliwa kabla ya Mpangilio wa Duka kumaliza kupakia).
+  if (!mpGoalOrderDraft.length) { try { mpLoadSettings(); } catch (e) { console.error('[Admin] mpLoadSettings', e); } }
+  el.innerHTML = `
+    <h2 style="color:var(--green-deep); margin-bottom:6px; font-family:'Fraunces',serif;">🗂 Makundi ya Kazi</h2>
+    <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:16px;">Hapa unabadilisha majina ya vitufe vya duka (Kupunguza Uzito, Kinga...), unapanga mfuatano, unaongeza makundi mapya na kuweka bidhaa kwenye kundi unalotaka. <b style="color:var(--green-deep);">Toleo la admin: ${AHS_ADMIN_VERSION}</b></p>
+    ${mpGoalCardHtml()}`;
+  mpRenderGoalOrderList();
+  mpRenderGoalAssign();
+}
+
+async function renderMpangilioTab() {
+  const wrapEl = document.getElementById('tab-mpangilio');
   const cloudOn = (typeof AHS_CLOUD_READY !== 'undefined' && AHS_CLOUD_READY);
+  try {
+    if (cloudOn && typeof cloudGetHomepageSettings === 'function') {
+      wrapEl.innerHTML = `<p style="font-size:.85rem; color:var(--ink-soft); padding:20px;">⏳ Inapakia mpangilio wa sasa kutoka Firestore...</p>`;
+      const fresh = await cloudGetHomepageSettings();
+      if (fresh) {
+        lsSetA('ahs_homepage_settings', { featuredToday: fresh.featuredToday || [], categoryOffers: fresh.categoryOffers || {}, sectionOrder: fresh.sectionOrder || [], goalOrder: fresh.goalOrder || [], goalHidden: fresh.goalHidden || [], goalCustom: fresh.goalCustom || [], goalLabels: fresh.goalLabels || {}, goalAssign: fresh.goalAssign || {}, sectionMeta: fresh.sectionMeta || {} });
+      }
+      // Kama fetch imeshindwa (mtandao), tunaendelea na localStorage iliyopo (fallback) badala ya kuzuia kabisa.
+    }
+  } catch (err) {
+    console.error('[Admin] renderMpangilioTab (cloud fetch) imeshindwa:', err);
+  }
+  mpLoadSettings();
   document.getElementById('tab-mpangilio').innerHTML = `
     <h2 style="color:var(--green-deep); margin-bottom:6px; font-family:'Fraunces',serif;">🎯 Mpangilio wa Duka</h2>
+    <button class="btn btn-primary" style="margin-bottom:14px;" onclick="mpOpenMakundiTab()">🗂 Panga Makundi ya Kazi (majina, mfuatano, bidhaa)</button>
     <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:20px;">
-      Hapa unaweza: (1) kuchagua bidhaa zipi zionekane MWANZONI kabisa dukani leo, na kupangilia mfuatano wake, na
+      Hapa unaweza: (1) kuchagua bidhaa zipi zionekane MWANZONI kabisa dukani leo — kwenye "Bidhaa Zetu Zote"
+      NA kwenye "Leo Tunapendekeza" — na kupangilia mfuatano wake (⬆️⬇️, ya juu ndiyo ya kwanza), na
       (2) kuweka/kubadilisha ofa (asilimia ya punguzo) kwa kila kundi la bidhaa — punguzo linatumika moja kwa moja
       kwenye bei halisi (rejareja na jumla) kila mahali dukani, si onyesho tu.
       ${cloudOn ? '' : '⚠️ Firebase haijaunganishwa — mabadiliko yatabaki kwenye kivinjari hiki tu.'}
@@ -1436,6 +1655,14 @@ function renderMpangilioTab() {
       <p id="mpFeaturedStatus" style="font-size:.78rem; font-weight:700; margin-top:10px; display:none;"></p>
     </div>
 
+    <div style="border:1px solid var(--line); border-radius:14px; padding:18px 20px; margin-bottom:24px; max-width:720px;">
+      <h3 style="color:var(--green-deep); font-size:1rem; margin-bottom:10px;">📐 Mpangilio wa Sehemu za Ukurasa</h3>
+      <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:12px;">Panga mfuatano wa sehemu NZIMA za homepage (Flash Sale, Bidhaa Zetu Zote, New Arrivals, n.k.) kwa vitufe ⬆️⬇️ — sehemu ikihama, bidhaa zake zote zinahama nayo. Pia unaweza <b>kubadilisha Title na maelezo</b> ya kila sehemu (andika kwenye kisanduku; ukiacha wazi, jina la awali linatumika). Bonyeza Hifadhi ili wateja waone papo hapo.</p>
+      <div id="mpSectionOrderList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <button class="btn btn-primary" style="margin-top:14px;" id="mpSectionOrderSaveBtn" onclick="mpSaveSettings()">💾 Hifadhi Mpangilio wa Sehemu</button>
+      <p id="mpSectionOrderStatus" style="font-size:.78rem; font-weight:700; margin-top:10px; display:none;"></p>
+    </div>
+
     <div style="border:1px solid var(--line); border-radius:14px; padding:18px 20px; max-width:720px;">
       <h3 style="color:var(--green-deep); font-size:1rem; margin-bottom:10px;">🏷️ Ofa kwa Kila Kundi</h3>
       <p style="font-size:.78rem; color:var(--ink-soft); margin-bottom:12px;">Weka asilimia ya punguzo (mfano 15) kwa kundi lolote, au acha 0 kuzima ofa yake.</p>
@@ -1445,6 +1672,7 @@ function renderMpangilioTab() {
     </div>`;
 
   mpRenderFeaturedList();
+  mpRenderSectionOrderList();
   mpRenderOffersRows();
 
   const searchEl = document.getElementById('mpFeaturedSearch');
@@ -1512,6 +1740,192 @@ function mpRenderFeaturedList() {
   }));
 }
 
+// Draft ya admin inatumika na goal-groups.js (ahsGoalOf, ahsGoalGroups...) ili hesabu ziwe sahihi papo hapo.
+function mpGoalLabelsFromDraft() {
+  const out = {};
+  Object.keys(mpGoalMetaDraft).forEach(k => {
+    const m = mpGoalMetaDraft[k];
+    const base = GOAL_GROUPS.find(g => g.key === k);
+    const entry = {};
+    if (m.icon && (!base || m.icon !== base.icon)) entry.icon = m.icon;
+    if (m.sw && (!base || m.sw !== base.label.sw)) entry.sw = m.sw;
+    if (m.en) entry.en = m.en;
+    if (Object.keys(entry).length) out[k] = entry;
+  });
+  return out;
+}
+function mpGoalCustomFromDraft() {
+  return mpGoalCustomKeys.map(k => {
+    const m = mpGoalMetaDraft[k] || {};
+    return { key: k, icon: m.icon || '⭐', sw: m.sw || 'Kundi Jipya', en: m.en || '' };
+  });
+}
+function mpGoalSyncOverride() {
+  window.AHS_GOAL_SETTINGS_OVERRIDE = {
+    goalOrder: mpGoalOrderDraft, goalHidden: mpGoalHiddenDraft,
+    goalLabels: mpGoalLabelsFromDraft(), goalCustom: mpGoalCustomFromDraft(), goalAssign: mpGoalAssignDraft,
+  };
+}
+function mpRenderGoalOrderList() {
+  const wrap = document.getElementById('mpGoalOrderList');
+  if (!wrap || typeof GOAL_GROUPS === 'undefined') return;
+  mpGoalSyncOverride();
+  const counts = {};
+  try { allAdminProducts().forEach(p => { const g = ahsGoalOf(p); counts[g] = (counts[g] || 0) + 1; }); } catch (e) {}
+  wrap.innerHTML = mpGoalOrderDraft.map((key, i) => {
+    const m = mpGoalMetaDraft[key]; if (!m) return '';
+    const hid = mpGoalHiddenDraft.includes(key);
+    const isCustom = mpGoalCustomKeys.includes(key);
+    return `<div style="display:flex; align-items:center; gap:6px; padding:8px 10px; border:1px solid var(--line); border-radius:8px; flex-wrap:wrap; ${hid ? 'opacity:.55;' : ''}">
+      <b style="width:22px; color:var(--ink-soft);">${i + 1}.</b>
+      <input type="text" data-mpgicon="${key}" value="${escapeHtmlA(m.icon || '')}" maxlength="4" style="width:46px; text-align:center; padding:6px; border:1px solid var(--line); border-radius:6px;" title="Alama (emoji)">
+      <input type="text" data-mpgsw="${key}" value="${escapeHtmlA(m.sw || '')}" placeholder="Jina la kundi (Kiswahili)" style="flex:1; min-width:150px; padding:6px 8px; border:1px solid var(--line); border-radius:6px;">
+      <input type="text" data-mpgen="${key}" value="${escapeHtmlA(m.en || '')}" placeholder="English (si lazima)" style="width:130px; padding:6px 8px; border:1px solid var(--line); border-radius:6px;">
+      <span style="font-size:.75rem; color:var(--ink-soft); min-width:34px; text-align:right;">(${counts[key] || 0})</span>
+      <button class="order-confirm-btn" data-mpgoalup="${i}" ${i===0?'disabled':''}>⬆️</button>
+      <button class="order-confirm-btn" data-mpgoaldown="${i}" ${i===mpGoalOrderDraft.length-1?'disabled':''}>⬇️</button>
+      <button class="order-confirm-btn" data-mpgoalhide="${key}" title="Ficha/onyesha kitufe">${hid ? '🙈' : '👁'}</button>
+      ${isCustom ? `<button class="order-confirm-btn" data-mpgoaldel="${key}" title="Futa kundi (bidhaa zake zinarudi kwenye kundi la kawaida)">🗑</button>` : ''}
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-mpgoalup]').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.dataset.mpgoalup, 10);
+    if (i > 0) { [mpGoalOrderDraft[i-1], mpGoalOrderDraft[i]] = [mpGoalOrderDraft[i], mpGoalOrderDraft[i-1]]; mpRenderGoalOrderList(); mpRenderGoalAssign(); }
+  }));
+  wrap.querySelectorAll('[data-mpgoaldown]').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.dataset.mpgoaldown, 10);
+    if (i < mpGoalOrderDraft.length - 1) { [mpGoalOrderDraft[i+1], mpGoalOrderDraft[i]] = [mpGoalOrderDraft[i], mpGoalOrderDraft[i+1]]; mpRenderGoalOrderList(); mpRenderGoalAssign(); }
+  }));
+  wrap.querySelectorAll('[data-mpgoalhide]').forEach(btn => btn.addEventListener('click', () => {
+    const k = btn.dataset.mpgoalhide;
+    mpGoalHiddenDraft = mpGoalHiddenDraft.includes(k) ? mpGoalHiddenDraft.filter(x => x !== k) : [...mpGoalHiddenDraft, k];
+    mpRenderGoalOrderList();
+  }));
+  wrap.querySelectorAll('[data-mpgoaldel]').forEach(btn => btn.addEventListener('click', () => {
+    const k = btn.dataset.mpgoaldel;
+    if (!confirm('Futa kundi hili? Bidhaa ulizoziweka humo zitarudi kwenye makundi ya kawaida.')) return;
+    mpGoalCustomKeys = mpGoalCustomKeys.filter(x => x !== k);
+    delete mpGoalMetaDraft[k];
+    mpGoalOrderDraft = mpGoalOrderDraft.filter(x => x !== k);
+    mpGoalHiddenDraft = mpGoalHiddenDraft.filter(x => x !== k);
+    Object.keys(mpGoalAssignDraft).forEach(pid => { if (mpGoalAssignDraft[pid] === k) delete mpGoalAssignDraft[pid]; });
+    mpRenderGoalOrderList(); mpRenderGoalAssign();
+  }));
+  // Kuhariri jina/alama: hifadhi kwenye draft bila kuchora upya (ili mshale usiruke)
+  const bind = (attr, field) => wrap.querySelectorAll('[' + attr + ']').forEach(inp => inp.addEventListener('input', () => {
+    const k = inp.getAttribute(attr);
+    if (mpGoalMetaDraft[k]) mpGoalMetaDraft[k][field] = inp.value.trim();
+    mpGoalSyncOverride();
+  }));
+  bind('data-mpgicon', 'icon'); bind('data-mpgsw', 'sw'); bind('data-mpgen', 'en');
+  wrap.querySelectorAll('[data-mpgsw]').forEach(inp => inp.addEventListener('change', () => {
+    // Jina likiachwa wazi, rudisha jina la awali la kundi
+    const k = inp.getAttribute('data-mpgsw');
+    if (!inp.value.trim()) {
+      const base = GOAL_GROUPS.find(g => g.key === k);
+      mpGoalMetaDraft[k].sw = base ? base.label.sw : 'Kundi Jipya';
+      mpRenderGoalOrderList(); mpRenderGoalAssign();
+    } else { mpRenderGoalAssign(); }
+  }));
+}
+
+async function mpPingIndexNow(btn) {
+  const old = btn.textContent; btn.disabled = true; btn.textContent = 'Inatuma...';
+  try {
+    const r = await ahsPingIndexNow(true);
+    alert(r && r.ok ? '✅ Imetumwa: URL ' + r.submitted + ' zimearifiwa kwa Bing/IndexNow.' : '⚠️ Haikufanikiwa (hali: ' + (r ? r.status : 'hakuna jibu') + '). Hakikisha tovuti imepakiwa na Functions zinafanya kazi.');
+  } catch (e) { alert('⚠️ Haikufanikiwa: ' + e.message); }
+  btn.disabled = false; btn.textContent = old;
+}
+
+function mpAddGoalGroup() {
+  const name = prompt('Jina la kundi jipya (mfano: Nguvu za Mwili, Wazee, Kwa Watoto):');
+  if (!name || !name.trim()) return;
+  const key = 'c_' + Date.now().toString(36);
+  mpGoalCustomKeys.push(key);
+  mpGoalMetaDraft[key] = { icon: '⭐', sw: name.trim(), en: '' };
+  mpGoalOrderDraft.unshift(key); // kundi jipya linaanza juu; unaweza kulishusha
+  mpRenderGoalOrderList(); mpRenderGoalAssign();
+}
+
+// Weka bidhaa moja moja kwenye kundi unalotaka (inashinda mpangilio wa kiotomatiki).
+function mpRenderGoalAssign() {
+  const wrap = document.getElementById('mpGoalAssignList');
+  const filterSel = document.getElementById('mpGoalAssignFilter');
+  if (!wrap || typeof GOAL_GROUPS === 'undefined') return;
+  mpGoalSyncOverride();
+  const groups = mpGoalOrderDraft.map(k => ahsGoalInfo(k)).filter(Boolean);
+  if (filterSel) {
+    filterSel.innerHTML = '<option value="all">Makundi yote</option>' + groups.map(g => `<option value="${g.key}">${g.icon} ${escapeHtmlA(g.label.sw)}</option>`).join('');
+    filterSel.value = groups.some(g => g.key === mpGoalAssignFilter) ? mpGoalAssignFilter : 'all';
+    mpGoalAssignFilter = filterSel.value;
+  }
+  const q = (mpGoalAssignQuery || '').toLowerCase().trim();
+  let list = allAdminProducts();
+  if (q) list = list.filter(p => ((p.name || '') + ' ' + (p.effect || '')).toLowerCase().includes(q));
+  if (mpGoalAssignFilter !== 'all') list = list.filter(p => ahsGoalOf(p) === mpGoalAssignFilter);
+  const total = list.length;
+  list = list.slice(0, 60);
+  const opts = groups.map(g => `<option value="${g.key}">${g.icon} ${escapeHtmlA(g.label.sw)}</option>`).join('');
+  wrap.innerHTML = (total ? '' : '<p style="font-size:.8rem; color:var(--ink-soft);">Hakuna bidhaa inayolingana.</p>') + list.map(p => {
+    const cur = ahsGoalOf(p);
+    const manual = mpGoalAssignDraft[String(p.id)];
+    return `<div style="display:flex; align-items:center; gap:8px; padding:6px 8px; border-bottom:1px solid var(--line);">
+      <span style="flex:1; font-size:.82rem;">${escapeHtmlA(p.name || '')}${manual ? ' <span title="Umeiweka mwenyewe" style="color:var(--green-deep);">✎</span>' : ''}</span>
+      <select data-mpgassign="${escapeHtmlA(String(p.id))}" style="max-width:52%; padding:5px; border:1px solid var(--line); border-radius:6px; font-size:.78rem;">${opts.replace('value="' + cur + '"', 'value="' + cur + '" selected')}</select>
+      ${manual ? `<button class="order-confirm-btn" data-mpgreset="${escapeHtmlA(String(p.id))}" title="Rudisha kundi la kiotomatiki">↺</button>` : ''}
+    </div>`;
+  }).join('') + (total > 60 ? `<p style="font-size:.75rem; color:var(--ink-soft); margin-top:8px;">Inaonyesha 60 kati ya ${total}. Tumia utafutaji kupunguza.</p>` : '');
+  wrap.querySelectorAll('[data-mpgassign]').forEach(sel => sel.addEventListener('change', () => {
+    mpGoalAssignDraft[sel.dataset.mpgassign] = sel.value;
+    mpRenderGoalOrderList(); mpRenderGoalAssign();
+  }));
+  wrap.querySelectorAll('[data-mpgreset]').forEach(btn => btn.addEventListener('click', () => {
+    delete mpGoalAssignDraft[btn.dataset.mpgreset];
+    mpRenderGoalOrderList(); mpRenderGoalAssign();
+  }));
+}
+
+function mpRenderSectionOrderList() {
+  const wrap = document.getElementById('mpSectionOrderList');
+  if (!wrap) return;
+  const byKey = new Map(MP_HOMEPAGE_SECTIONS.map(x => [x.key, x.label]));
+  const inp = 'width:100%; padding:7px 9px; border-radius:8px; border:1px solid var(--line); font-size:.82rem; margin-top:3px;';
+  wrap.innerHTML = mpSectionOrderDraft.map((key, i) => {
+    const d = MP_SECTION_DEFAULTS[key] || ['', null];
+    const m = mpSectionMetaDraft[key] || {};
+    return `
+    <div style="padding:10px; border:1px solid var(--line); border-radius:10px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <b style="width:22px; color:var(--ink-soft);">${i + 1}.</b>
+        <span style="flex:1; font-size:.85rem; font-weight:700;">${escapeHtmlA(byKey.get(key) || key)}</span>
+        <button class="order-confirm-btn" data-mpsecup="${i}" ${i===0?'disabled':''}>⬆️</button>
+        <button class="order-confirm-btn" data-mpsecdown="${i}" ${i===mpSectionOrderDraft.length-1?'disabled':''}>⬇️</button>
+      </div>
+      <div style="margin-top:8px; padding-left:32px;">
+        <label style="font-size:.72rem; color:var(--ink-soft);">Title (kichwa cha sehemu)
+          <input type="text" maxlength="120" data-mpsecmeta="${key}|title" value="${escapeHtmlA(m.title || '')}" placeholder="${escapeHtmlA(d[0])}" style="${inp}"></label>
+        ${d[1] !== null ? `<label style="font-size:.72rem; color:var(--ink-soft); display:block; margin-top:6px;">Maelezo chini ya title
+          <textarea rows="2" maxlength="300" data-mpsecmeta="${key}|sub" placeholder="${escapeHtmlA(d[1])}" style="${inp}">${escapeHtmlA(m.sub || '')}</textarea></label>` : ''}
+        ${key === 'bidhaa' ? `<label style="font-size:.72rem; color:var(--ink-soft); display:block; margin-top:6px;">Ujumbe wa Bei ya Jumla (Wholesale)
+          <textarea rows="2" maxlength="400" data-mpsecmeta="${key}|note" placeholder="Bei ya Jumla (Wholesale): Ukinunua kuanzia vipande 5..." style="${inp}">${escapeHtmlA(m.note || '')}</textarea></label>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-mpsecmeta]').forEach(el => el.addEventListener('input', () => {
+    const [k, f] = el.dataset.mpsecmeta.split('|');
+    (mpSectionMetaDraft[k] = mpSectionMetaDraft[k] || {})[f] = el.value;
+  }));
+  wrap.querySelectorAll('[data-mpsecup]').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.dataset.mpsecup, 10);
+    if (i > 0) { [mpSectionOrderDraft[i-1], mpSectionOrderDraft[i]] = [mpSectionOrderDraft[i], mpSectionOrderDraft[i-1]]; mpRenderSectionOrderList(); }
+  }));
+  wrap.querySelectorAll('[data-mpsecdown]').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.dataset.mpsecdown, 10);
+    if (i < mpSectionOrderDraft.length - 1) { [mpSectionOrderDraft[i+1], mpSectionOrderDraft[i]] = [mpSectionOrderDraft[i], mpSectionOrderDraft[i+1]]; mpRenderSectionOrderList(); }
+  }));
+}
+
 function mpRenderOffersRows() {
   const wrap = document.getElementById('mpOffersRows');
   if (!wrap) return;
@@ -1533,9 +1947,9 @@ function mpRenderOffersRows() {
 }
 
 async function mpSaveSettings() {
-  const data = { featuredToday: mpFeaturedDraft, categoryOffers: mpOffersDraft };
+  const data = { featuredToday: mpFeaturedDraft, categoryOffers: mpOffersDraft, sectionOrder: mpSectionOrderDraft, goalOrder: mpGoalOrderDraft, goalHidden: mpGoalHiddenDraft, goalCustom: mpGoalCustomFromDraft(), goalLabels: mpGoalLabelsFromDraft(), goalAssign: mpGoalAssignDraft, sectionMeta: mpSectionMetaFromDraft() };
   lsSetA('ahs_homepage_settings', data);
-  const statusEls = [document.getElementById('mpFeaturedStatus'), document.getElementById('mpOffersStatus')];
+  const statusEls = [document.getElementById('mpFeaturedStatus'), document.getElementById('mpSectionOrderStatus'), document.getElementById('mpOffersStatus'), document.getElementById('mpGoalStatus')];
   statusEls.forEach(el => { if (el) { el.style.display = 'block'; el.style.color = 'var(--ink-soft)'; el.textContent = '⏳ Inahifadhi...'; } });
 
   let cloudOk = true;
@@ -1566,8 +1980,10 @@ function initAdminHomepageSettingsSync() {
   if (typeof cloudListenHomepageSettings !== 'function') return;
   if (unsubscribeHomepageSettings) unsubscribeHomepageSettings();
   unsubscribeHomepageSettings = cloudListenHomepageSettings((data) => {
-    lsSetA('ahs_homepage_settings', { featuredToday: (data && data.featuredToday) || [], categoryOffers: (data && data.categoryOffers) || {} });
+    lsSetA('ahs_homepage_settings', { featuredToday: (data && data.featuredToday) || [], categoryOffers: (data && data.categoryOffers) || {}, sectionOrder: (data && data.sectionOrder) || [], goalOrder: (data && data.goalOrder) || [], goalHidden: (data && data.goalHidden) || [], goalCustom: (data && data.goalCustom) || [], goalLabels: (data && data.goalLabels) || {}, goalAssign: (data && data.goalAssign) || {}, sectionMeta: (data && data.sectionMeta) || {} });
     if (document.getElementById('tab-mpangilio').style.display !== 'none') renderMpangilioTab();
+    const mk = document.getElementById('tab-makundi');
+    if (mk && mk.style.display !== 'none') { try { mpLoadSettings(); renderMakundiTab(); } catch (e) { console.error(e); } }
   });
 }
 

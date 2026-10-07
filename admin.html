@@ -39,6 +39,7 @@
     <h2>Agnes Admin</h2>
     <div id="cloudAdminBanner" style="display:none; font-size:.72rem; font-weight:700; padding:8px 10px; border-radius:8px; margin-bottom:12px; line-height:1.4;"></div>
     <button class="active" data-tab="dashboard">📊 Dashibodi</button>
+    <button data-tab="makundi">🗂 Makundi ya Kazi</button>
     <button data-tab="products">🛒 Bidhaa</button>
     <button data-tab="addproduct">➕ Ongeza Bidhaa</button>
     <button data-tab="orders">📦 Oda <span class="order-notif-badge" id="orderNotifBadge" style="display:none;">0</span></button>
@@ -52,6 +53,7 @@
   </div>
   <div class="admin-main">
     <div id="tab-dashboard" class="tab-content"></div>
+    <div id="tab-makundi" class="tab-content" style="display:none;"></div>
     <div id="tab-products" class="tab-content" style="display:none;"></div>
     <div id="tab-addproduct" class="tab-content" style="display:none;"></div>
     <div id="tab-orders" class="tab-content" style="display:none;"></div>
@@ -110,6 +112,43 @@
       </div>
       <p style="font-size:.72rem; color:var(--ink-soft); margin-top:6px;">Weka picha halisi za wateja tu (kwa idhini yao). Acha wazi kuficha sehemu ya Kabla/Baada kwa bidhaa hii.</p>
     </div>
+    <div class="pedit-field" style="border-top:2px solid var(--line); padding-top:16px; margin-top:6px;">
+      <label style="font-size:.95rem; font-weight:800; color:var(--green-deep);">🔍 Mipangilio ya SEO (hiari)</label>
+      <p style="font-size:.72rem; color:var(--ink-soft); margin:4px 0 12px;">Acha uwanja wazi ili tovuti itengeneze thamani ya kawaida kiotomatiki. Ukijaza chochote hapa, ndicho kitakachotumika badala ya thamani ya kawaida — hakitabadilishwa kiotomatiki tena.</p>
+
+      <label>SEO Title (kichwa kinachoonekana kwenye matokeo ya Google)</label>
+      <input type="text" id="peditSeoTitle" maxlength="70" placeholder="Chaguo-msingi: [Jina la Bidhaa] | Agnes Herbal Supplements Tanzania" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); margin-bottom:10px;">
+
+      <label>Meta Description (maelezo mafupi chini ya kiungo kwenye Google)</label>
+      <textarea id="peditMetaDesc" rows="2" maxlength="160" placeholder="Chaguo-msingi: kutoka kwenye caption ya bidhaa hapo juu" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); margin-bottom:10px;"></textarea>
+
+      <label>Image ALT Text (maelezo ya picha kwa ajili ya utafutaji wa picha)</label>
+      <input type="text" id="peditImageAlt" maxlength="160" placeholder="Chaguo-msingi: [Jina la Bidhaa] Tanzania" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line); margin-bottom:10px;">
+
+      <label>Slug ya URL (hiari — herufi ndogo, mistari badala ya nafasi)</label>
+      <input type="text" id="peditSlug" maxlength="90" placeholder="Chaguo-msingi: linatokana na jina la bidhaa" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line);">
+      <p style="font-size:.72rem; color:#b45309; margin:4px 0 10px;">⚠️ Kubadilisha slug baada ya bidhaa kuwa na muda mrefu kwenye Google kunaweza kuathiri nafasi yake ya utafutaji. Badilisha tu kama ni lazima.</p>
+
+      <label>Manufaa Makuu 5 (hiari — moja moja)</label>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;">
+        <input type="text" id="peditBenefit1" maxlength="120" placeholder="Faida ya 1">
+        <input type="text" id="peditBenefit2" maxlength="120" placeholder="Faida ya 2">
+        <input type="text" id="peditBenefit3" maxlength="120" placeholder="Faida ya 3">
+        <input type="text" id="peditBenefit4" maxlength="120" placeholder="Faida ya 4">
+        <input type="text" id="peditBenefit5" maxlength="120" placeholder="Faida ya 5">
+      </div>
+
+      <label>Maswali Yanayoulizwa Kuhusu Bidhaa Hii (hiari — hadi maswali 3)</label>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <input type="text" id="peditFaqQ1" maxlength="150" placeholder="Swali 1">
+        <textarea id="peditFaqA1" rows="2" maxlength="400" placeholder="Jibu 1" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line);"></textarea>
+        <input type="text" id="peditFaqQ2" maxlength="150" placeholder="Swali 2" style="margin-top:4px;">
+        <textarea id="peditFaqA2" rows="2" maxlength="400" placeholder="Jibu 2" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line);"></textarea>
+        <input type="text" id="peditFaqQ3" maxlength="150" placeholder="Swali 3" style="margin-top:4px;">
+        <textarea id="peditFaqA3" rows="2" maxlength="400" placeholder="Jibu 3" style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line);"></textarea>
+      </div>
+      <p style="font-size:.72rem; color:var(--ink-soft); margin-top:8px;" id="peditSeoScopeNote"></p>
+    </div>
     <p id="peditSaveStatus" style="font-size:.78rem; font-weight:700; margin:4px 0 0; display:none;"></p>
     <div class="pedit-actions">
       <button class="btn btn-ghost" onclick="closePeditOverlay()">Ghairi</button>
@@ -122,14 +161,15 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<script src="js/firebase-config.js"></script>
+<script src="js/firebase-config.js?v27"></script>
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <script src="js/onesignal-config.js"></script>
 <script src="js/ai-config.js"></script>
 <script src="js/products-data.js"></script>
+<script src="js/goal-groups.js?v2"></script>
 <script src="js/effect-i18n.js"></script>
 <script src="js/ai-vision.js"></script>
-<script src="js/admin.js"></script>
+<script src="js/admin.js?v9"></script>
 <script src="js/sw-register.js" defer></script>
 <div id="cloudStatusBadge" class="cloud-status-badge checking"></div>
 </body>

@@ -10,6 +10,7 @@ function lsGetT(key, fallback) {
 const STAGE_KEYS = [
   { key: 'placed', label: 'track_placed', hours: 0 },
   { key: 'confirmed', label: 'track_confirmed', hours: 2 },
+  { key: 'processing', label: 'track_processing', hours: 12 },
   { key: 'packed', label: 'track_packed', hours: 24 },
   { key: 'shipped', label: 'track_shipped', hours: 48 },
   { key: 'delivered', label: 'track_delivered', hours: 96 }
@@ -62,13 +63,17 @@ function renderTrackResult(order, isLive) {
   const locale = (typeof getLocale === 'function') ? getLocale(lang) : 'sw-TZ';
   const hoursElapsed = (Date.now() - new Date(order.date).getTime()) / (1000 * 60 * 60);
   const statusIdx = order.status ? STAGE_KEYS.findIndex(s => s.key === order.status) : -1;
-  let html = `<div style="margin-top:20px;">
+  const headerHtml = `<div style="margin-top:20px;">
     ${isLive ? `<div class="track-live-pill"><span class="dot"></span>${escapeHtmlT(t('track_live_status'))}</div>` : ''}
     <b>${escapeHtmlT(t('track_order_label'))} #${escapeHtmlT(order.id)}</b>
     <div style="font-size:.82rem; color:var(--ink-soft); margin-bottom:6px;">${new Date(order.date).toLocaleString(locale)}</div>
     <div style="font-size:.9rem; margin-bottom:6px;">${escapeHtmlT(t('track_total_label'))}: Tsh ${Math.round(order.total).toLocaleString('en-US')}</div>
-  </div>
-  <div class="timeline">`;
+  </div>`;
+  if (order.status === 'cancelled') {
+    resultEl.innerHTML = headerHtml + `<div class="panel-empty" style="padding:16px; border:1px solid #e0a0a0; border-radius:10px; color:#b23a3a; background:rgba(178,58,58,.06);">❌ ${escapeHtmlT(t('track_cancelled'))}</div>`;
+    return;
+  }
+  let html = headerHtml + `<div class="timeline">`;
   STAGE_KEYS.forEach((stage, i) => {
     // If admin has set a real status (statusIdx >= 0), use that as the source of
     // truth; otherwise fall back to the old time-elapsed simulation.

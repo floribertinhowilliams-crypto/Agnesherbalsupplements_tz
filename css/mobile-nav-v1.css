@@ -1,0 +1,123 @@
+/* ============================================================
+   MOBILE NAV UPGRADE v1 — additive only:
+   1) Top Trust Bar (delivery + WhatsApp)
+   2) Sticky Bottom Navigation (mobile only)
+   ============================================================ */
+
+/* ---------- 1. TOP TRUST BAR ---------- */
+.top-trust-bar {
+  background-color: #1b4d3e;
+  color: #ffffff;
+  font-size: 0.85rem;
+  padding: 6px 0;
+  text-align: center;
+}
+.top-trust-bar a { color: #25d366; font-weight: bold; text-decoration: none; }
+
+/* ---------- 2. STICKY MOBILE BOTTOM NAV ---------- */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #ffffff;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+  z-index: 1000;
+  padding: 8px 0;
+  justify-content: space-around;
+}
+@media (max-width: 768px) {
+  .mobile-bottom-nav { display: flex; }
+  body { padding-bottom: 60px; }
+}
+.mobile-bottom-nav .nav-item {
+  display: flex; flex-direction: column; align-items: center;
+  font-size: 0.75rem; color: #333333; text-decoration: none;
+}
+.mobile-bottom-nav .nav-item.active { color: #1b4d3e; font-weight: bold; }
+
+/* ---------- Nyongeza ndogo zinazohitajika (cart badge + kuepuka mgongano na vitufe vingine vya "fixed bottom") ---------- */
+.mobile-bottom-nav .cart-icon-wrapper { position: relative; display: inline-flex; }
+.mobile-bottom-nav .cart-badge {
+  position: absolute;
+  top: -6px; right: -9px;
+  background: #25d366;
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+@media (max-width: 768px) {
+  /* Sogeza vitufe vingine vilivyokuwa "fixed bottom" juu kidogo ili visigongane
+     na bottom nav mpya — hii ni marekebisho ya nafasi TU, si ya tabia/kazi yao. */
+  .float-actions{ bottom:calc(18px + 60px) !important; }
+  .toast{ bottom:calc(100px + 60px) !important; }
+  .compare-bar{ bottom:60px !important; }
+  /* Kikapu (Kikapu/Cart) kilikuwa kinaonekana MARA TATU mobile wakati mmoja —
+     header (.cart-btn), floating pill (.cart-fab), NA bottom-nav (Kikapu) —
+     zote tatu zikifanya kazi ile ile (openCart()). Bottom-nav pekee inatosha
+     mobile; ficha floating pill ili isimchanganye mteja. Header cart-btn
+     imebaki (ni ndogo, sehemu ya kawaida ya header, si "duplicate" ya kutisha). */
+  .cart-fab{ display:none !important; }
+}
+
+/* ---------- Nav-drawer: sehemu ndogo "Kategoria" (viungo halisi vya /categories/) ---------- */
+.nav-drawer-sub-head{
+  padding:14px 12px 6px;
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  opacity:.75;
+}
+
+/* ---------- Hero: pill badge + trust indicators chini ya CTA (id="afyaBora") ---------- */
+.hero-trust-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:var(--green-soft);
+  color:var(--green-deep);
+  border:1px solid var(--gold);
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:.78rem;
+  font-weight:700;
+  margin-bottom:14px;
+}
+.hero-trust-indicators{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 20px;
+  margin-top:18px;
+}
+.hero-trust-indicators .trust-item{
+  font-size:.82rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+
+/* ===================== FILTER PANEL (collapsible — additive) =====================
+   Category/Bei/Panga (Sort)/Health Problems zilikuwa zinaonekana daima, zikichukua
+   nafasi kubwa ya skrini. Sasa zimefichwa ndani ya paneli inayofunguka kwa kubofya
+   kitufe "⋮ Chuja / Panga" — nafasi zaidi ya bure kwa mteja, bila kupoteza kazi
+   yoyote ya awali (filters zote bado zinafanya kazi vile vile ndani ya paneli). */
+.filter-toggle-btn{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  width:100%; margin-top:10px; padding:11px 14px;
+  background:var(--card-bg); border:1.5px solid var(--line); border-radius:12px;
+  color:var(--green-deep); font-weight:700; font-size:.92rem; cursor:pointer;
+}
+.filter-toggle-btn[aria-expanded="true"]{ background:var(--green-soft); border-color:var(--green); }
+.filter-panel{ margin-top:10px; }
+.filter-panel[hidden]{ display:none; }

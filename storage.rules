@@ -1,0 +1,35 @@
+// ============================================================================
+// Agnes Herbal Store — Firebase Storage Security Rules
+// ============================================================================
+// JINSI YA KUWEKA:
+// 1) Firebase Console → Storage → tab "Rules" (juu)
+// 2) Futa yaliyopo, bandika YOTE ya faili hili
+// 3) BADILISHA "PASTE_YOUR_ADMIN_EMAIL_HERE" na email HALISI ile ile
+//    uliyotumia kwenye firestore.rules
+// 4) "Publish"
+// ============================================================================
+
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "floribertinhowilliams@gmail.com";
+    }
+
+    // Picha za bidhaa: kila mtu anaweza kuziona (storefront), admin pekee
+    // anaweza kupakia/kufuta, na kikomo cha ukubwa (10MB) kwa kila picha.
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if isAdmin();
+    }
+
+    // Kila kitu kingine: kimefungwa kabisa kwa chaguo-msingi.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

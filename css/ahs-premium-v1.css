@@ -1,0 +1,106 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 1
+   Header simplification + premium search bar + premium category chips.
+   Additive only: no existing selectors are removed, no HTML/JS changed.
+   Safe to delete this single <link> to fully revert Phase 1.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1) HEADER: collapse desktop nav links into the same MENU drawer used on
+      mobile, so the visible header is just  LIVE · MENU · LOGO · CART/util
+      on every screen size. No JS changes needed — #menuToggle / #navDrawer
+      already work at any width; only the CSS was restricting them to <981px.
+   -------------------------------------------------------------------------- */
+nav ul { display: none !important; }
+.menu-toggle { display: inline-flex !important; }
+.nav-drawer { display: flex !important; }
+.nav-drawer-overlay { display: block !important; }
+
+nav { padding-top: 12px !important; padding-bottom: 12px !important; }
+
+.menu-toggle {
+  border-radius: 12px;
+  border: 1.5px solid var(--gold-soft);
+  background: linear-gradient(180deg, var(--card-bg), var(--green-soft));
+  transition: border-color .18s ease, transform .12s ease;
+}
+.menu-toggle:hover { border-color: var(--gold); }
+.menu-toggle:active { transform: scale(.94); }
+
+/* LIVE badge: slightly more premium chip + steadier pulse */
+.live-badge {
+  border-radius: 20px;
+  font-weight: 700;
+}
+.live-dot { animation-duration: 1.4s; }
+
+/* Wider drawer on larger screens, since it now doubles as the desktop menu */
+@media (min-width: 981px) {
+  .nav-drawer { width: 340px; }
+  .nav-drawer-links li a { font-size: 1rem; }
+}
+
+/* --------------------------------------------------------------------------
+   2) SEARCH BAR: larger, wider, more premium presence directly under header
+   -------------------------------------------------------------------------- */
+.search-wrap {
+  max-width: 720px;
+}
+.search-wrap .search-input {
+  border-radius: 30px !important;
+  padding-top: 17px !important;
+  padding-bottom: 17px !important;
+  padding-left: 24px !important;
+  font-size: 1rem !important;
+  border: 1.5px solid var(--line) !important;
+  background: var(--card-bg) !important;
+  box-shadow: 0 6px 20px -10px rgba(15, 77, 52, .25);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.search-wrap .search-input:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 5px rgba(198, 154, 58, .14), 0 10px 28px -12px rgba(15, 77, 52, .35) !important;
+}
+.search-icon { opacity: .75; font-size: 1.05rem; }
+
+@media (min-width: 769px) {
+  .search-filter-top { padding-top: 44px; }
+}
+
+/* --------------------------------------------------------------------------
+   3) CATEGORY CHIPS: premium pill treatment, clearer active state
+   -------------------------------------------------------------------------- */
+.category-chips { gap: 10px; padding-bottom: 14px; }
+
+.cat-chip {
+  padding: 10px 20px;
+  border-radius: 24px;
+  border: 1.5px solid var(--line);
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.cat-chip:hover {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.cat-chip.active {
+  background: linear-gradient(135deg, var(--green-deep), var(--green));
+  border-color: var(--green-deep);
+  box-shadow: 0 6px 16px -6px rgba(15, 77, 52, .55);
+}
+
+@media (min-width: 769px) {
+  .category-chips { justify-content: center; flex-wrap: wrap; overflow-x: visible; }
+}
+
+/* --------------------------------------------------------------------------
+   4) LIVE PURCHASE POPUP ("someone just bought...", green-accented toast):
+      it shares the exact same fixed bottom-left spot as the WhatsApp /
+      Call / Facebook / Instagram floating buttons, so it was landing right
+      on top of / under the Instagram icon. Lift it clear of that stack.
+      (Float buttons themselves are untouched.)
+   -------------------------------------------------------------------------- */
+.ln-popup-host { bottom: 232px !important; }
+@media (max-width: 640px) {
+  .ln-popup-host { bottom: 196px !important; }
+}

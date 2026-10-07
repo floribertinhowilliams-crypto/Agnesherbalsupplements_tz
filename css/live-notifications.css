@@ -1,0 +1,92 @@
+/* ============================================================
+   Agnes Herbal Store — Live Buying Notification System
+   (moving purchase ticker bar + popup purchase toasts)
+   ============================================================ */
+
+/* ---------- Shared ---------- */
+.ln-dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#2ecc71; box-shadow:0 0 0 0 rgba(46,204,113,.6); animation:lnPulse 1.6s infinite;}
+@keyframes lnPulse{
+  0%{box-shadow:0 0 0 0 rgba(46,204,113,.55);}
+  70%{box-shadow:0 0 0 7px rgba(46,204,113,0);}
+  100%{box-shadow:0 0 0 0 rgba(46,204,113,0);}
+}
+
+/* ================= MOVING LIVE PURCHASE BAR ================= */
+.ln-bar{
+  position:relative; overflow:hidden; background:var(--green-deep); color:#fdfbf3;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex; align-items:center; gap:0;
+}
+.ln-bar-label{
+  flex:0 0 auto; display:flex; align-items:center; gap:7px; font-size:.72rem; font-weight:800;
+  letter-spacing:.08em; text-transform:uppercase; background:rgba(0,0,0,.16);
+  padding:9px 16px; white-space:nowrap; z-index:2;
+}
+.ln-bar-viewport{flex:1 1 auto; overflow:hidden; position:relative; height:38px;}
+.ln-bar-track{
+  position:absolute; top:0; left:0; display:flex; align-items:center; height:100%;
+  white-space:nowrap; will-change:transform; animation:lnScroll linear infinite;
+}
+@keyframes lnScroll{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+.ln-bar-item{display:inline-flex; align-items:center; gap:8px; padding:0 26px; font-size:.82rem; font-weight:600; position:relative;}
+.ln-bar-item::after{content:"•"; position:absolute; right:-3px; opacity:.5;}
+.ln-bar-item b{font-weight:700;}
+.ln-bar-item .ln-qty{background:rgba(255,255,255,.16); border-radius:20px; padding:2px 9px; font-size:.72rem; font-weight:700;}
+.ln-bar-close{
+  flex:0 0 auto; background:none; border:none; color:#fdfbf3; opacity:.7; cursor:pointer;
+  font-size:1rem; padding:8px 14px; line-height:1; z-index:2;
+}
+.ln-bar-close:hover{opacity:1;}
+.ln-bar[data-paused="1"] .ln-bar-track{animation-play-state:paused;}
+
+html[data-theme="dark"] .ln-bar{background:#0c1f16;}
+html[data-theme="dark"] .ln-bar-label{background:rgba(0,0,0,.3);}
+
+@media(max-width:640px){
+  .ln-bar-label span.ln-label-text{display:none;}
+  .ln-bar-label{padding:9px 11px;}
+  .ln-bar-item{font-size:.76rem; padding:0 18px;}
+  .ln-bar-viewport{height:34px;}
+}
+
+/* ================= POPUP PURCHASE NOTIFICATION ================= */
+.ln-popup-host{
+  position:fixed; left:18px; bottom:18px; z-index:240;
+  width:320px; max-width:calc(100vw - 36px);
+  pointer-events:none;
+}
+.ln-toast{
+  pointer-events:auto;
+  display:flex; gap:11px; align-items:flex-start;
+  background:var(--card-bg); color:var(--ink);
+  border:1px solid var(--line); border-left:4px solid #2ecc71;
+  border-radius:14px; padding:12px 14px;
+  box-shadow:0 16px 34px -12px rgba(0,0,0,.28);
+  transform:translateY(18px) scale(.96); opacity:0;
+  transition:transform .35s cubic-bezier(.22,1,.36,1), opacity .35s ease;
+}
+.ln-toast.ln-in{transform:translateY(0) scale(1); opacity:1;}
+.ln-toast.ln-out{transform:translateY(10px) scale(.97); opacity:0;}
+.ln-toast-icon{flex:0 0 auto; width:34px; height:34px; border-radius:50%; background:var(--green-soft); display:flex; align-items:center; justify-content:center; font-size:1rem;}
+.ln-toast-body{flex:1 1 auto; min-width:0;}
+.ln-toast-line1{font-size:.84rem; font-weight:600; line-height:1.35; color:var(--ink);}
+.ln-toast-line1 b{color:var(--green-deep); font-weight:700;}
+.ln-toast-product{color:var(--green-deep); font-weight:700;}
+.ln-toast-meta{display:flex; align-items:center; gap:6px; margin-top:5px; font-size:.72rem; color:var(--ink-soft);}
+.ln-toast-meta .ln-qty-chip{background:var(--green-soft); color:var(--green-deep); border-radius:20px; padding:1px 8px; font-weight:700;}
+.ln-toast-close{flex:0 0 auto; background:none; border:none; color:var(--ink-soft); opacity:.55; cursor:pointer; font-size:.95rem; padding:2px; line-height:1;}
+.ln-toast-close:hover{opacity:1;}
+
+@media(max-width:640px){
+  .ln-popup-host{left:10px; right:10px; bottom:14px; width:auto; max-width:none;}
+  .ln-toast{padding:11px 12px;}
+  .ln-toast-line1{font-size:.8rem;}
+}
+
+/* If the cart drawer is open, keep popups from feeling cramped on small screens */
+@media(max-width:420px){
+  .ln-toast-icon{width:30px; height:30px; font-size:.9rem;}
+}

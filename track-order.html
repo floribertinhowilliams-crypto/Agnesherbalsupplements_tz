@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="sw" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fuatilia Oda Yako | Agnes Herbal Supplements</title>
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="icon" href="assets/icons/icon-96.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css?v21">
+<link rel="stylesheet" href="css/ahs-extra.css?v21">
+<meta name="theme-color" content="#0f4d34">
+
+<!-- ============================================================
+     Google Analytics 4, Meta (Facebook) Pixel & TikTok Pixel — imewekwa
+     kwenye faili moja kwa kila ukurasa: js/analytics-config.js
+     Weka ID zako HALISI ndani ya faili hilo pekee; hapa hakuna cha
+     kubadilisha. Mpaka uweke ID halisi, kila kitu kinabaki kimezimwa
+     kiotomatiki (hakuna script inayopakiwa, hakuna kosa).
+     ============================================================ -->
+<script src="js/analytics-config.js"></script>
+</head>
+<body>
+<header>
+  <nav>
+    <a class="brand" href="index.html">
+      <img src="assets/images/logo.png" alt="Agnes Herbal Supplements" width="46" height="46">
+      <div class="brand-name">Agnes<span>Herbal Store</span></div>
+    </a>
+    <ul><li><a href="index.html" data-i18n="home_link">Rudi Nyumbani</a></li></ul>
+    <div class="nav-right">
+      <div class="lang-switch">
+        <button class="lang-btn" data-lang="sw" onclick="setLang('sw')">SW</button>
+        <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
+        <button class="lang-btn" data-lang="zh" onclick="setLang('zh')">中文</button>
+        <button class="lang-btn" data-lang="rn" onclick="setLang('rn')">RN</button>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      <a class="icon-btn" href="admin.html" title="Admin Panel">⚙️</a>
+    </div>
+  </nav>
+</header>
+
+<section style="padding-top:60px;">
+  <div class="wrap">
+    <div class="section-head">
+      <h1 style="font-family:'Fraunces',serif; color:var(--green-deep); font-size:2rem;" data-i18n="nav_track">Fuatilia Oda</h1>
+      <p data-i18n="track_subtitle">Weka namba ya oda yako (mfano: AHS-1234) uliyopewa baada ya kutengeneza invoice, ili kuona hatua ya usafirishaji.</p>
+    </div>
+    <div class="track-box">
+      <input type="text" id="orderInput" placeholder="Namba ya Oda, mfano: AHS-1234" data-i18n-placeholder="track_input_placeholder">
+      <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="trackOrder()" data-i18n="track_btn">Fuatilia</button>
+      <div id="trackResult"></div>
+    </div>
+    <p style="text-align:center; font-size:.8rem; color:var(--ink-soft); max-width:520px; margin:20px auto 0;">
+      <b data-i18n="track_note_label">Kumbuka:</b> <span data-i18n="track_note">Ufuatiliaji huu unafanya kazi kwa kutumia kumbukumbu za kivinjari chako (localStorage) kwani duka hili halina backend ya malipo mtandaoni. Kwa taarifa halisi za usafirishaji, wasiliana nasi kwa WhatsApp.</span>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap"><div class="footer-bottom">© 2026 Agnes Herbal Supplements, Dar es Salaam. <span data-i18n="footer_rights">Haki zote zimehifadhiwa.</span></div></div>
+</footer>
+
+<div class="float-actions">
+  <a class="float-btn whatsapp pulse" href="https://wa.me/255678883675" target="_blank" rel="noopener" title="WhatsApp">💬</a>
+  <a class="float-btn call" href="tel:0678883675" title="Piga Simu" data-i18n-title="nav_call">📞</a>
+  <a class="float-btn fb-float" href="https://www.facebook.com/share/1AjAqYGUUS/" target="_blank" rel="noopener" title="Facebook">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.21 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.21 22 17.08 22 12.06Z"/></svg>
+  </a>
+  <a class="float-btn ig-float" href="https://www.instagram.com/agnes_herb_store?igsi=MXd3dmdhamJjcXVteA==" target="_blank" rel="noopener" title="Instagram">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.66.26 1.21.6 1.76 1.15.55.55.9 1.1 1.15 1.76.25.64.42 1.37.47 2.43.05 1.06.06 1.4.06 4.12s-.01 3.06-.06 4.12c-.05 1.06-.22 1.79-.47 2.43a4.9 4.9 0 0 1-1.15 1.76 4.9 4.9 0 0 1-1.76 1.15c-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.9 4.9 0 0 1-1.76-1.15 4.9 4.9 0 0 1-1.15-1.76c-.25-.64-.42-1.37-.47-2.43C2.01 15.06 2 14.72 2 12s.01-3.06.06-4.12c.05-1.06.22-1.79.47-2.43.26-.66.6-1.21 1.15-1.76A4.9 4.9 0 0 1 5.44.54C6.08.29 6.81.12 7.87.07 8.94.02 9.28 0 12 0Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 8.25a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5ZM17.4 4.6a1.17 1.17 0 1 0 0 2.34 1.17 1.17 0 0 0 0-2.34Z"/></svg>
+  </a>
+</div>
+
+<script>
+(function loadFirebaseNonBlocking(){
+  var srcs = [
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',
+    'js/firebase-config.js'
+  ];
+  // Pakua zote SAMBAMBA (parallel), tekeleza kwa mfuatano (async=false) —
+  // ona maelezo kamili kwenye index.html.
+  srcs.forEach(function (src) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = false;
+    document.head.appendChild(s);
+  });
+})();
+</script>
+<script src="js/i18n.js"></script>
+<script>
+function applyTheme(){ const theme = localStorage.getItem('ahs_theme')||'light'; document.documentElement.setAttribute('data-theme', theme); }
+function toggleTheme(){ const cur = localStorage.getItem('ahs_theme')||'light'; localStorage.setItem('ahs_theme', cur==='dark'?'light':'dark'); applyTheme(); }
+function onLangChanged(){ if (typeof rerenderTrackResult === 'function') rerenderTrackResult(); }
+document.addEventListener('DOMContentLoaded', () => { applyTheme(); applyLang(); });
+</script>
+<script src="js/track.js"></script>
+<script src="js/sw-register.js" defer></script>
+<div id="cloudStatusBadge" class="cloud-status-badge checking"></div>
+</body>
+</html>

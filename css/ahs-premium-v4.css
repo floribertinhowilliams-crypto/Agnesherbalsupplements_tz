@@ -1,0 +1,84 @@
+/* ==========================================================================
+   AGNES HERBAL SUPPLEMENTS — PREMIUM UI PASS, PHASE 4
+   Fixes the "🛒 Ongeza" / "⚡ Nunua" quick-action bar that sits on top of
+   every product photo (.pg-quickbar, inside .pg-img-wrap, from js/app.js
+   productCardHTML — no HTML/JS touched here, CSS override only):
+
+   Reported problems:
+   1) Buttons were a solid, fully-opaque block sitting across the WHOLE
+      width of the image, hiding a big strip of the product photo.
+   2) On mobile (2-up grid, cards as narrow as ~150px) the Swahili label
+      "⚡ Nunua Sasa" did not fit next to the icon at the tiny font-size,
+      so it visually overflowed/got clipped ("vimekatika") and the row
+      looked broken/out of line.
+
+   Fix: a slimmer, translucent/blurred glass bar (product photo still
+   shows through) instead of a solid opaque block, plus icon-only
+   buttons on narrow cards so nothing overflows or gets cut off.
+   Safe to delete this single <link> to fully revert Phase 4.
+   ========================================================================== */
+
+.pg-quickbar {
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  gap: 1px;
+  box-shadow: 0 6px 18px -8px rgba(0,0,0,.45);
+  opacity: .97;
+}
+
+.pg-quickbar button {
+  padding: 7px 4px;
+  font-size: .66rem;
+  min-width: 0;
+  backdrop-filter: blur(6px) saturate(1.3);
+  -webkit-backdrop-filter: blur(6px) saturate(1.3);
+}
+
+.pg-quickbar .qb-cart {
+  background: rgba(255,255,255,.82);
+}
+html[data-theme="dark"] .pg-quickbar .qb-cart {
+  background: rgba(27,32,28,.82);
+}
+.pg-quickbar .qb-buy {
+  background: rgba(15,77,52,.88);
+}
+
+/* A soft gradient scrim behind the bar keeps the buttons legible on any
+   photo without needing a fully solid background. */
+.pg-img-wrap::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 46px;
+  background: linear-gradient(to top, rgba(0,0,0,.28), transparent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Narrow cards (mobile 2-up grid, ~150-190px): icon-only buttons so the
+   label never overflows or gets clipped. */
+@media (max-width: 560px) {
+  .pg-quickbar { bottom: 6px; left: 6px; right: 6px; }
+  .pg-quickbar button { padding: 9px 2px; font-size: 1rem; line-height: 1; }
+  .pg-quickbar button span { display: none; }
+}
+
+/* New Products / horizontal-scroll rows use narrower cards (~152px) even
+   on tablet widths where the main grid already has room for labels — same
+   icon-only treatment there, up to the point those rows widen out. */
+@media (min-width: 561px) and (max-width: 899px) {
+  .new-products-row .pg-quickbar button,
+  .deal-grid .pg-quickbar button {
+    font-size: 1rem;
+    line-height: 1;
+    padding: 9px 2px;
+  }
+  .new-products-row .pg-quickbar button span,
+  .deal-grid .pg-quickbar button span {
+    display: none;
+  }
+}

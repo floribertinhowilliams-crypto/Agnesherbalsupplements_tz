@@ -156,7 +156,10 @@ function svGetTrendingProducts(n) {
   const all = visibleProducts();
   let pool = all.filter(p => p.bestseller);
   if (!pool.length) pool = all;
-  const sorted = [...pool].sort((a, b) => (b.rating * b.reviewCount) - (a.rating * a.reviewCount));
+  const sorted = [...pool].sort((a, b) => {
+    const as = getRatingStats(a.id), bs = getRatingStats(b.id);
+    return ((bs.rating * bs.count) - (as.rating * as.count)) || (b.bestseller - a.bestseller) || (new Date(b.dateAdded) - new Date(a.dateAdded));
+  });
   const seenEffect = new Set();
   const deduped = [];
   sorted.forEach(p => {
@@ -210,6 +213,7 @@ function svClearHistory() { lsSet('ahs_search_history', []); }
 /* ===================== APPLY ACTIONS (shared by dropdown, grid, history) ===================== */
 function svApplyTextSearch(phrase, input) {
   filterState.search = phrase;
+  filterState.goal = 'all';
   filterState.keywordSet = null;
   input.value = phrase;
   renderGrid();
@@ -219,6 +223,7 @@ function svApplyKeywordSearch(keywords, label, kind, input) {
   filterState.keywordSet = keywords.slice();
   filterState.search = '';
   filterState.category = 'all';
+  filterState.goal = 'all';
   const catSel = document.getElementById('categorySelect');
   if (catSel) catSel.value = 'all';
   input.value = label;
@@ -227,6 +232,7 @@ function svApplyKeywordSearch(keywords, label, kind, input) {
 }
 function svApplyCategory(slug, label, input) {
   filterState.category = slug;
+  filterState.goal = 'all';
   filterState.search = '';
   filterState.keywordSet = null;
   input.value = '';
@@ -320,6 +326,7 @@ function svNoMatchHTML(query) {
       <button type="button" class="sugg-explore-btn" data-sv-action="explore-open" data-sv-kind="goal">🎯 ${escapeHtml(t('search_by_goal'))}</button>
     </div>
     <a class="sugg-whatsapp-cta" href="https://wa.me/255678883675?text=${waText}" target="_blank" rel="noopener">💬 ${escapeHtml(t('ask_whatsapp_search'))}</a>
+    <a class="sugg-explore-btn" style="display:inline-block;margin-top:8px;text-decoration:none;" href="je-ipo/${query ? '?q=' + encodeURIComponent(query) : ''}">🔎 Je, ipo? Angalia upatikanaji</a>
   </div>`;
   return html;
 }
@@ -361,7 +368,7 @@ function svRenderDropdown(input, box) {
         <div class="sugg-item-body">
           <b>${svHighlight(p.name, query)}</b>
           <span class="sugg-item-effect">${escapeHtml(translateEffect(p.effect))}</span>
-          <span class="sugg-item-meta"><span class="sugg-stars">${starString(p.rating)}</span> ${fmt(p.prices.retail)}</span>
+          <span class="sugg-item-meta">${(() => { const st = getRatingStats(p.id); return st.count > 0 ? `<span class="sugg-stars">${starString(st.rating)}</span> ` : ''; })()}${fmt(p.prices.retail)}</span>
         </div>
       </div>`).join('') + `</div>`;
   }

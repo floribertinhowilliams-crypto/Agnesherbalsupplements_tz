@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bidhaa | Agnes Herbal Supplements</title>
+<meta name="description" content="Bidhaa ya asili kutoka Agnes Herbal Supplements, Tanzania.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/icons/icon-96.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{font-family:Inter,sans-serif;background:#fbf7ee;color:#1b1b1b;margin:0;padding:0;}
+.wrap{max-width:640px;margin:0 auto;padding:20px;}
+.back{display:inline-block;margin-bottom:16px;color:#0f4d34;text-decoration:none;font-weight:600;font-size:.9rem;}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.card img{width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:#eee;}
+.card-body{padding:20px;}
+h1{font-family:'Fraunces',serif;color:#0f4d34;font-size:1.4rem;margin:0 0 8px;}
+.cat{font-size:.8rem;color:#c98a2c;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:10px;}
+.desc{font-size:.92rem;line-height:1.6;color:#444;margin:12px 0 18px;}
+.cta{display:block;text-align:center;background:#0f4d34;color:#fff;padding:14px;border-radius:12px;text-decoration:none;font-weight:700;margin-bottom:10px;border:none;width:100%;font-size:1rem;cursor:pointer;}
+.cta.wa{background:#25D366;}
+.order-now-box{margin-bottom:10px;}
+.qty-stepper{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;background:#f4f0e4;border-radius:12px;padding:8px;}
+.qty-stepper button{width:34px;height:34px;border-radius:8px;border:none;background:#0f4d34;color:#fff;font-size:1.1rem;font-weight:800;cursor:pointer;}
+.qty-stepper span{font-size:1.05rem;font-weight:800;min-width:22px;text-align:center;}
+.cta.order-now{background:#c98a2c;font-size:1.05rem;box-shadow:0 4px 14px rgba(201,138,44,.35);}
+.skeleton{padding:40px 20px;text-align:center;color:#888;}
+.notfound{padding:40px 20px;text-align:center;color:#b23a3a;}
+footer{text-align:center;font-size:.75rem;color:#888;padding:30px 20px;}
+</style>
+<script src="../js/analytics-config.js"></script>
+<script src="../js/order-now.js"></script>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="/">&larr; Rudi Dukani</a>
+<div class="card" id="productCard">
+<div class="skeleton" id="loadingMsg">Inapakia bidhaa...</div>
+</div>
+</div>
+<footer>&copy; 2026 Agnes Herbal Supplements-Winstown,Dynee&amp; Duozi Distributor Tanzania, Dar es Salaam.</footer>
+
+<script>
+(function loadFirebaseNonBlocking(){
+  var srcs = [
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',
+    '../js/firebase-config.js',
+    '../js/products-data.js'
+  ];
+  srcs.forEach(function (src) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = false;
+    document.head.appendChild(s);
+  });
+})();
+</script>
+<script>
+function escHtml(str) { return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+function imageUrlFor(p) {
+  if (p.images && p.images.length) return p.images[0];
+  if (p.cover) return p.cover;
+  if (p.file) return 'https://agnesherbalsupplements.com/images/' + p.file;
+  return '../assets/images/logo.png';
+}
+
+function renderProduct(p, id) {
+  document.title = p.name + ' - Agnes Herbal Supplements | ' + (p.category || '');
+  const price = p.prices ? p.prices.retail : 0;
+  const desc = p.caption || (p.name + ' - ' + (p.effect || p.category || '') + '. Bidhaa ya asili kutoka Agnes Herbal Supplements, Tanzania.');
+  const img = imageUrlFor(p);
+  document.getElementById('productCard').innerHTML = `
+    <img src="${escHtml(img)}" alt="${escHtml(p.name)}" loading="lazy">
+    <div class="card-body">
+      <div class="cat">${escHtml(p.category || '')}</div>
+      <h1>${escHtml(p.name)}</h1>
+      <p style="font-size:1.3rem;font-weight:800;color:#0f4d34;">Tsh ${price.toLocaleString('en-US')}</p>
+      <p class="desc">${escHtml(desc)}</p>
+      <div class="order-now-box">
+        <div class="qty-stepper">
+          <button type="button" onclick="ahsChangeOrderQty(-1)" aria-label="Punguza idadi">\u2212</button>
+          <span id="orderNowQty">1</span>
+          <button type="button" onclick="ahsChangeOrderQty(1)" aria-label="Ongeza idadi">+</button>
+        </div>
+        <a class="cta order-now" href="#" onclick="ahsOrderNow(${id},'${p.name.replace(/'/g, "\\'")}',${price});return false;">\uD83D\uDED2 ORDER NOW</a>
+      </div>
+      <a class="cta" onclick="if(typeof ahsTrackEvent==='function')ahsTrackEvent('add_to_cart',{content_name:'${p.name.replace(/'/g, "\\'")}',content_type:'product',value:${price},currency:'TZS'});" href="/#product-${id}">\uD83D\uDED2 Ona kwenye Duka / Nunua</a>
+      <a class="cta wa" onclick="if(typeof ahsTrackEvent==='function')ahsTrackEvent('generate_lead',{content_name:'${p.name.replace(/'/g, "\\'")}',content_type:'product'});" href="https://wa.me/255678883675?text=${encodeURIComponent('Habari, ninavutiwa na bidhaa: ' + p.name)}" target="_blank" rel="noopener">\uD83D\uDCAC Uliza kwa WhatsApp</a>
+      <p style="font-size:.7rem;color:#999;margin-top:14px;line-height:1.5;">Bidhaa hii haikusudiwi kutibu, kuponya au kuzuia ugonjwa wowote. Si mbadala wa ushauri wa kitabibu. / This product is not intended to diagnose, treat, cure, or prevent any disease.</p>
+    </div>`;
+  if (typeof ahsTrackEvent === 'function') {
+    ahsTrackEvent('view_item', { content_name: p.name, content_type: 'product', value: price, currency: 'TZS' });
+  }
+}
+
+function showNotFound() {
+  document.getElementById('productCard').innerHTML = '<div class="notfound">Samahani, bidhaa hii haikupatikana au imeondolewa.<br><a class="back" href="/">&larr; Rudi Dukani kuona bidhaa zingine</a></div>';
+}
+
+function initProductPage() {
+  const params = new URLSearchParams(window.location.search);
+  const idRaw = params.get('id');
+  const id = parseInt(idRaw, 10);
+  if (idRaw === null || Number.isNaN(id)) { showNotFound(); return; }
+
+  // 1) Bidhaa za kwenye orodha tuli (products-data.js) — zipo papo hapo, hazihitaji mtandao.
+  if (typeof PRODUCTS !== 'undefined' && PRODUCTS[id]) {
+    renderProduct(PRODUCTS[id], id);
+    return;
+  }
+
+  // 2) Vinginevyo, jaribu Firestore (bidhaa mpya zilizoongezwa na Admin baada ya
+  //    tovuti kujengwa — hazimo kwenye faili tuli, ziko "customProducts" pekee).
+  let attempts = 0;
+  function tryFirestore() {
+    attempts++;
+    if (typeof AHS_CLOUD_READY !== 'undefined' && AHS_CLOUD_READY && ahsDb) {
+      ahsDb.collection('customProducts').doc(String(id)).get().then(doc => {
+        if (doc.exists) { renderProduct(doc.data(), id); }
+        else { showNotFound(); }
+      }).catch(() => showNotFound());
+      return;
+    }
+    if (attempts < 40) { setTimeout(tryFirestore, 150); } // subiri Firebase SDK ipakie (mtandao wa polepole)
+    else { showNotFound(); }
+  }
+  tryFirestore();
+}
+document.addEventListener('DOMContentLoaded', initProductPage);
+</script>
+</body>
+</html>

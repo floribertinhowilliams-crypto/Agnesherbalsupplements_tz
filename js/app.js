@@ -37,7 +37,7 @@ let productOverrides = lsGet('ahs_product_overrides', {});
 // (2) categoryOffers — { "Jina la Kundi": asilimiaYaOfa } — ofa inayotumika
 //     kiotomatiki kwa BEI HALISI (rejareja na jumla) za bidhaa zote za kundi
 //     hilo, kila mahali (kikapu, invoice, gridi) — si picha tu.
-let homepageSettings = lsGet('ahs_homepage_settings', { featuredToday: [], categoryOffers: {} });
+let homepageSettings = lsGet('ahs_homepage_settings', { featuredToday: [], categoryOffers: {}, sectionOrder: [], goalOrder: [], goalHidden: [], goalCustom: [], goalLabels: {}, goalAssign: {}, sectionMeta: {} });
 
 // CUSTOM_PRODUCTS = bidhaa mpya alizoongeza admin kwenye "➕ Ongeza Bidhaa"
 // (admin.html) — hazimo kwenye js/products-data.js tuli, zinatoka Firestore
@@ -129,6 +129,90 @@ function featuredTodayProducts() {
   return ids.map(id => getEffectiveProduct(id)).filter(p => p && !p.hidden);
 }
 
+/* ===================== MPANGILIO WA SEHEMU ZA UKURASA (Homepage Section Order) =====================
+   Admin anaweza kupanga (⬆️⬇️ kwenye admin.html → Mpangilio wa Duka) mfuatano wa SEHEMU nzima za
+   homepage (si bidhaa ndani ya sehemu moja tu) — mfano: aitake "Trending Now" ionekane kabla ya
+   "Flash Sale", au "Daily Deals" ionekane mwanzoni kabisa. Mpangilio unahifadhiwa kama orodha ya
+   "keys" ndani ya homepageSettings.sectionOrder (Firestore: meta/homepageSettings, sawa na
+   featuredToday/categoryOffers) — hakuna rules mpya zinazohitajika. Ukiacha bila kupanga,
+   sehemu zinabaki kwenye mfuatano wake wa asili (HOMEPAGE_SECTIONS hapa chini).
+   Kila "kipengele" hapa ni <section> nzima ya HTML (index.html) — insertBefore() chini
+   inahamisha NODE nzima ya DOM (si maandishi tu), hivyo bidhaa/gridi zote zilizomo ndani
+   ya section hiyo zinahama pamoja nayo 100% bila kuhitaji kuguswa upya popote pengine.
+   "recentlyViewed" (Umeangalia Hivi Karibuni) sasa ni section yake huru pia — inaweza
+   kupangwa kama sehemu nyingine yoyote (ilikuwa div ndani ya "bidhaa" hapo awali). */
+const HOMEPAGE_SECTIONS = [
+  { key: 'flashSale',          id: 'flashSale',          label: 'Flash Sale' },
+  { key: 'bidhaa',              id: 'bidhaa',              label: 'Bidhaa Zetu Zote (Our Products)' },
+  { key: 'recentlyViewed',      id: 'recentlyViewed',      label: 'Umeangalia Hivi Karibuni (Recently Viewed)' },
+  { key: 'newProductsSection',  id: 'newProductsSection',  label: 'New Products' },
+  { key: 'featuredToday',       id: 'featuredToday',       label: 'Recommendation Products' },
+  { key: 'shopByCategory',      id: 'shopByCategory',      label: 'Shop by Category' },
+  { key: 'bestSellers',         id: 'bestSellers',         label: 'Best Sellers' },
+  { key: 'newArrivals',         id: 'newArrivals',         label: 'New Arrivals' },
+  { key: 'trending',            id: 'trending',            label: 'Trending Now' },
+  { key: 'dailyDeals',          id: 'dailyDeals',          label: 'Daily Deals (Today\'s Deals)' },
+  { key: 'recentlyAdded',       id: 'recentlyAdded',       label: 'Recently Added' },
+];
+function applyHomepageSectionOrder() {
+  const savedOrder = (homepageSettings && homepageSettings.sectionOrder) || [];
+  // Funga "keys" zilizohifadhiwa na zile zipya ambazo huenda hazijawahi kupangwa bado
+  // (mfano sehemu mpya iliyoongezwa kwenye HOMEPAGE_SECTIONS baadaye) — hizo zinabaki
+  // mwishoni kwa mfuatano wao wa asili badala ya kutoweka.
+  const known = new Set(HOMEPAGE_SECTIONS.map(s => s.key));
+  const order = [
+    ...savedOrder.filter(k => known.has(k)),
+    ...HOMEPAGE_SECTIONS.map(s => s.key).filter(k => !savedOrder.includes(k)),
+  ];
+  const anchor = document.getElementById('searchFilterTop');
+  if (!anchor || !anchor.parentNode) return;
+  let insertAfter = anchor;
+  order.forEach(key => {
+    const cfg = HOMEPAGE_SECTIONS.find(s => s.key === key);
+    const el = cfg && document.getElementById(cfg.id);
+    if (!el) return;
+    insertAfter.parentNode.insertBefore(el, insertAfter.nextSibling);
+    insertAfter = el;
+  });
+}
+
+/* ===================== MAJINA/MAELEZO YA SEHEMU (Section Titles) =====================
+   Admin (Mpangilio wa Duka → Mpangilio wa Sehemu) anaweza kubadilisha Title na maelezo ya kila
+   sehemu ya homepage. Yanahifadhiwa kwenye homepageSettings.sectionMeta = { key: {title, sub, note} }.
+   Uwanja ukiwa wazi, maandishi ya awali (yenye tafsiri za i18n) yanarudi. */
+function applySectionMeta() {
+  const meta = (homepageSettings && homepageSettings.sectionMeta) || {};
+  const setTxt = (el, val) => {
+    if (!el) return;
+    if (val) {
+      if (el.dataset.ahsOrig === undefined) {
+        el.dataset.ahsOrig = el.textContent;
+        el.dataset.ahsI18n = el.getAttribute('data-i18n') || '';
+      }
+      el.removeAttribute('data-i18n');
+      el.textContent = val;
+    } else if (el.dataset.ahsOrig !== undefined) {
+      if (el.dataset.ahsI18n) el.setAttribute('data-i18n', el.dataset.ahsI18n);
+      el.textContent = el.dataset.ahsOrig;
+      delete el.dataset.ahsOrig; delete el.dataset.ahsI18n;
+    }
+  };
+  HOMEPAGE_SECTIONS.forEach(cfg => {
+    const sec = document.getElementById(cfg.id);
+    if (!sec) return;
+    const m = meta[cfg.key] || {};
+    setTxt(sec.querySelector('h2'), (m.title || '').trim());
+    setTxt(sec.querySelector('.section-head > p, .fs-head p'), (m.sub || '').trim());
+    if (cfg.key === 'bidhaa') {
+      const note = sec.querySelector('.wholesale-note');
+      if (note) {
+        const v = (m.note || '').trim();
+        if (v) { if (note.dataset.ahsOrig === undefined) note.dataset.ahsOrig = note.innerHTML; note.textContent = v; }
+        else if (note.dataset.ahsOrig !== undefined) { note.innerHTML = note.dataset.ahsOrig; delete note.dataset.ahsOrig; }
+      }
+    }
+  });
+}
 function unitPriceFor(product, qty) {
   const p = product.prices;
   if (qty >= 10) return p.w10;
@@ -137,7 +221,7 @@ function unitPriceFor(product, qty) {
 }
 
 /* ===================== FILTER / SORT STATE ===================== */
-let filterState = { search: '', category: 'all', price: 'all', sort: 'default', keywordSet: null };
+let filterState = { search: '', category: 'all', goal: 'all', price: 'all', sort: 'default', keywordSet: null };
 
 function starString(rating) {
   const full = Math.round(rating);
@@ -199,6 +283,36 @@ function fallbackSearchProducts(query, list) {
     return words.every(w => hay.includes(w));
   });
 }
+function productSortDate(p) {
+  // Bidhaa za awali (tuli, products-data.js) zina 'dateAdded' (mfano "2026-04-16").
+  // Bidhaa alizoongeza admin (Firestore) mara nyingine zina 'dateAdded' (string),
+  // mara nyingine 'createdAt' tu (Firestore Timestamp {seconds, nanoseconds}).
+  // Kabla ya marekebisho haya, bidhaa zisizo na 'dateAdded' halali zilikwama
+  // kimya kimya mahali zilipo (comparator ikirudisha NaN), hivyo "Mpya Zaidi"
+  // haikuwa ikiwapandisha juu kwa uhakika. Sasa tunajaribu vyanzo vyote viwili,
+  // na tukikosa vyote, tunairudisha kama "zamani sana" (0) badala ya NaN.
+  if (p.dateAdded) {
+    const t = new Date(p.dateAdded).getTime();
+    if (!Number.isNaN(t)) return t;
+  }
+  if (p.createdAt && typeof p.createdAt.seconds === 'number') {
+    return p.createdAt.seconds * 1000;
+  }
+  return 0;
+}
+function pinnedFirstOrder(list) {
+  // Bidhaa alizozipanga admin kwenye "Mpangilio wa Duka → Bidhaa za Leo"
+  // (homepageSettings.featuredToday) zinapandishwa MWANZONI kabisa mwa
+  // "Bidhaa Zetu Zote" pia — si kwenye carousel ya "Recommendation" tu —
+  // kwa mfuatano alioupanga admin, zikifuatiwa na bidhaa nyingine kwa tarehe.
+  const pinnedIds = (homepageSettings && homepageSettings.featuredToday) || [];
+  if (!pinnedIds.length) return list;
+  const byId = new Map(list.map(p => [p.id, p]));
+  const pinned = pinnedIds.map(id => byId.get(id)).filter(Boolean);
+  const pinnedSet = new Set(pinned.map(p => p.id));
+  const rest = list.filter(p => !pinnedSet.has(p.id));
+  return [...pinned, ...rest];
+}
 function getFilteredSorted() {
   let list = visibleProducts();
   if (filterState.imageSearch && imageSearchResultIds.length) {
@@ -233,15 +347,32 @@ function getFilteredSorted() {
     }
   }
   if (filterState.category !== 'all') list = list.filter(p => p.catSlug === filterState.category);
+  if (filterState.goal !== 'all' && typeof ahsGoalInfo === 'function' && !ahsGoalInfo(filterState.goal)) filterState.goal = 'all'; // kundi lilifutwa na admin
+  if (filterState.goal && filterState.goal !== 'all' && typeof ahsGoalOf === 'function') list = list.filter(p => ahsGoalOf(p) === filterState.goal);
   if (filterState.price !== 'all') list = list.filter(p => matchesPrice(p, filterState.price));
 
   switch (filterState.sort) {
     case 'price_asc': list = [...list].sort((a,b) => a.prices.retail - b.prices.retail); break;
     case 'price_desc': list = [...list].sort((a,b) => b.prices.retail - a.prices.retail); break;
-    case 'latest': list = [...list].sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded)); break;
-    case 'bestseller': list = [...list].sort((a,b) => (b.bestseller - a.bestseller) || (b.rating - a.rating)); break;
-    case 'rating': list = [...list].sort((a,b) => b.rating - a.rating); break;
+    case 'latest': list = [...list].sort((a,b) => productSortDate(b) - productSortDate(a)); break;
+    case 'bestseller': list = [...list].sort((a,b) => (b.bestseller - a.bestseller) || (getRatingStats(b.id).rating - getRatingStats(a.id).rating)); break;
+    case 'rating': list = [...list].sort((a,b) => {
+      const as = getRatingStats(a.id), bs = getRatingStats(b.id);
+      return (bs.rating - as.rating) || (bs.count - as.count) || (b.bestseller - a.bestseller);
+    }); break;
     default: break;
+  }
+  // Mpangilio wa admin (pinned) unashinda kila wakati kwa "latest" na "default" —
+  // ndiyo njia ya admin "kuchagua title gani zianze" kwa uhakika, bila kutegemea
+  // tarehe pekee (ambayo si ya kuaminika 100% kwa bidhaa za zamani/zilizohamishwa).
+  // Chaguo-msingi = makundi ya KAZI kwa mfuatano aliopanga admin (Mpangilio wa Duka → Makundi ya Kazi),
+  // si kwa aina ya bidhaa (Tea/Gummies/...). Bidhaa za Leo (pinned) bado zinatangulia zote.
+  const noExplicitSearch = !(filterState.search && filterState.search.trim()) && !(filterState.keywordSet && filterState.keywordSet.length) && !filterState.imageSearch;
+  if (filterState.sort === 'default' && noExplicitSearch && typeof ahsSortByGoal === 'function') {
+    list = ahsSortByGoal(list);
+  }
+  if (filterState.sort === 'latest' || filterState.sort === 'default') {
+    list = pinnedFirstOrder(list);
   }
   return list;
 }
@@ -253,9 +384,17 @@ function renderFilterControls() {
   const sortSel = document.getElementById('sortSelect');
   const lang = getLang();
 
-  catSel.innerHTML = `<option value="all">${t('filter_category')}: ${t('filter_all')}</option>` +
-    CATEGORIES.map(c => `<option value="${slugify(c)}">${escapeHtml(c)}</option>`).join('');
-  catSel.value = filterState.category;
+  // "Kundi" sasa ni KAZI ya bidhaa (Kupunguza Uzito, Kinga, Uzazi...) kwa mfuatano wa admin.
+  // Aina za zamani (Tea/Gummies/...) bado zinafanya kazi kupitia utafutaji na viungo vya kategoria.
+  if (typeof GOAL_GROUPS !== 'undefined' && typeof ahsGoalDisplayOrder === 'function') {
+    catSel.innerHTML = `<option value="all">${t('filter_category')}: ${t('filter_all')}</option>` +
+      ahsGoalDisplayOrder().map(k => { const g = ahsGoalInfo(k); if (!g) return ''; return `<option value="${k}">${g.icon} ${escapeHtml(ahsGoalLabel(k, lang))}</option>`; }).join('');
+    catSel.value = filterState.goal;
+  } else {
+    catSel.innerHTML = `<option value="all">${t('filter_category')}: ${t('filter_all')}</option>` +
+      CATEGORIES.map(c => `<option value="${slugify(c)}">${escapeHtml(c)}</option>`).join('');
+    catSel.value = filterState.category;
+  }
 
   priceSel.innerHTML = `
     <option value="all">${t('price_all')}</option>
@@ -295,10 +434,27 @@ const AHS_SITE = 'https://agnesherbalsupplements.com';
 // ukurasa unaotengenezwa "on the fly" na functions/products/[slug].js kwa
 // muundo /products/jina-la-bidhaa (bila kiambishi cha id, bila .html) — ona
 // productSlug() ndani ya functions/_lib/seo.js, tuliyoiga hapa kwa usahihi.
+// Bidhaa 11 za awali zina typo kwenye jina la FAILI tuli (jina la bidhaa lilisahihishwa, faili halikubadilishwa).
+// Jedwali hili linahakikisha link ni ile halisi inayofunguka (si ile inayotokana na jina lililosahihishwa).
+const AHS_STATIC_SLUG_OVERRIDES = {
+  34: 'p34-boobs-enlargeent-and-lifting-tea', 77: 'p77-bbli-breast-curve-gummies', 91: 'p91-bbi-gummies',
+  92: 'p92-clutathione-whitening-collagen-gummies', 114: 'p114-fat-burnergar-garcinia-cambogia-tablet',
+  118: 'p118-nn-a-tabl', 125: 'p125-28-days-detox-plus-flat-tumy-tablet', 180: 'p180-prostate-haalth-capsules',
+  196: 'p196-turmeric-ginger-comolex', 235: 'p235-nad-nmn-alternatne-resveratrol',
+  246: 'p246-green-plun-probiotie-fber-drink-jelly'
+};
 function productPageUrl(p) {
-  const slug = slugify(p.name) || ('bidhaa-' + p.id);
-  if (PRODUCTS[p.id] !== undefined) return `${AHS_SITE}/products/p${p.id}-${slug}.html`;
-  return `${AHS_SITE}/products/${slug}`;
+  if (PRODUCTS[p.id] !== undefined && AHS_STATIC_SLUG_OVERRIDES[p.id]) return `${AHS_SITE}/products/${AHS_STATIC_SLUG_OVERRIDES[p.id]}`;
+  // Muundo mmoja kwa bidhaa zote: /products/p<namba>-<jina> (bila .html).
+  // Bidhaa za awali: jina la ORIGINAL (kama kwenye faili tuli), si jina lililobadilishwa kwenye admin.
+  const orig = (PRODUCTS[p.id] !== undefined && PRODUCTS[p.id].name) ? PRODUCTS[p.id].name : p.name;
+  const slug = slugify(orig) || ('bidhaa-' + p.id);
+  if (PRODUCTS[p.id] !== undefined) return `${AHS_SITE}/products/p${p.id}-${slug}`;
+  // Slug ya admin (Hariri → SEO) inashinda, sawa na seva (mergeOverride kwenye functions/_lib/seo.js).
+  const ovSlug = (typeof productOverrides !== 'undefined' && productOverrides[p.id] && productOverrides[p.id].slug) || '';
+  const custom = slugify(ovSlug || p.slug || '');
+  if (custom) return `${AHS_SITE}/products/${/^\d+-/.test(custom) ? 'p' + custom : custom}`;
+  return `${AHS_SITE}/products/p${p.id}-${slug}`;
 }
 function absoluteImageUrl(p) {
   const img = p.cover || (p.images && p.images[0]) || ('images/' + p.file);
@@ -366,7 +522,7 @@ function productCardHTML(p) {
   const badges = [];
   if (p.dealPct) badges.push(`<span class="deal-badge">-${p.dealPct}%</span>`);
   else if (p.bestseller) badges.push(`<span class="pg-badge best">🔥 Best</span>`);
-  const isNew = (new Date() - new Date(p.dateAdded)) / (1000*60*60*24) < 20;
+  const isNew = (Date.now() - productSortDate(p)) / (1000*60*60*24) < 20 && productSortDate(p) > 0;
   if (!p.dealPct && isNew) badges.push(`<span class="pg-badge new">✨ New</span>`);
   if (typeof p.stock === 'number') {
     if (p.stock <= 0) badges.push(`<span class="pg-badge stock-out">Imeisha</span>`);
@@ -386,7 +542,7 @@ function productCardHTML(p) {
         <img data-src="${p.cover || (p.images && p.images[0]) || ('images/' + p.file)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async" class="lazy-fade">
       </div>
       <div class="pg-caption">
-        <div class="pg-rating">${starString(p.rating)} <span class="count">(${p.reviewCount})</span></div>
+        ${(() => { const st = getRatingStats(p.id); return st.count > 0 ? `<div class="pg-rating">${starString(st.rating)} <span class="count">(${st.count})</span></div>` : ''; })()}
         <b>${escapeHtml(p.name)}</b><span>${escapeHtml(translateEffect(p.effect))}</span>${priceHTML}
       </div>
       <div class="pg-quickbar">
@@ -428,6 +584,7 @@ function initRevealObserver() {
 function renderGrid() {
   const wrap = document.getElementById('gallery-wrap');
   const list = getFilteredSorted();
+  if (typeof renderCategoryChips === 'function') renderCategoryChips();
   document.getElementById('resultsCount').textContent = `${list.length} / ${allBaseProducts().length} bidhaa`;
   if (list.length === 0) {
     const query = (filterState.keywordSet && filterState.keywordSet.length) ? '' : filterState.search.trim();
@@ -504,6 +661,7 @@ function initSearch() {
 
   input.addEventListener('input', () => {
     filterState.search = input.value;
+    filterState.goal = 'all';
     filterState.keywordSet = null;
     if (filterState.imageSearch) clearImageSearch();
     const hgReset = document.getElementById('health-goal-filter');
@@ -557,7 +715,12 @@ function openProduct(id) {
   if (currentProduct.caption) { capEl.textContent = currentProduct.caption; capEl.style.display = 'block'; }
   else { capEl.style.display = 'none'; }
   document.getElementById('modalQty').textContent = currentQty;
-  document.getElementById('modalRating').innerHTML = `${starString(currentProduct.rating)} <span class="count">${currentProduct.rating} (${currentProduct.reviewCount} ${t('rating_reviews')})</span>`;
+  const headerStats = getRatingStats(currentProduct.id);
+  const modalRatingEl = document.getElementById('modalRating');
+  modalRatingEl.innerHTML = headerStats.count > 0
+    ? `${starString(headerStats.rating)} <span class="count">${headerStats.rating} (${headerStats.count} ${t('rating_reviews')})</span>`
+    : '';
+  modalRatingEl.style.display = headerStats.count > 0 ? '' : 'none';
   updateWishlistCompareBtns();
 
   renderAvailability(currentProduct);
@@ -570,15 +733,17 @@ function openProduct(id) {
   renderProductFaq(currentProduct);
   updateStickyBuyBar(currentProduct);
 
-  // reviews
-  document.getElementById('modalScore').textContent = currentProduct.rating.toFixed(1);
-  document.getElementById('modalStars').textContent = starString(currentProduct.rating);
-  document.getElementById('modalReviewCount').textContent = `${currentProduct.reviewCount} ${t('rating_reviews')}`;
-  renderRatingBars(currentProduct);
+  // reviews — real reviews only (Admin → Maoni). Nothing is fabricated here;
+  // if a product has no genuine reviews yet, we show an honest empty state.
   const customReviews = lsGet('ahs_reviews_custom', {})[id] || [];
-  const generated = getProductReviews(id, Math.min(3, currentProduct.reviewCount));
+  document.getElementById('modalScore').textContent = headerStats.count > 0 ? headerStats.rating.toFixed(1) : '—';
+  document.getElementById('modalStars').textContent = headerStats.count > 0 ? starString(headerStats.rating) : '';
+  document.getElementById('modalReviewCount').textContent = headerStats.count > 0
+    ? `${headerStats.count} ${t('rating_reviews')}`
+    : t('no_reviews_yet');
+  renderRatingBars(customReviews);
   const lang = getLang();
-  const revHtml = customReviews.concat(generated).slice(0, 5).map(r => {
+  const revHtml = customReviews.slice(0, 5).map(r => {
     const rname = r.name || '';
     const initials = rname.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('') || '?';
     return `
@@ -586,12 +751,12 @@ function openProduct(id) {
       <div class="rav">${initials}</div>
       <div class="rbody">
         <div class="rname">${escapeHtml(rname)}</div>
-        <div class="stars">${starString(r.rating || currentProduct.rating)}</div>
+        <div class="stars">${starString(r.rating || 0)}</div>
         <p>${escapeHtml(pickLangText(r, lang) || r.comment || '')}</p>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('modalReviewsList').innerHTML = revHtml;
+  document.getElementById('modalReviewsList').innerHTML = revHtml || `<p class="review-empty" style="font-size:.85rem; color:var(--ink-soft, #777); padding:6px 0;">${t('no_reviews_yet_cta')}</p>`;
 
   // share links
   const shareText = encodeURIComponent(`${currentProduct.name} - ${fmt(currentProduct.prices.retail)} - Agnes Herbal Supplements`);
@@ -603,7 +768,7 @@ function openProduct(id) {
 
   // related products
   const related = visibleProducts().filter(p => p.category === currentProduct.category && p.id !== id)
-    .sort((a,b) => b.rating - a.rating).slice(0, 4);
+    .sort((a,b) => (getRatingStats(b.id).rating - getRatingStats(a.id).rating) || (b.bestseller - a.bestseller)).slice(0, 4);
   document.getElementById('relatedGrid').innerHTML = related.map(p => `
     <div class="pg-item" data-id="${p.id}" style="cursor:pointer;">
       <img data-src="${p.cover || (p.images && p.images[0]) || ('images/' + p.file)}" alt="${escapeHtml(p.name)}" loading="lazy" class="lazy-fade">
@@ -805,10 +970,13 @@ function toggleProductFaq(i) {
 }
 
 /* ---------- rating distribution bars ---------- */
-function renderRatingBars(product) {
+// Counts the actual star value of each genuine review — no simulated
+// breakdown. If there are no real reviews yet, the bars area is cleared.
+function renderRatingBars(reviews) {
   const el = document.getElementById('modalRatingBars');
   if (!el) return;
-  const dist = buildRatingDistribution(product.rating, product.reviewCount);
+  if (!reviews || !reviews.length) { el.innerHTML = ''; return; }
+  const dist = buildRatingDistribution(reviews);
   const max = Math.max(1, ...dist.map(d => d.count));
   el.innerHTML = dist.map(d => `
     <div class="rs-bar-row">
@@ -980,24 +1148,27 @@ function renderComparePanel() {
     <tr><th>Bei (Retail)</th>${items.map(p => `<td>${fmt(p.prices.retail)}</td>`).join('')}</tr>
     <tr><th>Bei (5+)</th>${items.map(p => `<td>${fmt(p.prices.w5)}</td>`).join('')}</tr>
     <tr><th>Bei (10+)</th>${items.map(p => `<td>${fmt(p.prices.w10)}</td>`).join('')}</tr>
-    <tr><th>Ukadiriaji</th>${items.map(p => `<td>${starString(p.rating)} (${p.rating})</td>`).join('')}</tr>
+    <tr><th>Ukadiriaji</th>${items.map(p => { const st = getRatingStats(p.id); return `<td>${st.count > 0 ? `${starString(st.rating)} (${st.rating})` : '—'}</td>`; }).join('')}</tr>
   </table>`;
   body.querySelectorAll('[data-remove]').forEach(el => el.addEventListener('click', () => toggleCompare(parseInt(el.dataset.remove,10))));
 }
 
-/* ===================== RECENTLY VIEWED ===================== */
+/* ===================== RECENTLY VIEWED =====================
+   Sasa ni SECTION yake huru (id="recentlyViewed", HTML: index.html) badala ya kuwa
+   div ndani ya "Bidhaa Zetu Zote" — hivyo inaweza kupangwa (⬆️⬇️) peke yake kwenye
+   "🎯 Mpangilio wa Duka" → "📐 Mpangilio wa Sehemu za Ukurasa", sawa na sehemu
+   nyingine zote za homepage. Angalia HOMEPAGE_SECTIONS hapo juu. */
 function renderRecentlyViewed() {
+  const section = document.getElementById('recentlyViewed');
   const wrap = document.getElementById('recentlyViewedWrap');
   if (!wrap) return;
-  if (recentlyViewed.length === 0) { wrap.innerHTML = ''; return; }
+  if (recentlyViewed.length === 0) { wrap.innerHTML = ''; if (section) section.style.display = 'none'; return; }
   const items = recentlyViewed.map(id => getEffectiveProduct(id)).filter(Boolean).slice(0, 8);
-  wrap.innerHTML = `<h3 style="color:var(--green-deep); margin:40px 0 16px; font-size:1.1rem;">${t('recently_viewed')}</h3>
-    <div class="gallery-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));">
-      ${items.map(p => `<div class="pg-item" data-open="${p.id}" style="cursor:pointer;">
+  if (section) section.style.display = 'block';
+  wrap.innerHTML = items.map(p => `<div class="pg-item" data-open="${p.id}" style="cursor:pointer;">
         <img src="${p.cover || (p.images && p.images[0]) || ('images/' + p.file)}" alt="${escapeHtml(p.name)}" loading="lazy">
         <div class="pg-caption"><b>${escapeHtml(p.name)}</b><em>${fmt(p.prices.retail)}</em></div>
-      </div>`).join('')}
-    </div>`;
+      </div>`).join('');
   wrap.querySelectorAll('[data-open]').forEach(el => el.addEventListener('click', () => openProduct(parseInt(el.dataset.open,10))));
 }
 
@@ -1099,6 +1270,100 @@ function fallbackCopy(value, onDone) {
   }
 }
 
+/* ===================== AD SOURCE (facebook/instagram/tiktok/whatsapp/direct) ===================== */
+// Mteja akifika kwa link yenye ?src=facebook (ndani ya Ad), tunahifadhi chanzo hicho
+// kwa dakika za kikao (session) ili kikaonekane kwenye oda yake mwishoni — hii
+// ndiyo inayowezesha ku-track ni Ad ipi inayoleta mauzo zaidi.
+const AHS_VALID_SOURCES = ['facebook', 'instagram', 'tiktok', 'website', 'whatsapp', 'direct'];
+function captureOrderSource() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    let src = (params.get('src') || params.get('utm_source') || '').toLowerCase().trim();
+    if (src && !AHS_VALID_SOURCES.includes(src)) {
+      if (src.includes('fb') || src.includes('face')) src = 'facebook';
+      else if (src.includes('ig') || src.includes('insta')) src = 'instagram';
+      else if (src.includes('tt') || src.includes('tiktok')) src = 'tiktok';
+      else if (src.includes('wa') || src.includes('whatsapp')) src = 'whatsapp';
+      else src = 'website';
+    }
+    if (src) sessionStorage.setItem('ahs_order_source', src);
+  } catch (e) { /* ignore */ }
+}
+function getOrderSource() {
+  try { return sessionStorage.getItem('ahs_order_source') || 'direct'; } catch (e) { return 'direct'; }
+}
+document.addEventListener('DOMContentLoaded', captureOrderSource);
+
+/* ===================== ORDER NOW deep link (kutoka product landing page) ===================== */
+// Product landing pages (/products/*.html) zina button "🛒 ORDER NOW" inayompeleka
+// mteja hapa na ?orderNow=<id>&qty=<n> — tunaongeza bidhaa hiyo kwenye kikapu
+// moja kwa moja na kufungua fomu ya order, badala ya kumlazimu atafute bidhaa upya.
+function handleOrderNowParam() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const orderNowId = params.get('orderNow');
+    if (orderNowId === null) return;
+    const qty = Math.max(1, parseInt(params.get('qty'), 10) || 1);
+    const id = parseInt(orderNowId, 10);
+    if (Number.isNaN(id) || typeof getEffectiveProduct !== 'function') return;
+    let done = false;
+    const tryAdd = () => {
+      if (done) return true;
+      const p = getEffectiveProduct(id);
+      if (!p) return false;
+      done = true;
+      if (cart[id]) cart[id].qty += qty; else cart[id] = { ...p, qty: qty };
+      lsSet('ahs_cart', cart);
+      if (typeof updateCartUI === 'function') updateCartUI();
+      if (typeof openCart === 'function') openCart();
+      if (typeof showToast === 'function') showToast(`${escapeHtml(p.name)} imewekwa kwenye kikapu — kamilisha taarifa zako kuagiza.`);
+      if (typeof ahsTrackEvent === 'function') {
+        ahsTrackEvent('add_to_cart', { content_name: p.name, content_ids: [String(id)], content_type: 'product', value: p.prices.retail * qty, currency: 'TZS' });
+      }
+      return true;
+    };
+    if (tryAdd()) return;
+    // Bidhaa mpya za admin (customProducts) hupakiwa kutoka Firestore baada ya ukurasa kufunguka.
+    // Mteja mpya (asiye na cache) angepoteza ORDER NOW — kwa hiyo tunasubiri kwa hadi sekunde 15.
+    let tries = 0;
+    const iv = setInterval(() => {
+      tries++;
+      if (tryAdd()) { clearInterval(iv); return; }
+      if (tries >= 50) {
+        clearInterval(iv);
+        if (typeof showToast === 'function') showToast('Bidhaa haikupatikana kwa sasa. Tafadhali itafute dukani au tuandikie WhatsApp.');
+      }
+    }, 300);
+  } catch (e) { /* ignore */ }
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(handleOrderNowParam, 0); });
+
+/* ===================== DEEP LINK: /#product-<id> (kitufe cha "Ona kwenye Duka" + viungo vya kushare) ===================== */
+// Kabla ya hili, #product-<id> haikufanya kitu: mteja alifika ukurasa wa mwanzo tu.
+// Sasa inafungua dirisha la bidhaa hiyo moja kwa moja (inasubiri bidhaa mpya za admin zipakiwe kutoka Firestore).
+function handleProductHash() {
+  try {
+    const m = /^#product-(\d+)$/.exec(window.location.hash || '');
+    if (!m) return;
+    const id = parseInt(m[1], 10);
+    if (typeof getEffectiveProduct !== 'function' || typeof openProduct !== 'function') return;
+    let tries = 0;
+    const tryOpen = () => {
+      const p = getEffectiveProduct(id);
+      if (!p) return false;
+      openProduct(id);
+      return true;
+    };
+    if (tryOpen()) return;
+    const iv = setInterval(() => {
+      tries++;
+      if (tryOpen() || tries >= 50) clearInterval(iv);
+    }, 300);
+  } catch (e) { /* ignore */ }
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(handleProductHash, 400); });
+window.addEventListener('hashchange', handleProductHash);
+
 /* ===================== CUSTOMER INFO (jina/simu/mkoa) ===================== */
 function getLocationType() {
   const checked = document.querySelector('input[name="custLocationType"]:checked');
@@ -1119,7 +1384,7 @@ function isCustomerInfoFilled() {
   let location = '';
   if (locationType === 'dar') location = (document.getElementById('cartDarArea') || {}).value || '';
   else if (locationType === 'mkoani') location = (document.getElementById('cartCustRegion') || {}).value || '';
-  return !!(name.trim() && phone.trim() && locationType && location.trim());
+  return !!(name.trim() && (typeof isValidTzPhone === 'function' ? isValidTzPhone(phone) : phone.trim()) && locationType && location.trim());
 }
 function updateCheckoutButtonsState() {
   const ready = isCustomerInfoFilled();
@@ -1128,25 +1393,48 @@ function updateCheckoutButtonsState() {
   if (invBtn) invBtn.disabled = !ready;
   if (waBtn) waBtn.disabled = !ready;
 }
+// Tanzania phone numbers: 06XXXXXXXX / 07XXXXXXXX (10 digits) or +255XXXXXXXXX (international).
+// Spaces/dashes ndani ya namba zinapuuzwa kabla ya kuangalia muundo.
+function isValidTzPhone(raw) {
+  if (!raw) return false;
+  const v = raw.replace(/[\s-]/g, '');
+  return /^0[67]\d{8}$/.test(v) || /^\+255[67]\d{8}$/.test(v) || /^255[67]\d{8}$/.test(v);
+}
 function getCustomerInfo() {
   const nameEl = document.getElementById('cartCustName');
   const phoneEl = document.getElementById('cartCustPhone');
+  const altPhoneEl = document.getElementById('cartCustAltPhone');
   const darAreaEl = document.getElementById('cartDarArea');
   const regionEl = document.getElementById('cartCustRegion');
+  const districtEl = document.getElementById('cartCustDistrict');
+  const wardEl = document.getElementById('cartCustWard');
+  const notesEl = document.getElementById('cartCustNotes');
   const name = nameEl ? nameEl.value.trim() : '';
   const phone = phoneEl ? phoneEl.value.trim() : '';
+  const altPhone = altPhoneEl ? altPhoneEl.value.trim() : '';
+  const district = districtEl ? districtEl.value.trim() : '';
+  const ward = wardEl ? wardEl.value.trim() : '';
+  const notes = notesEl ? notesEl.value.trim() : '';
   const locationType = getLocationType();
   const region = locationType === 'dar' ? (darAreaEl ? darAreaEl.value.trim() : '') : (regionEl ? regionEl.value.trim() : '');
   const locationEl = locationType === 'dar' ? darAreaEl : regionEl;
-  [ [nameEl,name], [phoneEl,phone] ].forEach(([el,val]) => {
-    if (el) el.classList.toggle('ccf-invalid', !val);
+  const phoneOk = isValidTzPhone(phone);
+  const hintEl = document.getElementById('cartPhoneHint');
+  if (hintEl) {
+    if (!phone) { hintEl.textContent = ''; }
+    else if (!phoneOk) { hintEl.textContent = '⚠️ Weka namba sahihi: 07XXXXXXXX, 06XXXXXXXX au +255XXXXXXXXX'; hintEl.style.color = '#b23a3a'; }
+    else { hintEl.textContent = ''; }
+  }
+  [ [nameEl,!!name], [phoneEl,phoneOk] ].forEach(([el,ok]) => {
+    if (el) el.classList.toggle('ccf-invalid', !ok);
   });
   if (locationEl) locationEl.classList.toggle('ccf-invalid', !region);
   const locToggle = document.querySelector('.ccf-toggle');
   if (locToggle) locToggle.classList.toggle('ccf-invalid', !locationType);
-  if (!name || !phone || !locationType || !region) return null;
-  lsSet('ahs_customer_info', { name, phone, region, locationType });
-  return { name, phone, region, locationType };
+  if (!name || !phoneOk || !locationType || !region) return null;
+  const info = { name, phone, altPhone, region, district, ward, notes, locationType };
+  lsSet('ahs_customer_info', info);
+  return info;
 }
 function regionLabel(key) {
   return key.split(' ').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
@@ -1234,7 +1522,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameEl = document.getElementById('cartCustName');
   if (nameEl) nameEl.addEventListener('input', updateCheckoutButtonsState);
   const phoneEl = document.getElementById('cartCustPhone');
-  if (phoneEl) phoneEl.addEventListener('input', updateCheckoutButtonsState);
+  if (phoneEl) phoneEl.addEventListener('input', () => { getCustomerInfo(); updateCheckoutButtonsState(); });
 });
 
 function prefillCustomerInfo() {
@@ -1242,10 +1530,16 @@ function prefillCustomerInfo() {
   if (!saved) return;
   const nameEl = document.getElementById('cartCustName');
   const phoneEl = document.getElementById('cartCustPhone');
+  const altPhoneEl = document.getElementById('cartCustAltPhone');
   const darAreaEl = document.getElementById('cartDarArea');
   const regionEl = document.getElementById('cartCustRegion');
+  const districtEl = document.getElementById('cartCustDistrict');
+  const wardEl = document.getElementById('cartCustWard');
   if (nameEl && !nameEl.value) nameEl.value = saved.name || '';
   if (phoneEl && !phoneEl.value) phoneEl.value = saved.phone || '';
+  if (altPhoneEl && !altPhoneEl.value) altPhoneEl.value = saved.altPhone || '';
+  if (districtEl && !districtEl.value) districtEl.value = saved.district || '';
+  if (wardEl && !wardEl.value) wardEl.value = saved.ward || '';
   if (saved.locationType) {
     const radio = document.getElementById(saved.locationType === 'dar' ? 'locDar' : 'locMkoani');
     if (radio) { radio.checked = true; toggleLocationFields(); }
@@ -1305,6 +1599,13 @@ function showInvoice() {
   document.getElementById('invCustName').textContent = customer.name;
   document.getElementById('invCustPhone').textContent = customer.phone;
   document.getElementById('invCustRegion').textContent = customer.region;
+  const altWrapEl = document.getElementById('invCustAltPhoneWrap');
+  if (altWrapEl) { altWrapEl.style.display = customer.altPhone ? '' : 'none'; document.getElementById('invCustAltPhone').textContent = customer.altPhone || ''; }
+  const dwWrapEl = document.getElementById('invCustDistrictWardWrap');
+  if (dwWrapEl) {
+    const parts = [customer.district, customer.ward].filter(Boolean);
+    dwWrapEl.textContent = parts.length ? ' (' + parts.join(', ') + ')' : '';
+  }
   document.getElementById('invShippingRuleText').textContent = shipInfo.isDar
     ? 'Dar es Salaam: unalipia ukishapokea bidhaa (malipo baada ya kupokea).'
     : 'Mikoani: malipo hufanyika kabla ya kutuma bidhaa (mkoani unalipia kwanza).';
@@ -1328,7 +1629,7 @@ function showInvoice() {
   // save order record for tracking + admin dashboard (only once per invoice generation)
   const orders = lsGet('ahs_orders', []);
   if (!orders.find(o => o.id === lastOrderNo)) {
-    const orderRecord = { id: lastOrderNo, items: items.map(i => ({ name: i.name, qty: i.qty, unit: unitPriceFor(i, i.qty) })), total: finalTotal, date: now.toISOString(), status: 'placed', customerName: customer.name, customerPhone: customer.phone, customerRegion: customer.region, shippingCost: shippingCost };
+    const orderRecord = { id: lastOrderNo, items: items.map(i => ({ name: i.name, qty: i.qty, unit: unitPriceFor(i, i.qty) })), total: finalTotal, date: now.toISOString(), status: 'placed', customerName: customer.name, customerPhone: customer.phone, altPhone: customer.altPhone || '', customerRegion: customer.region, district: customer.district || '', ward: customer.ward || '', notes: customer.notes || '', shippingCost: shippingCost, source: (typeof getOrderSource === 'function' ? getOrderSource() : 'direct') };
     orders.unshift(orderRecord);
     lsSet('ahs_orders', orders);
     // Live sync to admin panel (no-op silently if Firebase isn't configured yet)
@@ -1373,7 +1674,12 @@ function checkoutWhatsApp() {
   } else {
     msg += `\n⚠️ (Eneo hili halijapatikana kwenye orodha — bei ya usafiri itathibitishwa na Agnes Herbal Store baada ya oda hii)\n`;
   }
-  msg += `\nJumla ya Kulipa: Tsh ${Math.round(finalTotal).toLocaleString('en-US')}\nNamba ya Oda: ${lastOrderNo || ''}\n\nJina langu: ${customer.name}\nNamba ya Simu: ${customer.phone}\nMahali (Mkoa): ${customer.region}`;
+  msg += `\nJumla ya Kulipa: Tsh ${Math.round(finalTotal).toLocaleString('en-US')}\nNamba ya Oda: ${lastOrderNo || ''}\n\nJina langu: ${customer.name}\nNamba ya Simu: ${customer.phone}`;
+  if (customer.altPhone) msg += `\nNamba Mbadala: ${customer.altPhone}`;
+  msg += `\nMahali (Mkoa): ${customer.region}`;
+  if (customer.district) msg += `\nWilaya: ${customer.district}`;
+  if (customer.ward) msg += `\nKata/Mtaa: ${customer.ward}`;
+  if (customer.notes) msg += `\nMaelezo: ${customer.notes}`;
   if (!shipInfo.isDar) {
     msg += `\n\nKanuni: kwa oda za mikoani, malipo hufanyika kabla ya kutuma bidhaa (mkoani unalipia kwanza).`;
   } else {
@@ -1422,16 +1728,21 @@ function closeOrderHistory() {
 }
 
 /* ===================== TESTIMONIALS ===================== */
+// Real reviews only (Admin → Maoni). If none exist yet, the section is
+// hidden rather than filled with placeholder/fabricated quotes.
 function renderTestimonials() {
   const grid = document.getElementById('testimonialGrid');
+  const section = document.getElementById('maoni');
   if (!grid) return;
   const lang = getLang();
-  const picks = [REVIEW_POOL[0], REVIEW_POOL[2], REVIEW_POOL[4]];
+  const picks = getAllRealReviews().slice(0, 6);
+  if (!picks.length) { if (section) section.style.display = 'none'; return; }
+  if (section) section.style.display = '';
   grid.innerHTML = picks.map(r => `
     <div class="testimonial-card reveal">
-      <div class="stars">★★★★★</div>
-      <p>"${escapeHtml(pickLangText(r, lang))}"</p>
-      <b>— ${escapeHtml(r.name)}</b>
+      <div class="stars">${starString(r.rating || 0)}</div>
+      <p>"${escapeHtml(pickLangText(r, lang) || r.comment || '')}"</p>
+      <b>— ${escapeHtml(r.name || '')}</b>
     </div>`).join('');
   initRevealObserver();
 }
@@ -1600,12 +1911,25 @@ const VIDEO_EMBEDS = {
   3: null
 };
 function renderVideoSlots() {
+  let anyVideoSet = false;
   document.querySelectorAll('.video-placeholder[data-slot]').forEach(el => {
     const id = VIDEO_EMBEDS[el.dataset.slot];
+    const card = el.closest('.video-card');
     if (id) {
+      anyVideoSet = true;
       el.outerHTML = `<div class="video-frame-wrap"><iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}" loading="lazy" allowfullscreen title="Agnes Herbal Supplements video"></iframe></div>`;
+    } else if (card) {
+      // Hakuna video bado kwa nafasi hii — usimwonyeshe mteja placeholder,
+      // ficha kadi hii nzima badala yake.
+      card.style.display = 'none';
     }
   });
+  // Kama hakuna video hata moja iliyowekwa, ficha section nzima ya video
+  // badala ya kuonyesha ukurasa tupu / bidhaa isiyo na maudhui kwa mteja.
+  if (!anyVideoSet) {
+    const section = document.getElementById('video');
+    if (section) section.style.display = 'none';
+  }
 }
 
 /* ===================== APP UPDATE PUSH (kupokea + kuthibitisha) ===================== */
@@ -1684,6 +2008,7 @@ function onLangChanged() {
   updateCartUI();
   updateWishlistCompareBtns();
   renderRecentlyViewed();
+  applySectionMeta();
   if (currentProduct) openProduct(currentProduct.id);
 }
 
@@ -1706,7 +2031,8 @@ function ahsScrollToResults() {
 /* ===================== INIT ===================== */
 function initFilterEvents() {
   document.getElementById('categorySelect').addEventListener('change', (e) => {
-    filterState.category = e.target.value;
+    if (typeof GOAL_GROUPS !== 'undefined') { filterState.goal = e.target.value; filterState.category = 'all'; }
+    else { filterState.category = e.target.value; filterState.goal = 'all'; }
     filterState.keywordSet = null;
     const hgReset = document.getElementById('health-goal-filter');
     if (hgReset) hgReset.value = 'all';
@@ -1731,6 +2057,7 @@ function initFilterEvents() {
       }
       filterState.search = '';
       filterState.category = 'all';
+      filterState.goal = 'all';
       const catSel = document.getElementById('categorySelect');
       if (catSel) catSel.value = 'all';
       const searchInput = document.getElementById('searchInput');
@@ -1770,20 +2097,37 @@ function initLiveBadge() {
 function renderCategoryChips() {
   const wrap = document.getElementById('categoryChips');
   if (!wrap) return;
-  const chips = [`<button type="button" class="cat-chip ${filterState.category === 'all' ? 'active' : ''}" data-chip="all">${t('filter_all')}</button>`]
-    .concat(CATEGORIES.map(c => {
-      const slug = slugify(c);
-      return `<button type="button" class="cat-chip ${filterState.category === slug ? 'active' : ''}" data-chip="${slug}">${escapeHtml(c)}</button>`;
-    }));
-  wrap.innerHTML = chips.join('');
+  // Chips sasa ni makundi ya KAZI (Kupunguza Uzito, Kinga, Uzazi...) kwa mfuatano wa admin.
+  // Kichujio cha "Kundi" (aina: Tea/Gummies/...) kimebaki kwenye #categorySelect.
+  const lang = getLang();
+  const allChip = `<button type="button" class="cat-chip ${(filterState.goal === 'all') ? 'active' : ''}" data-chip="all">${t('filter_all')}</button>`;
+  if (typeof GOAL_GROUPS === 'undefined' || typeof ahsGoalDisplayOrder !== 'function') {
+    wrap.innerHTML = allChip;
+  } else {
+    const hidden = ahsGoalHiddenSet();
+    const counts = {};
+    allBaseProducts().forEach(p => { const g = ahsGoalOf(p); counts[g] = (counts[g] || 0) + 1; });
+    const chips = ahsGoalDisplayOrder()
+      .filter(k => counts[k] && (!hidden.has(k) || filterState.goal === k))
+      .map(k => {
+        const g = ahsGoalInfo(k);
+        if (!g) return '';
+        return `<button type="button" class="cat-chip ${filterState.goal === k ? 'active' : ''}" data-chip="${k}">${g.icon} ${escapeHtml(ahsGoalLabel(k, lang))}</button>`;
+      });
+    wrap.innerHTML = [allChip].concat(chips).join('');
+  }
+  if (typeof renderShopByCategory === 'function') renderShopByCategory();
   wrap.querySelectorAll('[data-chip]').forEach(btn => {
     btn.addEventListener('click', () => {
-      filterState.category = btn.dataset.chip;
+      filterState.goal = btn.dataset.chip;
+      filterState.category = 'all';
       filterState.keywordSet = null;
+      filterState.search = '';
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) searchInput.value = '';
       const hgReset = document.getElementById('health-goal-filter');
       if (hgReset) hgReset.value = 'all';
       renderFilterControls();
-      renderCategoryChips();
       renderGrid();
       ahsScrollToResults();
     });
@@ -1796,9 +2140,8 @@ function renderNewProducts() {
   const grid = document.getElementById('newProductsGrid');
   if (!section || !grid) return;
   const list = allBaseProducts()
-    .filter(p => p.dateAdded)
     .slice()
-    .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded))
+    .sort((a, b) => productSortDate(b) - productSortDate(a))
     .slice(0, 12);
   if (!list.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
@@ -1855,6 +2198,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('compareCount').textContent = compareList.length;
   renderFilterControls();
   showSkeletonThenRender();
+  applyHomepageSectionOrder();
+  applySectionMeta();
   initFilterEvents();
   initSearch();
   renderRecentlyViewed();
@@ -2025,8 +2370,10 @@ function initCloudProductSync() {
 function initCloudHomepageSettingsSync() {
   if (typeof cloudListenHomepageSettings !== 'function') return;
   cloudListenHomepageSettings((data) => {
-    homepageSettings = { featuredToday: (data && data.featuredToday) || [], categoryOffers: (data && data.categoryOffers) || {} };
+    homepageSettings = { featuredToday: (data && data.featuredToday) || [], categoryOffers: (data && data.categoryOffers) || {}, sectionOrder: (data && data.sectionOrder) || [], goalOrder: (data && data.goalOrder) || [], goalHidden: (data && data.goalHidden) || [], goalCustom: (data && data.goalCustom) || [], goalLabels: (data && data.goalLabels) || {}, goalAssign: (data && data.goalAssign) || {}, sectionMeta: (data && data.sectionMeta) || {} };
     lsSet('ahs_homepage_settings', homepageSettings);
+    applyHomepageSectionOrder();
+    applySectionMeta();
     cloudRerenderNow();
   });
 }
@@ -2079,6 +2426,7 @@ function initCloudCustomProductsSync() {
 function resetToHomeDefaults() {
   filterState.search = '';
   filterState.category = 'all';
+  filterState.goal = 'all';
   filterState.price = 'all';
   filterState.sort = 'default';
   filterState.keywordSet = null;

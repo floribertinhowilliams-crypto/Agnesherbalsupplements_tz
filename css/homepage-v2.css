@@ -100,11 +100,11 @@
 
 /* ---------- STATISTICS COUNTER ---------- */
 .stats-counter{background:linear-gradient(120deg, var(--green-deep), var(--green)); padding:56px 0; color:#fff;}
-.sc-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px; text-align:center;}
+.sc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; text-align:center;}
 .sc-icon{font-size:1.8rem; margin-bottom:8px;}
 .sc-num{font-family:'Fraunces',serif; font-size:2.4rem; font-weight:700; line-height:1;}
 .sc-label{font-size:.82rem; opacity:.88; margin-top:6px;}
-@media(max-width:768px){ .sc-grid{grid-template-columns:repeat(2,1fr); gap:32px 20px;} }
+@media(max-width:768px){ .sc-grid{grid-template-columns:repeat(3,1fr); gap:16px 10px;} }
 
 /* ---------- BRANDS / TRUST STRIP ---------- */
 .brands-strip{padding:44px 0;}

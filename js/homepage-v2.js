@@ -72,7 +72,7 @@ function hpCardHTML(p, opts) {
         <img src="${hpImgSrc(p)}" alt="${hp_esc(p.name)}" loading="lazy">
       </div>
       <div class="pg-caption">
-        <div class="pg-rating">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5 - Math.round(p.rating))} <span class="count">(${p.reviewCount})</span></div>
+        ${(() => { const st = getRatingStats(p.id); return st.count > 0 ? `<div class="pg-rating">${'★'.repeat(Math.round(st.rating))}${'☆'.repeat(5 - Math.round(st.rating))} <span class="count">(${st.count})</span></div>` : ''; })()}
         <b>${hp_esc(p.name)}</b><span>${hp_esc(translateEffect(p.effect))}</span>
         ${priceHTML}
       </div>
@@ -200,7 +200,10 @@ function renderDailyDeals() {
 function renderBestSellers() {
   const grid = document.getElementById('bestSellersGrid');
   if (!grid) return;
-  const list = hp_products().filter(p => p.bestseller).sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount).slice(0, 10);
+  const list = hp_products().filter(p => p.bestseller).sort((a, b) => {
+    const as = getRatingStats(a.id), bs = getRatingStats(b.id);
+    return (bs.rating - as.rating) || (bs.count - as.count) || (new Date(b.dateAdded) - new Date(a.dateAdded));
+  }).slice(0, 10);
   grid.innerHTML = list.map(p => hpCardHTML(p)).join('');
   hpBindCards(grid);
 }
@@ -218,7 +221,10 @@ function renderNewArrivals() {
 function renderTrending() {
   const grid = document.getElementById('trendingGrid');
   if (!grid) return;
-  const list = [...hp_products()].sort((a, b) => (b.reviewCount * b.rating) - (a.reviewCount * a.rating)).slice(0, 10);
+  const list = [...hp_products()].sort((a, b) => {
+    const as = getRatingStats(a.id), bs = getRatingStats(b.id);
+    return ((bs.count * bs.rating) - (as.count * as.rating)) || (b.bestseller - a.bestseller) || (new Date(b.dateAdded) - new Date(a.dateAdded));
+  }).slice(0, 10);
   grid.innerHTML = list.map(p => hpCardHTML(p)).join('');
   hpBindCards(grid);
 }
@@ -243,8 +249,34 @@ function renderRecentlyAdded() {
 /* ===================== SHOP BY CATEGORY ===================== */
 function renderShopByCategory() {
   const grid = document.getElementById('shopByCategoryGrid');
-  if (!grid || typeof CATEGORIES === 'undefined') return;
+  if (!grid) return;
   const all = hp_products();
+  // Vitufe vikubwa sasa ni makundi ya KAZI ya bidhaa, kwa mfuatano aliopanga admin
+  // (Mpangilio wa Duka → Makundi ya Kazi). Makundi yaliyofichwa na admin hayaonyeshwi hapa.
+  if (typeof GOAL_GROUPS !== 'undefined' && typeof ahsGoalOf === 'function') {
+    const lang = (typeof getLang === 'function') ? getLang() : 'sw';
+    const hidden = ahsGoalHiddenSet();
+    const byGoal = {};
+    all.forEach(p => { const k = ahsGoalOf(p); (byGoal[k] = byGoal[k] || []).push(p); });
+    grid.innerHTML = ahsGoalDisplayOrder().filter(k => byGoal[k] && !hidden.has(k)).map(k => {
+      const g = ahsGoalInfo(k);
+      const items = byGoal[k];
+      const thumb = items[0].cover || (items[0].images && items[0].images[0]) || ('images/' + items[0].file);
+      return `
+      <div class="cat-card" data-goal="${k}">
+        <img src="${thumb}" alt="${hp_esc(ahsGoalLabel(k, lang))}" loading="lazy">
+        <div class="cat-card-body">
+          <b>${g.icon} ${hp_esc(ahsGoalLabel(k, lang))}</b>
+          <span>${items.length} ${t('products_word')}</span>
+        </div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('[data-goal]').forEach(card => {
+      card.addEventListener('click', () => goToGoal(card.dataset.goal));
+    });
+    return;
+  }
+  if (typeof CATEGORIES === 'undefined') return;
   grid.innerHTML = CATEGORIES.map(catName => {
     const slug = (typeof slugify === 'function') ? slugify(catName) : catName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const items = all.filter(p => p.catSlug === slug);
@@ -262,8 +294,18 @@ function renderShopByCategory() {
     card.addEventListener('click', () => goToCategorySlug(card.dataset.cat));
   });
 }
+function goToGoal(key) {
+  if (typeof filterState !== 'undefined') {
+    filterState.goal = key; filterState.category = 'all'; filterState.search = ''; filterState.keywordSet = null;
+  }
+  const si = document.getElementById('searchInput'); if (si) si.value = '';
+  if (typeof renderFilterControls === 'function') renderFilterControls();
+  if (typeof renderGrid === 'function') renderGrid();
+  const target = document.getElementById('bidhaa');
+  if (target) target.scrollIntoView({ behavior: 'smooth' });
+}
 function goToCategorySlug(slug) {
-  if (typeof filterState !== 'undefined') filterState.category = slug;
+  if (typeof filterState !== 'undefined') { filterState.category = slug; filterState.goal = 'all'; }
   const sel = document.getElementById('categorySelect');
   if (sel) sel.value = slug;
   if (typeof renderGrid === 'function') renderGrid();
@@ -302,20 +344,29 @@ function initStatsCounter() {
 }
 
 /* ===================== TESTIMONIALS v2 ===================== */
+// Real reviews only. This carousel's own heading says "real feedback from
+// our loyal customers" — so if there are no genuine reviews yet, the whole
+// section is hidden rather than filled with placeholder quotes.
 function renderTestimonialsV2() {
   const track = document.getElementById('testimonialsV2Track');
-  if (!track || typeof REVIEW_POOL === 'undefined') return;
+  const section = document.getElementById('testimonialsV2');
+  if (!track || typeof getAllRealReviews !== 'function') return;
   const lang = (typeof getLang === 'function') ? getLang() : 'sw';
-  track.innerHTML = REVIEW_POOL.map(r => {
-    const initials = r.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-    const text = pickLangText(r, lang);
+  const reviews = getAllRealReviews().slice(0, 10);
+  if (!reviews.length) { if (section) section.style.display = 'none'; return; }
+  if (section) section.style.display = '';
+  track.innerHTML = reviews.map(r => {
+    const rname = r.name || '';
+    const initials = rname.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+    const text = pickLangText(r, lang) || r.comment || '';
+    const stars = '★'.repeat(Math.round(Number(r.rating) || 0)) + '☆'.repeat(5 - Math.round(Number(r.rating) || 0));
     return `
       <div class="tv2-card">
         <div class="tv2-top">
           <div class="tv2-avatar">${initials}</div>
           <div>
-            <div class="stars">★★★★★</div>
-            <b>${hp_esc(r.name)}</b>
+            <div class="stars">${stars}</div>
+            <b>${hp_esc(rname)}</b>
           </div>
         </div>
         <p>"${hp_esc(text)}"</p>

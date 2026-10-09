@@ -13,6 +13,18 @@ export async function onRequestGet() {
   } catch (e) {
     products = [];
   }
+  // Hifadhi: Firestore ikishindwa kabisa, tumia catalog-snapshot.json ili Google daima aone bidhaa za admin.
+  let snapUrls = '';
+  if (!products.length) {
+    try {
+      const r = await fetch(`${SITE}/catalog-snapshot.json`);
+      if (r.ok) {
+        const snap = await r.json();
+        const today = new Date().toISOString().slice(0, 10);
+        snapUrls = (snap.items || []).filter(i => i && i.url).map(i => `  <url><loc>${escapeXml(i.url)}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>`).join('\n');
+      }
+    } catch (e) { /* endelea */ }
+  }
 
   const urls = products
     .filter(p => p.name)
@@ -38,7 +50,7 @@ export async function onRequestGet() {
     })
     .join('\n');
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">\n${urls}\n</urlset>`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">\n${urls || snapUrls}\n</urlset>`;
 
   return new Response(xml, {
     status: 200,

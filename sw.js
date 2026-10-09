@@ -1,18 +1,15 @@
-// Agnes Herbal Supplements — Service Worker (stale-cache safe)
-// Versioned cache name forces browser to drop old app shells after deploy.
-const CACHE_NAME = 'ahs-cache-v65-cloudflare-fix';
+// Agnes Herbal Supplements — Service Worker (offline-first cache)
+// Kila toleo jipya: badilisha namba hapa — vifaa vyote vinafuta cache ya zamani na kupakia upya kiotomatiki.
+const CACHE_NAME = 'ahs-cache-v65-20261009';
 const CORE_ASSETS = [
   './index.html',
   './blog.html',
   './track-order.html',
   './admin.html',
   './404.html',
-  './500.html',
   './favicon.ico',
   './css/style.css',
   './css/ahs-extra.css',
-  './css/homepage-v2.css',
-  './css/search-v2.css',
   './js/products-data.js',
   './js/content-data.js',
   './js/product-page-data.js',
@@ -36,9 +33,7 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(CORE_ASSETS))
-      .catch(() => {})
+    caches.open(CACHE_NAME).then(cache => Promise.all(CORE_ASSETS.map(u => cache.add(new Request(u, { cache: 'reload' })).catch(() => {})))).catch(() => {})
   );
   self.skipWaiting();
 });
@@ -52,15 +47,10 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// HTML / JS / CSS: network-first with cache fallback so deployment changes are
-// picked up quickly and old browser caches do not keep serving stale pages.
-// Images: cache-first because they change much less often and are cheaper to keep.
+// Cache-first for core assets & images, network-first fallback for everything else
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-
   const url = new URL(event.request.url);
-  const isDocument = url.pathname.endsWith('.html') || url.pathname === '/';
-  const isStaticAsset = /\.(js|css|json|svg|png|jpg|jpeg|webp|ico|mp4)$/i.test(url.pathname);
 
   if (url.pathname.includes('/images/') || url.pathname.includes('/assets/')) {
     event.respondWith(
@@ -69,17 +59,6 @@ self.addEventListener('fetch', (event) => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         return res;
       }).catch(() => cached))
-    );
-    return;
-  }
-
-  if (isDocument || /\.(js|css|json)$/i.test(url.pathname)) {
-    event.respondWith(
-      fetch(event.request, { cache: 'no-store' }).then(res => {
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        return res;
-      }).catch(() => caches.match(event.request).then(cached => cached || caches.match('./404.html')))
     );
     return;
   }

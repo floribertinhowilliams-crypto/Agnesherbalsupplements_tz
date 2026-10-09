@@ -36,3 +36,25 @@
 
 /assets/*
   Cache-Control: public, max-age=3600
+
+# --- v65: kuzuia cache ya zamani kwenye kurasa za bidhaa, orodha na sitemap (zinathibitishwa upya kila mara) ---
+/products/*
+  Cache-Control: no-cache
+
+/orodha/*
+  Cache-Control: no-cache
+
+/bidhaa-zote/*
+  Cache-Control: no-cache
+
+/catalog.json
+  Cache-Control: no-cache
+
+/catalog-snapshot.json
+  Cache-Control: no-cache
+
+/sitemap.xml
+  Cache-Control: no-cache
+
+/*.json
+  Cache-Control: no-cache

@@ -295,10 +295,32 @@ const AHS_SITE = 'https://agnesherbalsupplements.com';
 // ukurasa unaotengenezwa "on the fly" na functions/products/[slug].js kwa
 // muundo /products/jina-la-bidhaa (bila kiambishi cha id, bila .html) — ona
 // productSlug() ndani ya functions/_lib/seo.js, tuliyoiga hapa kwa usahihi.
+// Bidhaa za awali zilizo na typo kwenye jina la FAILI tuli (jina la bidhaa lilisahihishwa, faili halikubadilishwa):
+// jedwali hili linahakikisha link ni ile halisi inayofunguka.
+const AHS_STATIC_SLUG_OVERRIDES = {
+ "34": "p34-boobs-enlargeent-and-lifting-tea",
+ "77": "p77-bbli-breast-curve-gummies",
+ "91": "p91-bbi-gummies",
+ "92": "p92-clutathione-whitening-collagen-gummies",
+ "114": "p114-fat-burnergar-garcinia-cambogia-tablet",
+ "118": "p118-nn-a-tabl",
+ "125": "p125-28-days-detox-plus-flat-tumy-tablet",
+ "180": "p180-prostate-haalth-capsules",
+ "196": "p196-turmeric-ginger-comolex",
+ "235": "p235-nad-nmn-alternatne-resveratrol",
+ "246": "p246-green-plun-probiotie-fber-drink-jelly"
+};
 function productPageUrl(p) {
-  const slug = slugify(p.name) || ('bidhaa-' + p.id);
-  if (PRODUCTS[p.id] !== undefined) return `${AHS_SITE}/products/p${p.id}-${slug}.html`;
-  return `${AHS_SITE}/products/${slug}`;
+  // Muundo mmoja, URL safi (bila .html): /products/p<namba>-<jina>
+  if (PRODUCTS[p.id] !== undefined && AHS_STATIC_SLUG_OVERRIDES[p.id]) return `${AHS_SITE}/products/${AHS_STATIC_SLUG_OVERRIDES[p.id]}`;
+  const orig = (PRODUCTS[p.id] !== undefined && PRODUCTS[p.id].name) ? PRODUCTS[p.id].name : p.name;
+  const slug = slugify(orig) || ('bidhaa-' + p.id);
+  if (PRODUCTS[p.id] !== undefined) return `${AHS_SITE}/products/p${p.id}-${slug}`;
+  // Slug ya admin (Hariri → SEO) inashinda, sawa na seva (productSlug kwenye functions/_lib/seo.js).
+  const ovSlug = (typeof productOverrides !== 'undefined' && productOverrides[p.id] && productOverrides[p.id].slug) || '';
+  const custom = slugify(ovSlug || p.slug || '');
+  if (custom) return `${AHS_SITE}/products/${/^\d+-/.test(custom) ? 'p' + custom : custom}`;
+  return `${AHS_SITE}/products/p${p.id}-${slug}`;
 }
 function absoluteImageUrl(p) {
   const img = p.cover || (p.images && p.images[0]) || ('images/' + p.file);
@@ -595,7 +617,8 @@ function openProduct(id) {
 
   // share links
   const shareText = encodeURIComponent(`${currentProduct.name} - ${fmt(currentProduct.prices.retail)} - Agnes Herbal Supplements`);
-  const shareUrl = encodeURIComponent(location.href.split('#')[0] + '#product-' + id);
+  const shareUrl = encodeURIComponent(productPageUrl(currentProduct)); // URL ya bidhaa yenyewe (inafungua bidhaa hiyo hiyo + preview nzuri WhatsApp)
+  const shareLinkBtn = document.getElementById('pShareLink'); if (shareLinkBtn) shareLinkBtn.dataset.pid = id;
   document.getElementById('pShareWa').href = `https://wa.me/?text=${shareText}%20${shareUrl}`;
   document.getElementById('pShareFb').href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
   document.getElementById('pShareX').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
@@ -2123,3 +2146,74 @@ document.addEventListener('DOMContentLoaded', () => {
     else { panel.setAttribute('hidden', ''); btn.setAttribute('aria-expanded', 'false'); }
   });
 });
+
+/* ===================== DEEP LINK: /#product-<id> (kitufe cha "Ona kwenye Duka" + viungo vya kushare) ===================== */
+// Kabla ya hili, #product-<id> haikufanya kitu: mteja alifika ukurasa wa mwanzo tu.
+// Sasa inafungua dirisha la bidhaa hiyo moja kwa moja (inasubiri bidhaa mpya za admin zipakiwe kutoka Firestore).
+function handleProductHash() {
+  try {
+    const m = /^#product-(\d+)$/.exec(window.location.hash || '');
+    if (!m) return;
+    const id = parseInt(m[1], 10);
+    if (typeof getEffectiveProduct !== 'function' || typeof openProduct !== 'function') return;
+    let tries = 0;
+    const tryOpen = () => {
+      const p = getEffectiveProduct(id);
+      if (!p) return false;
+      openProduct(id);
+      return true;
+    };
+    if (tryOpen()) return;
+    const iv = setInterval(() => {
+      tries++;
+      if (tryOpen() || tries >= 50) clearInterval(iv);
+    }, 300);
+  } catch (e) { /* ignore */ }
+}
+document.addEventListener('DOMContentLoaded', () => { setTimeout(handleProductHash, 400); });
+window.addEventListener('hashchange', handleProductHash);
+
+/* ===================== SHIRIKI LINK YA BIDHAA (kitufe 🔗 + kushikilia kadi) =====================
+   Kila bidhaa ina URL yake (productPageUrl). Kitufe 🔗 kwenye dirisha la bidhaa, au KUSHIKILIA kadi ya
+   bidhaa kwa sekunde ~0.6, kinafungua "Share" ya simu (WhatsApp n.k.) — au kinanakili link kama simu haina share. */
+function shareProductLink(id) {
+  try {
+    const p = (typeof getEffectiveProduct === 'function') ? getEffectiveProduct(Number(id)) : null;
+    if (!p) return;
+    const url = productPageUrl(p);
+    const title = p.name + ' - Agnes Herbal Supplements';
+    if (navigator.share) {
+      navigator.share({ title, text: title, url }).catch(() => {});
+      return;
+    }
+    const done = () => showToast('🔗 Link imenakiliwa: ' + p.name);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => { window.prompt('Nakili link:', url); });
+    else window.prompt('Nakili link:', url);
+  } catch (e) { /* ignore */ }
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('#pShareLink');
+  if (b) { e.preventDefault(); shareProductLink(b.dataset.pid); }
+});
+(function initLongPressShare() {
+  let timer = null, startX = 0, startY = 0, fired = false;
+  const clear = () => { if (timer) { clearTimeout(timer); timer = null; } };
+  document.addEventListener('pointerdown', (e) => {
+    const card = e.target.closest && e.target.closest('.pg-item[data-id]');
+    if (!card || e.target.closest('button, [data-wl], [data-cmp], a')) return;
+    fired = false; startX = e.clientX; startY = e.clientY;
+    clear();
+    timer = setTimeout(() => {
+      fired = true; timer = null;
+      if (navigator.vibrate) try { navigator.vibrate(30); } catch (_) {}
+      shareProductLink(card.dataset.id);
+    }, 650);
+  }, true);
+  document.addEventListener('pointermove', (e) => { if (timer && (Math.abs(e.clientX - startX) > 10 || Math.abs(e.clientY - startY) > 10)) clear(); }, true);
+  ['pointerup', 'pointercancel', 'scroll'].forEach(ev => document.addEventListener(ev, clear, true));
+  // Baada ya kushikilia, usifungue dirisha la bidhaa (click inayofuata inamezwa).
+  document.addEventListener('click', (e) => {
+    if (fired) { fired = false; e.stopPropagation(); e.preventDefault(); }
+  }, true);
+  document.addEventListener('contextmenu', (e) => { if (e.target.closest && e.target.closest('.pg-item[data-id]') && fired) e.preventDefault(); }, true);
+})();

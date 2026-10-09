@@ -25,6 +25,8 @@ export const PROJECT_ID = 'agnes-1-console';
 export const SITE = 'https://agnesherbalsupplements.com';
 export const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 export const WHATSAPP_NUMBER = '255678883675';
+// Ufunguo wa IndexNow (faili la ufunguo liko kwenye mzizi: /<ufunguo>.txt)
+export const INDEXNOW_KEY = 'bc647de973740d7df77bf5fd9c824709';
 
 export function slugify(s) {
   return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -71,8 +73,9 @@ async function fetchAllOverrides() {
   let pageToken = '';
   for (let i = 0; i < 10; i++) {
     const url = `${FIRESTORE_BASE}/productOverrides?pageSize=300${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
-    const res = await fetch(url);
-    if (!res.ok) break;
+    const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 4500);
+    let res; try { res = await fetch(url, { signal: ac.signal }); } finally { clearTimeout(tm); }
+    if (!res.ok) throw new Error('firestore ' + res.status);
     const data = await res.json();
     (data.documents || []).forEach(d => { map[d.name.split('/').pop()] = fsDoc(d); });
     if (!data.nextPageToken) break;
@@ -96,7 +99,7 @@ function mergeOverride(product, ov) {
 // Inasoma customProducts ZOTE (kurasa nyingi ikihitajika), kisha inaunganisha
 // (merge) na productOverrides ya kila bidhaa — ili jina/picha/caption ULIYOBADILISHA
 // kwenye admin BAADA ya kuunda bidhaa ionekane kwa Google 100%, sio dukani tu.
-export async function fetchCustomProducts() {
+async function fetchCustomProductsRaw() {
   let all = [];
   let pageToken = '';
   for (let i = 0; i < 10; i++) {
@@ -137,7 +140,12 @@ export async function fetchCustomProductById(id) {
 }
 
 export function productSlug(p) {
-  return slugify(p.name) || `bidhaa-${p.id}`;
+  // Muundo mmoja kwa bidhaa ZOTE: p<namba>-<jina> (mfano p100050-jina) — namba inazuia migongano ya majina yanayofanana.
+  // Slug ya admin (Hariri → SEO) inayoanza na namba inapewa "p" mbele.
+  const custom = slugify(p.slug || '');
+  if (custom) return /^\d+-/.test(custom) ? `p${custom}` : custom;
+  const byName = slugify(p.name);
+  return byName ? `p${p.id}-${byName}` : `bidhaa-${p.id}`;
 }
 
 export function imageProxyUrl(productId, index) {
@@ -190,4 +198,25 @@ export function buildMetaDescription(p) {
   }
   base = base.replace(/\s+/g, ' ').trim();
   return base.length > 158 ? base.slice(0, 157).trim() + '…' : base;
+}
+
+// Kasi + uhakika: matokeo ya Firestore yanawekwa kwenye cache ya edge (sekunde 120) ili Google/bots/wateja
+// wasubiri Firestore kila ombi; Firestore ikichelewa/ikishindwa tunatumia nakala ya mwisho iliyofanikiwa.
+// Bidhaa mpya za admin zinaonekana ndani ya dakika 2 kwa bots na ukurasa wa bidhaa.
+let _memCustom = null, _memAt = 0;
+export async function fetchCustomProducts() {
+  const now = Date.now();
+  if (_memCustom && now - _memAt < 60000) return _memCustom;
+  const cache = (typeof caches !== 'undefined' && caches.default) ? caches.default : null;
+  const key = new Request(SITE + '/__cache/custom-products-v1');
+  try {
+    const list = await fetchCustomProductsRaw();
+    _memCustom = list; _memAt = now;
+    if (cache) { try { await cache.put(key, new Response(JSON.stringify(list), { headers: { 'Cache-Control': 'public, max-age=86400', 'Content-Type': 'application/json' } })); } catch (e) {} }
+    return list;
+  } catch (e) {
+    if (_memCustom) return _memCustom;
+    if (cache) { try { const hit = await cache.match(key); if (hit) { const l = await hit.json(); _memCustom = l; _memAt = now - 30000; return l; } } catch (e2) {} }
+    throw e;
+  }
 }

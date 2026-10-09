@@ -1,0 +1,826 @@
+{
+ "generatedAt": "2026-10-08T22:23:58.398Z",
+ "count": 82,
+ "items": [
+  {
+   "id": 100040,
+   "name": "7days slim plus fat burner",
+   "effect": "Weight  Loss",
+   "category": "Tablet Candy / Powder Series",
+   "priceTZS": 25000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100040-7days-slim-plus-fat-burner",
+   "image": "https://agnesherbalsupplements.com/img/custom/100040/0.jpg"
+  },
+  {
+   "id": 100041,
+   "name": "slim plus fat burner",
+   "effect": "Weight  Loss",
+   "category": "Tablet Candy / Powder Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100041-slim-plus-fat-burner",
+   "image": "https://agnesherbalsupplements.com/img/custom/100041/0.jpg"
+  },
+  {
+   "id": 100043,
+   "name": "MELAO Hot Cream",
+   "effect": "Weight  Loss",
+   "category": "Creams",
+   "priceTZS": 30000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100043-melao-hot-cream",
+   "image": "https://agnesherbalsupplements.com/img/custom/100043/0.jpg"
+  },
+  {
+   "id": 100044,
+   "name": "DUOZI Marine Collagen+ Super 5 in 1",
+   "effect": "Beaut",
+   "category": "Powder / Softgel Series",
+   "priceTZS": 120000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100044-duozi-marine-collagen-super-5-in-1",
+   "image": "https://agnesherbalsupplements.com/img/custom/100044/0.jpg"
+  },
+  {
+   "id": 100045,
+   "name": "Blood sugar complex",
+   "effect": "Blood sugar balance",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 70000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100045-blood-sugar-complex",
+   "image": "https://agnesherbalsupplements.com/img/custom/100045/0.jpg"
+  },
+  {
+   "id": 100046,
+   "name": "Health prostate stronger life",
+   "effect": "Prostate health",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100046-health-prostate-stronger-life",
+   "image": "https://agnesherbalsupplements.com/img/custom/100046/0.jpg"
+  },
+  {
+   "id": 100047,
+   "name": "Magnesium complex",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100047-magnesium-complex",
+   "image": "https://agnesherbalsupplements.com/img/custom/100047/0.jpg"
+  },
+  {
+   "id": 100048,
+   "name": "MAGNESIUM 12-IN-1 COMPLEX – 700MG 💪🧠",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100048-magnesium-12-in-1-complex-700mg",
+   "image": "https://agnesherbalsupplements.com/img/custom/100048/0.jpg"
+  },
+  {
+   "id": 100049,
+   "name": "Happy Hormones PCOS Multivitamin capsules",
+   "effect": "Capsule / Jelly Series",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 55000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100049-happy-hormones-pcos-multivitamin-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100049/0.jpg"
+  },
+  {
+   "id": 100050,
+   "name": "Women's Probiotic + Slippery Elm Gummies 🌸",
+   "effect": "Health vaginal",
+   "category": "Gummies Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100050-women-s-probiotic-slippery-elm-gummies",
+   "image": "https://agnesherbalsupplements.com/img/custom/100050/0.jpg"
+  },
+  {
+   "id": 100051,
+   "name": "EYE VITAMIN & MINERAL SUPPLEMENT",
+   "effect": "Eye health",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100051-eye-vitamin-mineral-supplement",
+   "image": "https://agnesherbalsupplements.com/img/custom/100051/0.jpg"
+  },
+  {
+   "id": 100052,
+   "name": "Multi Vitamin Complete Liquid",
+   "effect": "Health supplements",
+   "category": "Drops / Patch Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100052-multi-vitamin-complete-liquid",
+   "image": "https://agnesherbalsupplements.com/img/custom/100052/0.jpg"
+  },
+  {
+   "id": 100059,
+   "name": "DUOZI Calcium + Magnesium + Zinc + Vitamin D3",
+   "effect": "Health supplements",
+   "category": "Tablet Candy / Powder Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100059-duozi-calcium-magnesium-zinc-vitamin-d3",
+   "image": "https://agnesherbalsupplements.com/img/custom/100059/0.jpg"
+  },
+  {
+   "id": 100060,
+   "name": "Alpha Arbutin Collagen Peptide Drink",
+   "effect": "Health supplements",
+   "category": "Juices",
+   "priceTZS": 100000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100060-alpha-arbutin-collagen-peptide-drink",
+   "image": "https://agnesherbalsupplements.com/img/custom/100060/0.jpg"
+  },
+  {
+   "id": 100061,
+   "name": "Curvy Weight Gain powder kubwa",
+   "effect": "Weightgain",
+   "category": "Powder / Softgel Series",
+   "priceTZS": 100000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100061-curvy-weight-gain-powder-kubwa",
+   "image": "https://agnesherbalsupplements.com/img/custom/100061/0.jpg"
+  },
+  {
+   "id": 100062,
+   "name": "Uro vaginal moisture",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100062-uro-vaginal-moisture",
+   "image": "https://agnesherbalsupplements.com/img/custom/100062/0.jpg"
+  },
+  {
+   "id": 100063,
+   "name": "Menopause",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100063-menopause",
+   "image": "https://agnesherbalsupplements.com/img/custom/100063/0.jpg"
+  },
+  {
+   "id": 100064,
+   "name": "Flo ovarian support",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100064-flo-ovarian-support",
+   "image": "https://agnesherbalsupplements.com/img/custom/100064/0.jpg"
+  },
+  {
+   "id": 100065,
+   "name": "Sea moss 19,445Mg",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100065-sea-moss-19-445mg",
+   "image": "https://agnesherbalsupplements.com/img/custom/100065/0.jpg"
+  },
+  {
+   "id": 100066,
+   "name": "Multi collagen",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100066-multi-collagen",
+   "image": "https://agnesherbalsupplements.com/img/custom/100066/0.jpg"
+  },
+  {
+   "id": 100068,
+   "name": "Ginseng Five Treasure Tea",
+   "effect": "Health supplements",
+   "category": "Tea Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100068-ginseng-five-treasure-tea",
+   "image": "https://agnesherbalsupplements.com/img/custom/100068/0.jpg"
+  },
+  {
+   "id": 100069,
+   "name": "Advanced woman probiotics",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100069-advanced-woman-probiotics",
+   "image": "https://agnesherbalsupplements.com/img/custom/100069/0.jpg"
+  },
+  {
+   "id": 100070,
+   "name": "Breast firming",
+   "effect": "Health supplements",
+   "category": "Oil",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100070-breast-firming",
+   "image": "https://agnesherbalsupplements.com/img/custom/100070/0.jpg"
+  },
+  {
+   "id": 100071,
+   "name": "Slippery Elm Bark",
+   "effect": "Health supplements",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100071-slippery-elm-bark",
+   "image": "https://agnesherbalsupplements.com/img/custom/100071/0.jpg"
+  },
+  {
+   "id": 100072,
+   "name": "Butt booster",
+   "effect": "Weight gain",
+   "category": "Gummies Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100072-butt-booster",
+   "image": "https://agnesherbalsupplements.com/img/custom/100072/0.jpg"
+  },
+  {
+   "id": 100073,
+   "name": "Mix products",
+   "effect": "Losing weight",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100073-mix-products",
+   "image": "https://agnesherbalsupplements.com/img/custom/100073/0.jpg"
+  },
+  {
+   "id": 100074,
+   "name": "Mix of weight gain",
+   "effect": "Weight  gain",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100074-mix-of-weight-gain",
+   "image": "https://agnesherbalsupplements.com/img/custom/100074/0.jpg"
+  },
+  {
+   "id": 100075,
+   "name": "Mix of collagen",
+   "effect": "Whitening",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100075-mix-of-collagen",
+   "image": "https://agnesherbalsupplements.com/img/custom/100075/0.jpg"
+  },
+  {
+   "id": 100076,
+   "name": "Mix of reproductive supplements",
+   "effect": "Wellness",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100076-mix-of-reproductive-supplements",
+   "image": "https://agnesherbalsupplements.com/img/custom/100076/0.jpg"
+  },
+  {
+   "id": 100077,
+   "name": "Mix of reproductive supplements for woman",
+   "effect": "Reproductive supplements",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100077-mix-of-reproductive-supplements-for-woman",
+   "image": "https://agnesherbalsupplements.com/img/custom/100077/0.jpg"
+  },
+  {
+   "id": 100078,
+   "name": "Mix of whitening",
+   "effect": "Whitening",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100078-mix-of-whitening",
+   "image": "https://agnesherbalsupplements.com/img/custom/100078/0.jpg"
+  },
+  {
+   "id": 100079,
+   "name": "Mixed za kuongeza shape",
+   "effect": "Za kuongeza hips na makalio",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100079-mixed-za-kuongeza-shape",
+   "image": "https://agnesherbalsupplements.com/img/custom/100079/0.jpg"
+  },
+  {
+   "id": 100080,
+   "name": "Mix products of breast",
+   "effect": "Health supplements",
+   "category": "Mixed",
+   "priceTZS": 1000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100080-mix-products-of-breast",
+   "image": "https://agnesherbalsupplements.com/img/custom/100080/0.jpg"
+  },
+  {
+   "id": 100081,
+   "name": "Titan gel gold",
+   "effect": "Penis enlagement",
+   "category": "Gel",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100081-titan-gel-gold",
+   "image": "https://agnesherbalsupplements.com/img/custom/100081/0.jpg"
+  },
+  {
+   "id": 100082,
+   "name": "Titan gel original",
+   "effect": "Penis enlagement",
+   "category": "Gel",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100082-titan-gel-original",
+   "image": "https://agnesherbalsupplements.com/img/custom/100082/0.jpg"
+  },
+  {
+   "id": 100083,
+   "name": "Luv max oral gel",
+   "effect": "Nguvu za kiume",
+   "category": "Gel",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100083-luv-max-oral-gel",
+   "image": "https://agnesherbalsupplements.com/img/custom/100083/0.jpg"
+  },
+  {
+   "id": 100084,
+   "name": "HERBAL VAGINAL WELLNESS STICK 🌸",
+   "effect": "Kubana uke",
+   "category": "Vaginal stick",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100084-herbal-vaginal-wellness-stick",
+   "image": "https://agnesherbalsupplements.com/img/custom/100084/0.jpg"
+  },
+  {
+   "id": 100085,
+   "name": "MAXMAN MEN ENLARGING CREAM",
+   "effect": "Health supplements",
+   "category": "Creams",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100085-maxman-men-enlarging-cream",
+   "image": "https://agnesherbalsupplements.com/img/custom/100085/0.jpg"
+  },
+  {
+   "id": 100086,
+   "name": "HONEYMOON COFFEE 3in1",
+   "effect": "Ya kuongeza nguvu za kiume",
+   "category": "Powder Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100086-honeymoon-coffee-3in1",
+   "image": "https://agnesherbalsupplements.com/img/custom/100086/0.jpg"
+  },
+  {
+   "id": 100087,
+   "name": "Maximan capsules",
+   "effect": "Nguvu za kiume",
+   "category": "Tablet Candy / Powder Series",
+   "priceTZS": 150000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100087-maximan-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100087/0.jpg"
+  },
+  {
+   "id": 100088,
+   "name": "Penis pump",
+   "effect": "Health supplements",
+   "category": "Pump size",
+   "priceTZS": 85000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100088-penis-pump",
+   "image": "https://agnesherbalsupplements.com/img/custom/100088/0.jpg"
+  },
+  {
+   "id": 100089,
+   "name": "ANTI SMOKING PATCH - Sumifun",
+   "effect": "Anti-smorking",
+   "category": "Drops / Patch Series",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100089-anti-smoking-patch-sumifun",
+   "image": "https://agnesherbalsupplements.com/img/custom/100089/0.jpg"
+  },
+  {
+   "id": 100090,
+   "name": "SLEEP MELATONIN GUMMIES",
+   "effect": "Usingizi",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 55000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100090-sleep-melatonin-gummies",
+   "image": "https://agnesherbalsupplements.com/img/custom/100090/0.jpg"
+  },
+  {
+   "id": 100091,
+   "name": "7 DAYS FAST WHITENING CREAM",
+   "effect": "Hair grow",
+   "category": "Creams",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100091-7-days-fast-whitening-cream",
+   "image": "https://agnesherbalsupplements.com/img/custom/100091/0.jpg"
+  },
+  {
+   "id": 100092,
+   "name": "NAIL FUNGUS TREATMENT LIQUID - Sumifun",
+   "effect": "Kuchaa",
+   "category": "Oil",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100092-nail-fungus-treatment-liquid-sumifun",
+   "image": "https://agnesherbalsupplements.com/img/custom/100092/0.jpg"
+  },
+  {
+   "id": 100093,
+   "name": "IMAX DELAY SPRAY FOR MEN",
+   "effect": "Nguvu za kiume",
+   "category": "Spray",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100093-imax-delay-spray-for-men",
+   "image": "https://agnesherbalsupplements.com/img/custom/100093/0.jpg"
+  },
+  {
+   "id": 100094,
+   "name": "VAGINAL TIGHTENING GEL",
+   "effect": "Za kubana uke",
+   "category": "Gel",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100094-vaginal-tightening-gel",
+   "image": "https://agnesherbalsupplements.com/img/custom/100094/0.jpg"
+  },
+  {
+   "id": 100095,
+   "name": "KING OF GINGER - 7 DAYS HAIR GROWTH OIL 30ml",
+   "effect": "Hair growth",
+   "category": "Oil",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100095-king-of-ginger-7-days-hair-growth-oil-30ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100095/0.jpg"
+  },
+  {
+   "id": 100096,
+   "name": "ROYAL HONEY VIP+ 5X - STRONGER",
+   "effect": "Nguvu za kiume",
+   "category": "Gel",
+   "priceTZS": 120000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100096-royal-honey-vip-5x-stronger",
+   "image": "https://agnesherbalsupplements.com/img/custom/100096/0.jpg"
+  },
+  {
+   "id": 100097,
+   "name": "WART / SKIN TAG REMOVER PEN - 5ml",
+   "effect": "Wart remover",
+   "category": "Pen stick",
+   "priceTZS": 25000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100097-wart-skin-tag-remover-pen-5ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100097/0.jpg"
+  },
+  {
+   "id": 100098,
+   "name": "OTTO STIMULATING GEL FOR WOMAN",
+   "effect": "Hamu ya tendo la ndoa",
+   "category": "Creams",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100098-otto-stimulating-gel-for-woman",
+   "image": "https://agnesherbalsupplements.com/img/custom/100098/0.jpg"
+  },
+  {
+   "id": 100099,
+   "name": "SHILAJIT CAPSULE 600mg - Himalayan Original",
+   "effect": "Nguvu za kiume",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 55000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100099-shilajit-capsule-600mg-himalayan-original",
+   "image": "https://agnesherbalsupplements.com/img/custom/100099/0.jpg"
+  },
+  {
+   "id": 100100,
+   "name": "Fertility combo",
+   "effect": "Fertility",
+   "category": "Tablet Candy / Powder Series",
+   "priceTZS": 90000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100100-fertility-combo",
+   "image": "https://agnesherbalsupplements.com/img/custom/100100/0.jpg"
+  },
+  {
+   "id": 100101,
+   "name": "Yoni wap",
+   "effect": "Health supplements",
+   "category": "Gel",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100101-yoni-wap",
+   "image": "https://agnesherbalsupplements.com/img/custom/100101/0.jpg"
+  },
+  {
+   "id": 100102,
+   "name": "Ems foot massage",
+   "effect": "Foot Massage",
+   "category": "Drops / Patch Series",
+   "priceTZS": 75000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100102-ems-foot-massage",
+   "image": "https://agnesherbalsupplements.com/img/custom/100102/0.jpg"
+  },
+  {
+   "id": 100103,
+   "name": "Dark knuckle gummies",
+   "effect": "Kuondoa weusi sehemu wa sehemu korofi",
+   "category": "Gummies Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100103-dark-knuckle-gummies",
+   "image": "https://agnesherbalsupplements.com/img/custom/100103/0.jpg"
+  },
+  {
+   "id": 100104,
+   "name": "Chinese liver detox tea original  18+ ingredients",
+   "effect": "Kusafisha ini na mwili mzima",
+   "category": "Tea Series",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100104-chinese-liver-detox-tea-original-18-ingredients",
+   "image": "https://agnesherbalsupplements.com/img/custom/100104/0.jpg"
+  },
+  {
+   "id": 100105,
+   "name": "Milk Thistle 1000MG",
+   "effect": "Kusafisha ini",
+   "category": "Tea Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100105-milk-thistle-1000mg",
+   "image": "https://agnesherbalsupplements.com/img/custom/100105/0.jpg"
+  },
+  {
+   "id": 100106,
+   "name": "Hemorrhoid",
+   "effect": "Kuondoa bawasiri",
+   "category": "Spray",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100106-hemorrhoid",
+   "image": "https://agnesherbalsupplements.com/img/custom/100106/0.jpg"
+  },
+  {
+   "id": 100107,
+   "name": "Hemorrhoid tea",
+   "effect": "Kuondoa bawasiri",
+   "category": "Tea Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100107-hemorrhoid-tea",
+   "image": "https://agnesherbalsupplements.com/img/custom/100107/0.jpg"
+  },
+  {
+   "id": 100108,
+   "name": "Mass Gainer",
+   "effect": "Weight Gain and muscle gain 💪",
+   "category": "Powder Series",
+   "priceTZS": 120000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100108-mass-gainer",
+   "image": "https://agnesherbalsupplements.com/img/custom/100108/0.jpg"
+  },
+  {
+   "id": 100109,
+   "name": "Laverly Essential Oils & Body Care Collection",
+   "effect": "Skin Care & Body Care",
+   "category": "Oil",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100109-laverly-essential-oils-body-care-collection",
+   "image": "https://agnesherbalsupplements.com/img/custom/100109/0.jpg"
+  },
+  {
+   "id": 100110,
+   "name": "Meidou Black Hair Dye Shampoo 3 in 1 – 500ml",
+   "effect": "Black Hair Color, Shine & Moisturizing Hair Care",
+   "category": "Hair Care / Beauty",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100110-meidou-black-hair-dye-shampoo-3-in-1-500ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100110/0.jpg"
+  },
+  {
+   "id": 100111,
+   "name": "Xun Z Lan Personal Lubricant Water Based 200ml",
+   "effect": "Vilainishi",
+   "category": "Gel",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100111-xun-z-lan-personal-lubricant-water-based-200ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100111/0.jpg"
+  },
+  {
+   "id": 100112,
+   "name": "Testosterone Boost - 60 Capsules",
+   "effect": "Kusaidia kuongeza nguvu, misuli na hamu ya tendo",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100112-testosterone-boost-60-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100112/0.jpg"
+  },
+  {
+   "id": 100113,
+   "name": "Advanced Joint Complex Collagen Type 2 + Hyaluronic Acid - 120 Capsules",
+   "effect": "Kwa mifupa, maungio na cartilage - miguu na magoti kuuma",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 55000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100113-advanced-joint-complex-collagen-type-2-hyaluronic-acid-120-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100113/0.jpg"
+  },
+  {
+   "id": 100114,
+   "name": "FH PRO Fertility Multivitamin For Women - Fairhaven Health - 180 Capsules",
+   "effect": "Inasaidia afya ya uzazi kwa mwanaume • Ina Zinc na Selenium - muhimu kwa afya ya mbegu • Ina L-Carnitine na CoQ10 • Ina Methylated B Vitamins kwa nishati • Inasaidia kinga ya mwili na nguvu",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 400000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100114-fh-pro-fertility-multivitamin-for-women-fairhaven-health-180-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100114/0.jpg"
+  },
+  {
+   "id": 100115,
+   "name": "HORBAACH APPLE CIDER VINEGAR 2400mg (150 Capsules)",
+   "effect": "Inasaidia mmeng'enyo wa chakula (digestion) • Inasaidia metabolism na nishati ya mwili • Inasaidia detox ya asili ya mwili • Ina mother culture ya ACV • Vegetarian friendly, Gluten Free • 150 Capsules",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100115-horbaach-apple-cider-vinegar-2400mg-150-capsules",
+   "image": "https://agnesherbalsupplements.com/img/custom/100115/0.jpg"
+  },
+  {
+   "id": 100116,
+   "name": "Bee venom scar gel",
+   "effect": "bee venom scar gel  Hii ni gel ya kupaka kwenye ngozi inasaidia kuondoa na kuboresha muonekano wa makovu  Kazi zake;  🌟Husaidia kupunguza muonekano wa makovu hivyo kufanya eneo lenye kovu kuonekana laini zaidi  🌟Hutumiika kuondoa makovu baada ya upasuaji na hii ni baada ya jeraha la upasuaji kupona na kufunga vizuri  🌟Hutumia kuondoa makovu yaliyoachwa na chunusi  🌟Hutumia kuondoa makovu ya kuungua na moto  🌟Husaidia kulainisha ngozi ya kovu hasa sehemu yenye ngozi ngumu au kavu  🌟Husaidia kufanya ngozi kuwa smooth na kuboresha texture",
+   "category": "Creams",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100116-bee-venom-scar-gel",
+   "image": "https://agnesherbalsupplements.com/img/custom/100116/0.jpg"
+  },
+  {
+   "id": 100117,
+   "name": "Sumifun Men's Private Care Cream - Antibacterial & Anti-Itch Cream for Men",
+   "effect": "✓ QUICKLY RELIEVE ITCHING Husaidia kupunguza hisia ya muwasho haraka na kuleta utulivu.  ✓ ANTIBACTERIAL & SKIN HEALTH CARE Husaidia kuzuia ukuaji wa bacteria wanaosababisha harufu na muwasho.  ✓ HERBAL INGREDIENTS - NO STIMULATION Imetengenezwa kwa viambata asilia, haina kemikali kali, haina kuwasha ngozi.  ✓ PRIVATE PARTS CARE Huongeza kujiamini kwa kukupa hisia ya usafi na ukavu muda wote.",
+   "category": "Creams",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100117-sumifun-men-s-private-care-cream-antibacterial-anti-itch-cream-for-men",
+   "image": "https://agnesherbalsupplements.com/img/custom/100117/0.jpg"
+  },
+  {
+   "id": 100118,
+   "name": "Sumifun Hernia Cream",
+   "effect": "Husaidia kupunguza maumivu ya tumbo na usumbufu • Inasaidia kupunguza kuvimba • Rahisi kutumia, ni ya kupaka tu kwa nje •",
+   "category": "Creams",
+   "priceTZS": 35000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100118-sumifun-hernia-cream",
+   "image": "https://agnesherbalsupplements.com/img/custom/100118/0.jpg"
+  },
+  {
+   "id": 100119,
+   "name": "Kiti Cha Choo (Commode Chair)",
+   "effect": "Kiti maalum cha choo kwa wazee, wagonjwa na mama wajawazito. Imara, kinachokunjwa na rahisi kusafisha.",
+   "category": "Vifaa vya usaidizi",
+   "priceTZS": 200000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100119-kiti-cha-choo-commode-chair",
+   "image": "https://agnesherbalsupplements.com/img/custom/100119/0.jpg"
+  },
+  {
+   "id": 100120,
+   "name": "Neuropathy Nerve Support",
+   "effect": "Husaidia kupunguza hisia ya ganzi na kuchomachoma • Husaidia kulisha na kuimarisha mishipa ya fahamu • Inasaidia katika kuzaliwa upya kwa seli za neva",
+   "category": "Softgel / Capsule Series",
+   "priceTZS": 70000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100120-neuropathy-nerve-support",
+   "image": "https://agnesherbalsupplements.com/img/custom/100120/0.jpg"
+  },
+  {
+   "id": 100121,
+   "name": "Myo & D-Chiro Inositol 40:1 + Ashwagandha & Vitamin D",
+   "effect": "Husaidia kusawazisha homoni za kike • Inasaidia kurudisha mzunguko wa hedhi wa kawaida • Ina Ashwagandha kwa kupunguza stress na Vitamin D • 120 Vegetarian Capsules, 3rd Party Tested - Ubora umehakikishwa",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 50000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100121-myo-d-chiro-inositol-40-1-ashwagandha-vitamin-d",
+   "image": "https://agnesherbalsupplements.com/img/custom/100121/0.jpg"
+  },
+  {
+   "id": 100122,
+   "name": "Psyllium Husk 500mg",
+   "effect": "• Husaidia kupunguza choo kigumu na constipation • Inasaidia usagaji wa chakula na afya ya utumbo • 200 Veg Capsules - Vegetarian / Vegan • Non-GMO",
+   "category": "Tea Series",
+   "priceTZS": 150000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100122-psyllium-husk-500mg",
+   "image": "https://agnesherbalsupplements.com/img/custom/100122/0.jpg"
+  },
+  {
+   "id": 100123,
+   "name": "Vitamin D3 K2 Liquid Drops 5000IU - with Omega 3 & MCT Oil",
+   "effect": "Mifupa imara, kinga ya mwili na moyo. 4-in-1 kwa matone machache tu kwa siku.  Long Description: Hii ni Vitamin D3 5000IU na K2 120mcg ya maji (liquid) iliyochanganywa na Omega 3 na MCT Oil kwa ufyonzaji wa haraka na ufanisi zaidi. Ni nguvu ya juu, asilia 100%.",
+   "category": "Drops / Patch Series",
+   "priceTZS": 100,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100123-vitamin-d3-k2-liquid-drops-5000iu-with-omega-3-mct-oil",
+   "image": "https://agnesherbalsupplements.com/img/custom/100123/0.jpg"
+  },
+  {
+   "id": 100124,
+   "name": "Probiotics for woman - 50 Billion CFU + Cranberry",
+   "effect": "• Husaidia afya ya uke na kupunguza harufu na miwasho • Inasaidia njia ya mkojo (UTI) - Cranberry • Husaidia mmeng'enyo wa chakula na kinga ya mwili • 60 Capsules - Delayed Release",
+   "category": "Capsule / Jelly Series",
+   "priceTZS": 70000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100124-probiotics-for-woman-50-billion-cfu-cranberry",
+   "image": "https://agnesherbalsupplements.com/img/custom/100124/0.jpg"
+  },
+  {
+   "id": 100125,
+   "name": "Joyspring Detox Zee",
+   "effect": "Fomula ya watoto, ladha nzuri • Matone ya maji - rahisi kumeza • 30 Servings Kwa",
+   "category": "Drops / Patch Series",
+   "priceTZS": 60000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100125-joyspring-detox-zee",
+   "image": "https://agnesherbalsupplements.com/img/custom/100125/0.jpg"
+  },
+  {
+   "id": 100126,
+   "name": "Soursop graviola leaves tea",
+   "effect": "✅Husaidia kuongeza kinga ya mwili  ✅Husaidia kuua cell za cancer  ✅Husaidia kuondoa sumu mwilini  ✅Husaidia kudhibiti uvimbe na maambukizi  ✅Husaidia ku regulate sukari  ✅Husaidia kupunguza gesi tumboni  ✅Husaidia kupata usingizi mzuri  ✅Husaidia kuondoa msongo wa mawazo",
+   "category": "Tea Series",
+   "priceTZS": 45000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100126-soursop-graviola-leaves-tea",
+   "image": "https://agnesherbalsupplements.com/img/custom/100126/0.jpg"
+  },
+  {
+   "id": 100127,
+   "name": "LANTHOME White Hair Darkening Spray - Dawa ya Mvi ya Asili 50ml",
+   "effect": "WHITE TURN BLACK: Inarudisha rangi ya asili ya nywele yako kutoka nyeupe/mvi kuwa nyeusi. 2. Restore Melanin Production: Inachochea mwili wako kuzalisha tena melanin ambayo ndio rangi ya nywele. 3. Repair & Activate Follicles: Inatengeneza na kuamsha vishina vya nywele vilivyolala au kuharibika. 4. Strengthen & Rejuvenate: Inaimarisha nywele, kuzuia kukatika na kuzifanya ziwe na afya na mng'ao.",
+   "category": "Spray",
+   "priceTZS": 25000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100127-lanthome-white-hair-darkening-spray-dawa-ya-mvi-ya-asili-50ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100127/0.jpg"
+  },
+  {
+   "id": 100128,
+   "name": "OceAura Skincare Body Oil - Mafuta ya Asili ya Kuondoa Michirizi & Makovu 120ml",
+   "effect": "✓ Husaidia kupunguza muonekano wa michirizi ya ujauzito ✓ Husaidia kulainisha na kufifisha makovu ya zamani na mapya ✓ Huongeza unyevu na kufanya ngozi ing'ae ✓ Huboresha texture ya ngozi na kuifanya iwe laini ✓ Salama kutumia wakati wa ujauzito na baada ya kujifungua ✓ Inaweza kutumiwa na familia nzima",
+   "category": "Oil",
+   "priceTZS": 25000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100128-oceaura-skincare-body-oil-mafuta-ya-asili-ya-kuondoa-michirizi-makovu-120ml",
+   "image": "https://agnesherbalsupplements.com/img/custom/100128/0.jpg"
+  },
+  {
+   "id": 100129,
+   "name": "Pumpkin Seed Oil with Saw Palmetto Softgels - 300 Softgels",
+   "effect": "Afya ya Tezi Dume, Moyo, Nywele na Ngozi | Prostate & Bladder Support",
+   "category": "Softgel / Capsule Series",
+   "priceTZS": 70000,
+   "inStock": true,
+   "url": "https://agnesherbalsupplements.com/products/p100129-pumpkin-seed-oil-with-saw-palmetto-softgels-300-softgels",
+   "image": "https://agnesherbalsupplements.com/img/custom/100129/0.jpg"
+  }
+ ]
+}

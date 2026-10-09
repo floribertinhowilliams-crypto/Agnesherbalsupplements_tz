@@ -285,3 +285,15 @@ js/blog.js, js/track.js, js/admin.js → Mantiki ya kurasa husika
 images/                 → Picha za bidhaa
 assets/                 → Logo na icons za PWA
 ```
+
+## v65 (juu ya toleo la live) — link za bidhaa + AI/search
+- Muonekano, mpangilio, admin.html na js/admin.js HAZIJAGUSWA (sawa na live).
+- Kila bidhaa ina URL safi `/products/p<id>-<jina>` (bila .html); canonical/sitemap zimesafishwa; bidhaa za admin zinapata `p<id>-` kuzuia majina yanayofanana kugongana (URL za zamani zinaelekezwa 301).
+- Link ya bidhaa ikifunguliwa na mteja inafungua bidhaa hiyo ndani ya duka (`/#product-<id>`); roboti za utafutaji zinabaki kwenye ukurasa.
+- Chatbot inatoa link ya bidhaa ("link ya [jina]") na kitufe cha kunakili.
+- Mpya: `/orodha/`, `/catalog.json`, `/llms-full.txt` (Functions, zinasoma Firestore), `/bidhaa-zote/` (ukurasa tuli) na sitemap iliyosasishwa.
+- Kitufe cha 🔗 kwenye dirisha la bidhaa, na KUSHIKILIA kadi ya bidhaa, vinashiriki/vinanakili link ya bidhaa hiyo.
+- Firestore: matokeo yanakaa kwenye cache ya edge (dakika 2) na yana hifadhi (snapshot) ili Google ione bidhaa zote kila wakati.
+- catalog-snapshot.json sasa ina bidhaa zote 82 za admin (jumla 370) kutoka Export ya 2026-10-08.
+- Admin: kitufe cha '📣 Arifu Bing/AI Sasa' kimeongezwa kwenye Dashboard (js/ahs-indexnow.js + functions/api/indexnow.js); bidhaa mpya/mabadiliko huarifiwa kiotomatiki. admin.js haijabadilishwa.
+- Kizuia-cache: sw.js CACHE_NAME ya kipekee (ahs-cache-v65-20261009), CSS/JS zote ?v65, _headers no-cache kwa products/orodha/sitemap/json. Toleo lijalo: badilisha namba ya CACHE_NAME na ?v65.

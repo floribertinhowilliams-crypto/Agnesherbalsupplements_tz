@@ -3,7 +3,7 @@
 // hutanguliza kabla ya Function hii kuguswa kabisa).
 import {
   fetchCustomProducts, productSlug, imageProxyUrl, videoProxyUrl, buildAltText,
-  buildTitle, buildMetaDescription, escapeHtml, SITE, WHATSAPP_NUMBER
+  buildTitle, buildMetaDescription, escapeHtml, slugify, SITE, WHATSAPP_NUMBER
 } from '../_lib/seo.js';
 
 export async function onRequestGet(context) {
@@ -32,6 +32,9 @@ export async function onRequestGet(context) {
     // Pages HAITUMII _redirects kwa maombi yanayoshughulikiwa na Function
     // (hata kama njia ya Function inalingana), kwa hiyo lazima ifanyike
     // hapa ndani.
+    // URL ya zamani ya bidhaa za admin (jina tu, bila "p<id>-") → elekeza kwenye URL mpya.
+    const byOldSlug = products.find(p => p.name && slugify(p.name) === slug);
+    if (byOldSlug && productSlug(byOldSlug) !== slug) return Response.redirect(`${SITE}/products/${productSlug(byOldSlug)}`, 301);
     const m = /^p(\d+)-/.exec(slug);
     if (m) {
       const id = parseInt(m[1], 10);
@@ -183,6 +186,7 @@ ${hasYoutubeVideo ? `<div style="position:relative;aspect-ratio:16/9;background:
 </div>
 </div>
 <footer>&copy; ${new Date().getFullYear()} Agnes Herbal Supplements-Winstown,Dynee&amp; Duozi Distributor Tanzania, Dar es Salaam.</footer>
+<script>(function(){try{var ua=navigator.userAgent||"";if(/bot|crawl|spider|slurp|bing|google|yandex|baidu|duckduck|gpt|claude|perplexity|facebookexternalhit|whatsapp|telegram|twitterbot|linkedin|preview|lighthouse/i.test(ua)||/[?&]stay=1/.test(location.search))return;location.replace("/#product-${product.id}");}catch(e){}})();</script>
 </body>
 </html>`;
 

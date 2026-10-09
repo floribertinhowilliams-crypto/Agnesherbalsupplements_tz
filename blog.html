@@ -16,8 +16,8 @@
 <link rel="icon" href="assets/icons/icon-96.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v21">
-<link rel="stylesheet" href="css/ahs-extra.css?v21">
+<link rel="stylesheet" href="css/style.css?v65">
+<link rel="stylesheet" href="css/ahs-extra.css?v65">
 
 <!-- ============================================================
      Google Analytics 4, Meta (Facebook) Pixel & TikTok Pixel — imewekwa
@@ -26,7 +26,7 @@
      kubadilisha. Mpaka uweke ID halisi, kila kitu kinabaki kimezimwa
      kiotomatiki (hakuna script inayopakiwa, hakuna kosa).
      ============================================================ -->
-<script src="js/analytics-config.js"></script>
+<script src="js/analytics-config.js?v65"></script>
 </head>
 <body>
 <header>
@@ -89,14 +89,14 @@
   </a>
 </div>
 
-<script src="js/content-data.js"></script>
-<script src="js/i18n.js"></script>
+<script src="js/content-data.js?v65"></script>
+<script src="js/i18n.js?v65"></script>
 <script>
 function applyTheme(){ const theme = localStorage.getItem('ahs_theme')||'light'; document.documentElement.setAttribute('data-theme', theme); }
 function toggleTheme(){ const cur = localStorage.getItem('ahs_theme')||'light'; localStorage.setItem('ahs_theme', cur==='dark'?'light':'dark'); applyTheme(); }
 function onLangChanged(){ renderBlogList(); }
 </script>
-<script src="js/blog.js"></script>
-<script src="js/sw-register.js" defer></script>
+<script src="js/blog.js?v65"></script>
+<script src="js/sw-register.js?v65" defer></script>
 </body>
 </html>

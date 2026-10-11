@@ -25,7 +25,7 @@ export const PROJECT_ID = 'agnes-1-console';
 export const SITE = 'https://agnesherbalsupplements.com';
 export const FIRESTORE_BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
 export const WHATSAPP_NUMBER = '255678883675';
-// Ufunguo wa IndexNow (faili la ufunguo liko kwenye mzizi: /<ufunguo>.txt)
+// IndexNow (Bing, Yandex...): faili la ufunguo liko kwenye mzizi wa tovuti: /<ufunguo>.txt
 export const INDEXNOW_KEY = 'bc647de973740d7df77bf5fd9c824709';
 
 export function slugify(s) {
@@ -56,7 +56,7 @@ function fsValue(v) {
   if ('mapValue' in v) return fsDoc({ fields: (v.mapValue && v.mapValue.fields) || {} });
   return null;
 }
-function fsDoc(doc) {
+export function fsDoc(doc) {
   const out = {};
   const fields = (doc && doc.fields) || {};
   for (const k in fields) out[k] = fsValue(fields[k]);
@@ -68,14 +68,21 @@ function fsDoc(doc) {
 // marekebisho haya, SSR ya Google ilikuwa inasoma customProducts TU — hivyo
 // mabadiliko ya admin (mfano jina jipya fupi kwa ajili ya Google) hayakuwa
 // yakimfikia Google kamwe, japo yalionekana dukani kwa mteja mara moja.
-async function fetchAllOverrides() {
+// Orodha NYEPESI (bila picha/video za base64): ukurasa wa bidhaa unahitaji tu jina/slug/bei/maelezo
+// ya bidhaa ZOTE (kwa kuangalia slug na "Bidhaa Zinazohusiana"). Picha na video za bidhaa
+// iliyoombwa tu hupakuliwa kwa fetchCustomProductById(). Bila hili, kila ukurasa ulikuwa
+// unapakua MB 17+ za picha za bidhaa zote.
+const LITE_FIELDS = ['id','name','slug','category','catSlug','prices','caption','effect','stock','dateAdded',
+  'benefits','faq','videoId','rating','reviewCount','seoTitle','metaDescription','imageAlt','bestseller','prefix'];
+const LITE_MASK = LITE_FIELDS.map(f => '&mask.fieldPaths=' + encodeURIComponent(f)).join('');
+
+async function fetchAllOverrides(lite) {
   const map = {};
   let pageToken = '';
   for (let i = 0; i < 10; i++) {
-    const url = `${FIRESTORE_BASE}/productOverrides?pageSize=300${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
-    const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 4500);
-    let res; try { res = await fetch(url, { signal: ac.signal }); } finally { clearTimeout(tm); }
-    if (!res.ok) throw new Error('firestore ' + res.status);
+    const url = `${FIRESTORE_BASE}/productOverrides?pageSize=300${lite ? LITE_MASK : ''}${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
+    const res = await fetch(url);
+    if (!res.ok) break;
     const data = await res.json();
     (data.documents || []).forEach(d => { map[d.name.split('/').pop()] = fsDoc(d); });
     if (!data.nextPageToken) break;
@@ -93,17 +100,23 @@ function mergeOverride(product, ov) {
     images: (ov.images && ov.images.length) ? ov.images : product.images,
     videoClip: ov.videoClip || product.videoClip,
     videoId: ov.videoId || product.videoId,
+    seoTitle: ov.seoTitle || product.seoTitle,
+    metaDescription: ov.metaDescription || product.metaDescription,
+    imageAlt: ov.imageAlt || product.imageAlt,
+    slug: ov.slug || product.slug,
+    benefits: (ov.benefits && ov.benefits.length) ? ov.benefits : product.benefits,
+    faq: (ov.faq && ov.faq.length) ? ov.faq : product.faq,
   };
 }
 
 // Inasoma customProducts ZOTE (kurasa nyingi ikihitajika), kisha inaunganisha
 // (merge) na productOverrides ya kila bidhaa — ili jina/picha/caption ULIYOBADILISHA
 // kwenye admin BAADA ya kuunda bidhaa ionekane kwa Google 100%, sio dukani tu.
-async function fetchCustomProductsRaw() {
+export async function fetchCustomProducts(lite) {
   let all = [];
   let pageToken = '';
   for (let i = 0; i < 10; i++) {
-    const url = `${FIRESTORE_BASE}/customProducts?pageSize=300${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
+    const url = `${FIRESTORE_BASE}/customProducts?pageSize=300${lite ? LITE_MASK : ''}${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
     const res = await fetch(url);
     if (!res.ok) break;
     const data = await res.json();
@@ -116,11 +129,11 @@ async function fetchCustomProductsRaw() {
     if (!data.nextPageToken) break;
     pageToken = data.nextPageToken;
   }
-  return mergeAllOverrides(all);
+  return mergeAllOverrides(all, lite);
 }
-async function mergeAllOverrides(all) {
+async function mergeAllOverrides(all, lite) {
   let overrides = {};
-  try { overrides = await fetchAllOverrides(); } catch (e) { /* SSR isiharibike ikiwa hii pekee itashindikana */ }
+  try { overrides = await fetchAllOverrides(lite); } catch (e) { /* SSR isiharibike ikiwa hii pekee itashindikana */ }
   return all.map(p => mergeOverride(p, overrides[p._docId] || overrides[String(p.id)]));
 }
 
@@ -140,8 +153,8 @@ export async function fetchCustomProductById(id) {
 }
 
 export function productSlug(p) {
-  // Muundo mmoja kwa bidhaa ZOTE: p<namba>-<jina> (mfano p100050-jina) — namba inazuia migongano ya majina yanayofanana.
-  // Slug ya admin (Hariri → SEO) inayoanza na namba inapewa "p" mbele.
+  // Muundo mmoja kwa bidhaa ZOTE: p<namba>-<jina>  (mfano p0-28-day-slimming-tea).
+  // Slug ya admin inayoanza na namba (mfano "100100-fertility-combo") inapewa "p" mbele.
   const custom = slugify(p.slug || '');
   if (custom) return /^\d+-/.test(custom) ? `p${custom}` : custom;
   const byName = slugify(p.name);
@@ -165,6 +178,7 @@ export function videoProxyUrl(productId) {
 // zinasafishwa, na maneno yanayorudiwa (mfano jina na kazi zikiwa na neno
 // moja) yanaondolewa ili isiwe ni "keyword stuffing".
 export function buildAltText(p) {
+  if (p.imageAlt && p.imageAlt.trim()) return p.imageAlt.trim().slice(0, 160);
   const clean = s => String(s || '').replace(/[–—]/g, ' ').replace(/&/g, 'na').replace(/\s+/g, ' ').trim();
   const name = clean(p.name);
   const effect = clean(p.effect);
@@ -184,12 +198,18 @@ export function buildAltText(p) {
 }
 
 export function buildTitle(p) {
+  if (p.seoTitle && p.seoTitle.trim()) return p.seoTitle.trim();
   return `${p.name} | Agnes Herbal Supplements Tanzania`;
 }
 
-// Meta description: caption ya admin ikiwa ipo (imefupishwa), la sivyo
-// muundo ule ule unaotumika kwenye kurasa 288 za awali.
+// Meta description: admin override kwanza (ikiwa ipo), kisha caption ya
+// admin (imefupishwa), la sivyo muundo ule ule unaotumika kwenye kurasa
+// 288 za awali.
 export function buildMetaDescription(p) {
+  if (p.metaDescription && p.metaDescription.trim()) {
+    const custom = p.metaDescription.trim();
+    return custom.length > 158 ? custom.slice(0, 157).trim() + '…' : custom;
+  }
   let base = (p.caption && p.caption.trim())
     ? p.caption.trim()
     : `${p.name} - ${p.effect || p.category} - ${p.category}.`;
@@ -200,23 +220,20 @@ export function buildMetaDescription(p) {
   return base.length > 158 ? base.slice(0, 157).trim() + '…' : base;
 }
 
-// Kasi + uhakika: matokeo ya Firestore yanawekwa kwenye cache ya edge (sekunde 120) ili Google/bots/wateja
-// wasubiri Firestore kila ombi; Firestore ikichelewa/ikishindwa tunatumia nakala ya mwisho iliyofanikiwa.
-// Bidhaa mpya za admin zinaonekana ndani ya dakika 2 kwa bots na ukurasa wa bidhaa.
-let _memCustom = null, _memAt = 0;
-export async function fetchCustomProducts() {
-  const now = Date.now();
-  if (_memCustom && now - _memAt < 60000) return _memCustom;
-  const cache = (typeof caches !== 'undefined' && caches.default) ? caches.default : null;
-  const key = new Request(SITE + '/__cache/custom-products-v1');
-  try {
-    const list = await fetchCustomProductsRaw();
-    _memCustom = list; _memAt = now;
-    if (cache) { try { await cache.put(key, new Response(JSON.stringify(list), { headers: { 'Cache-Control': 'public, max-age=86400', 'Content-Type': 'application/json' } })); } catch (e) {} }
-    return list;
-  } catch (e) {
-    if (_memCustom) return _memCustom;
-    if (cache) { try { const hit = await cache.match(key); if (hit) { const l = await hit.json(); _memCustom = l; _memAt = now - 30000; return l; } } catch (e2) {} }
-    throw e;
+
+// Maswali ya kawaida ya duka (sera za duka, si madai ya kiafya) — yanatumika kwenye kila ukurasa wa bidhaa,
+// sawa na kurasa tuli. Maswali ya admin (Mipangilio ya SEO) yanatangulia yakiwepo.
+export function buildStandardFaq(p) {
+  const name = p.name;
+  const pr = p.prices || {};
+  const fmt = n => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const items = [
+    [`Naagizaje ${name}?`, `Bofya "ORDER NOW" kwenye ukurasa huu, au tuandikie WhatsApp +255 678 883 675. Tunakufikishia Dar es Salaam, mikoani, na pia Kenya, Uganda na Burundi.`]
+  ];
+  if (pr.w5 && pr.w10 && pr.retail) {
+    items.push([`Bei ya jumla (wholesale) ya ${name} ni ngapi?`, `Rejareja ni Tsh ${fmt(pr.retail)}. Ukinunua vipande 5 au zaidi ni Tsh ${fmt(pr.w5)} kwa kimoja, na vipande 10 au zaidi ni Tsh ${fmt(pr.w10)} kwa kimoja.`]);
   }
+  items.push(['Nawezaje kulipa?', 'Tunapokea M-Pesa, Mixx by Yas, HaloPesa na NMB. Maelezo kamili yako kwenye ukurasa wa Uwasilishaji na Malipo.']);
+  items.push(['Naweza kuuliza kabla ya kuagiza?', 'Ndiyo. Tuandikie WhatsApp +255 678 883 675 na tutakujibu kuhusu matumizi, upatikanaji na usafirishaji.']);
+  return items.map(([q, a]) => ({ q, a }));
 }

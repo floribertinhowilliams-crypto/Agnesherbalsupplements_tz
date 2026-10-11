@@ -10,17 +10,23 @@
 import { fetchCustomProducts, productSlug, SITE, INDEXNOW_KEY } from '../_lib/seo.js';
 import { STATIC_CATALOG } from '../_lib/static-catalog.js';
 
-const ENDPOINT = 'https://api.indexnow.org/indexnow';
-const CORE = ['/', '/orodha/', '/bidhaa-zote/', '/blog.html', '/sitemap.xml', '/sitemap-products-live.xml', '/catalog.json'];
+// Tunajaribu mlango wa pamoja kwanza; ukikataa (429 n.k.) tunajaribu Bing moja kwa moja, kisha Yandex.
+const ENDPOINTS = ['https://api.indexnow.org/indexnow', 'https://www.bing.com/indexnow', 'https://yandex.com/indexnow'];
+const CORE = ['/', '/orodha/', '/je-ipo/', '/blog', '/sitemap.xml', '/sitemap-products-live.xml', '/llms.txt', '/catalog.json'];
 
 function uniq(arr) { return Array.from(new Set(arr)); }
 
 async function submit(urlList) {
-  const res = await fetch(ENDPOINT, {
-    method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' },
-    body: JSON.stringify({ host: new URL(SITE).host, key: INDEXNOW_KEY, keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`, urlList }),
-  });
-  return res.status; // 200/202 = imepokelewa
+  const body = JSON.stringify({ host: new URL(SITE).host, key: INDEXNOW_KEY, keyLocation: `${SITE}/${INDEXNOW_KEY}.txt`, urlList });
+  let status = 0;
+  for (const ep of ENDPOINTS) {
+    try {
+      const res = await fetch(ep, { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' }, body });
+      status = res.status; // 200/202 = imepokelewa
+      if (status === 200 || status === 202) return status;
+    } catch (e) { status = 0; }
+  }
+  return status; // hali ya jaribio la mwisho
 }
 
 export async function onRequestPost({ request }) {

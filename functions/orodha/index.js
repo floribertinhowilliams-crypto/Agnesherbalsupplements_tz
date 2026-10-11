@@ -38,8 +38,8 @@ ul{padding-left:18px}li{margin:6px 0;font-size:.9rem}a{color:#0f4d34}
 </style></head><body><div class="wrap">
 <p><a href="/">← Duka</a></p>
 <h1>Orodha Kamili ya Bidhaa — Agnes Herbal Supplements Tanzania</h1>
-<p>Bidhaa ${items.length} za vitamini, virutubisho, chai za asili, collagen na gummies, zimepangwa kwa kazi yake. Kila jina ni kiungo cha ukurasa wake wenye bei na maelezo. Huoni unachotafuta? Uliza WhatsApp.</p>
-<a class="cta" href="https://wa.me/${WHATSAPP_NUMBER}?text=${wa}">💬 Uliza kama Ipo (WhatsApp)</a>
+<p>Bidhaa ${items.length} za vitamini, virutubisho, chai za asili, collagen na gummies, zimepangwa kwa kazi yake. Kila jina ni kiungo cha ukurasa wake wenye bei na maelezo. Huoni unachotafuta? <a href="/je-ipo/">Angalia kama ipo</a> au uliza WhatsApp.</p>
+<a class="cta" href="https://wa.me/${WHATSAPP_NUMBER}?text=${wa}">💬 Uliza kama Ipo (WhatsApp)</a><a class="cta alt" href="/je-ipo/">🔎 Je, Ipo?</a>
 <nav class="toc">${toc}</nav>
 ${sections}
 <p style="font-size:.75rem;color:#777;margin-top:30px">Bidhaa zetu hazikusudiwi kutibu, kuponya au kuzuia ugonjwa wowote. Wasiliana na daktari kabla ya kuanza virutubisho vipya. Agnes Herbal Supplements, Dar es Salaam, Tanzania.</p>

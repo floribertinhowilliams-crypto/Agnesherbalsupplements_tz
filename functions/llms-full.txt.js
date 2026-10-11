@@ -8,7 +8,7 @@ export async function onRequestGet() {
     '# Agnes Herbal Supplements — Orodha Kamili ya Bidhaa',
     '',
     `> Duka la vitamini, virutubisho na chai za asili, Dar es Salaam, Tanzania. Bidhaa ${items.length}. Tunafikisha Tanzania nzima. Agiza kwa WhatsApp: https://wa.me/${WHATSAPP_NUMBER} (+255 678 883 675).`,
-    '> Bidhaa isipoonekana hapa, uliza WhatsApp — tunaweza kukuagizia.',
+    '> Bidhaa isipoonekana hapa, uliza WhatsApp — tunaweza kukuagizia. Kuangalia upatikanaji: ' + SITE + '/je-ipo/',
     '> Malipo: M-Pesa, Mixx by Yas, HaloPesa, NMB. Bidhaa hazikusudiwi kutibu au kuzuia ugonjwa wowote.',
     '',
   ];

@@ -17,6 +17,16 @@
 /sw.js
   Cache-Control: no-cache
 
+# Kurasa za bidhaa: ruhusu injini zote kuorodhesha na kuonyesha picha/video kubwa.
+/products/*
+  X-Robots-Tag: index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1
+
+# Sitemap na faili za AI: zisikae kwenye cache ndefu ili bidhaa mpya zionekane haraka.
+/sitemap.xml
+  Cache-Control: public, max-age=300
+/llms.txt
+  Cache-Control: public, max-age=300
+
 /index.html
   Cache-Control: no-cache
 
@@ -37,24 +47,5 @@
 /assets/*
   Cache-Control: public, max-age=3600
 
-# --- v65: kuzuia cache ya zamani kwenye kurasa za bidhaa, orodha na sitemap (zinathibitishwa upya kila mara) ---
-/products/*
-  Cache-Control: no-cache
-
-/orodha/*
-  Cache-Control: no-cache
-
-/bidhaa-zote/*
-  Cache-Control: no-cache
-
-/catalog.json
-  Cache-Control: no-cache
-
-/catalog-snapshot.json
-  Cache-Control: no-cache
-
-/sitemap.xml
-  Cache-Control: no-cache
-
-/*.json
-  Cache-Control: no-cache
+/images_custom/*
+  Cache-Control: public, max-age=3600

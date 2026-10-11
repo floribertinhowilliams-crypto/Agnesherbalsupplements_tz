@@ -1,24 +1,36 @@
 // Agnes Herbal Supplements — reviews, FAQ & blog content (bilingual SW/EN)
-// Static demo content. Replace with real customer reviews from the Admin dashboard.
+//
+// REAL REVIEWS ONLY. This file used to ship a fixed pool of fabricated
+// reviewer names/quotes that were deterministically assigned to every
+// product (and to a fake star rating/review count baked into
+// products-data.js). That has been removed. Every rating, review count,
+// and review shown anywhere on the site now comes exclusively from
+// genuine reviews an admin enters via Admin → Maoni, stored under the
+// localStorage key "ahs_reviews_custom". Until a product has a real
+// review, its rating/review UI is simply hidden rather than showing an
+// invented number or quote.
 
-const REVIEW_POOL = [
-  { name: "Amina H.", sw: "Nimetumia bidhaa hii kwa wiki mbili, matokeo ni mazuri sana. Naipenda!", en: "I've used this for two weeks and the results are great. I love it!", fr: "Je l'utilise depuis deux semaines et les résultats sont excellents. J'adore !", zh: "我已经使用了两周，效果非常好。我很喜欢！", rn: "Nkoresheje iki gicuruzwa mu ndwi zibiri, ivyavuye ni vyiza cane. Ndakikunda!" },
-  { name: "Juma M.", sw: "Ubora wa bidhaa ni wa hali ya juu, na huduma kwa wateja ni nzuri.", en: "Product quality is excellent, and customer service was great.", fr: "La qualité du produit est excellente et le service client était très bon.", zh: "产品质量非常好，客户服务也很棒。", rn: "Ubuziranenge bw'igicuruzwa ni bwiza cane, kandi ubufasha bw'abakiriya ni bwiza." },
-  { name: "Grace P.", sw: "Nimeagiza mara tatu sasa, kila mara napata bidhaa halisi na kwa haraka.", en: "I've ordered three times now, always genuine products delivered fast.", fr: "J'ai commandé trois fois maintenant, toujours des produits authentiques livrés rapidement.", zh: "我已经下单三次了，每次都能收到正品，配送也很快。", rn: "Ndamaze gutegura incuro zitatu, buri gihe nronka ibicuruzwa vy'ukuri kandi bitwarwa ningoga." },
-  { name: "Neema K.", sw: "Bei ni nzuri ukilinganisha na maduka mengine, na ubora haujashuka.", en: "Prices are fair compared to other shops, and quality hasn't dropped.", fr: "Les prix sont justes par rapport à d'autres boutiques, et la qualité reste constante.", zh: "价格比其他店铺公道，而且质量一直很稳定。", rn: "Ibiciro ni vyiza ugereranije n'amaduka andi, kandi ubuziranenge ntibwaragabanutse." },
-  { name: "Baraka S.", sw: "Nashukuru kwa ushauri walionipa kabla ya kununua, ilinisaidia kuchagua sahihi.", en: "Grateful for the advice they gave me before buying — helped me choose right.", fr: "Merci pour les conseils avant l'achat — cela m'a aidé à bien choisir.", zh: "感谢他们在购买前给我的建议，帮助我做出了正确的选择。", rn: "Ndashimira impanuro bampaye imbere yo kugura — vyamfashije guhitamwo neza." },
-  { name: "Fatuma R.", sw: "Bidhaa imefika salama na packaging ni nzuri sana.", en: "Product arrived safely and the packaging was excellent.", fr: "Le produit est arrivé en toute sécurité et l'emballage était excellent.", zh: "产品安全送达，包装非常精美。", rn: "Igicuruzwa carashitse neza kandi ipaki yaco yari nziza cane." },
-  { name: "Elias N.", sw: "Nimeona mabadiliko ndani ya mwezi mmoja wa matumizi.", en: "I noticed changes within one month of use.", fr: "J'ai remarqué des changements en un mois d'utilisation.", zh: "使用一个月后我就看到了变化。", rn: "Narabonye impinduka mu kwezi kumwe nkoresha." },
-  { name: "Zawadi T.", sw: "Huduma ya WhatsApp ni ya haraka, majibu yanakuja mara moja.", en: "WhatsApp service is fast, replies come right away.", fr: "Le service WhatsApp est rapide, les réponses arrivent immédiatement.", zh: "WhatsApp客服响应很快，回复很及时。", rn: "Ubufasha kuri WhatsApp ni bwihuse, inyishu ziza ako kanya." }
-];
+function getRealReviewsFor(productId) {
+  try {
+    const all = JSON.parse(localStorage.getItem('ahs_reviews_custom') || '{}');
+    return all[productId] || [];
+  } catch (e) { return []; }
+}
 
-function getProductReviews(productId, count) {
-  const list = [];
-  const n = REVIEW_POOL.length;
-  for (let i = 0; i < count; i++) {
-    list.push(REVIEW_POOL[(productId + i * 3) % n]);
-  }
-  return list;
+function getRatingStats(productId) {
+  const revs = getRealReviewsFor(productId);
+  if (!revs.length) return { rating: 0, count: 0 };
+  const sum = revs.reduce((s, r) => s + (Number(r.rating) || 0), 0);
+  return { rating: Math.round((sum / revs.length) * 10) / 10, count: revs.length };
+}
+
+function getAllRealReviews() {
+  try {
+    const all = JSON.parse(localStorage.getItem('ahs_reviews_custom') || '{}');
+    const out = [];
+    Object.keys(all).forEach(pid => (all[pid] || []).forEach(r => out.push(Object.assign({ productId: pid }, r))));
+    return out.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+  } catch (e) { return []; }
 }
 
 const FAQ_DATA = [

@@ -1,6 +1,5 @@
 // Agnes Herbal Supplements — Service Worker (offline-first cache)
-// Kila toleo jipya: badilisha namba hapa — vifaa vyote vinafuta cache ya zamani na kupakia upya kiotomatiki.
-const CACHE_NAME = 'ahs-cache-v65-20261009';
+const CACHE_NAME = 'ahs-cache-v72';
 const CORE_ASSETS = [
   './index.html',
   './blog.html',
@@ -19,6 +18,7 @@ const CORE_ASSETS = [
   './js/sw-register.js',
   './js/homepage-v2.js',
   './js/search-v2.js',
+  './js/goal-groups.js',
   './js/live-notifications.js',
   './js/blog.js',
   './js/track.js',
@@ -33,7 +33,7 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => Promise.all(CORE_ASSETS.map(u => cache.add(new Request(u, { cache: 'reload' })).catch(() => {})))).catch(() => {})
+    caches.open(CACHE_NAME).then(cache => cache.addAll(CORE_ASSETS)).catch(() => {})
   );
   self.skipWaiting();
 });

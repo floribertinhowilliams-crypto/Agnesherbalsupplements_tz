@@ -310,33 +310,21 @@ function getProductFaq(product) {
 }
 
 /* ===================== REVIEW RATING DISTRIBUTION ===================== */
-// We only store an average rating + review count per product (no per-review star
-// values), so this builds a plausible 1–5 star breakdown that is consistent with
-// that average — a standard technique used across e-commerce sites when the
-// individual star values of every review aren't separately stored.
-function buildRatingDistribution(rating, count) {
-  const stars = [5, 4, 3, 2, 1];
-  const weights = stars.map(s => Math.max(0.02, 1 - Math.abs(s - rating) * 0.55));
-  const sumW = weights.reduce((a, b) => a + b, 0);
-  const raw = weights.map(w => (w / sumW) * count);
-  const rounded = raw.map(v => Math.round(v));
-  // fix rounding drift so total matches count exactly
-  let diff = count - rounded.reduce((a, b) => a + b, 0);
-  let idx = 0;
-  while (diff !== 0 && rounded.length) {
-    const i = idx % rounded.length;
-    if (diff > 0) { rounded[i]++; diff--; }
-    else if (rounded[i] > 0) { rounded[i]--; diff++; }
-    idx++;
-    if (idx > 1000) break;
-  }
-  return stars.map((s, i) => ({ star: s, count: Math.max(0, rounded[i]) }));
+// Counts the actual star value each genuine review was given — real data
+// only, no simulated/plausible-looking breakdown.
+function buildRatingDistribution(reviews) {
+  const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  (reviews || []).forEach(r => {
+    const s = Math.round(Number(r.rating) || 0);
+    if (counts[s] !== undefined) counts[s]++;
+  });
+  return [5, 4, 3, 2, 1].map(s => ({ star: s, count: counts[s] }));
 }
 
 /* ===================== FREQUENTLY BOUGHT TOGETHER ===================== */
 function getFrequentlyBoughtWith(product) {
   const pool = visibleProducts().filter(p => p.category === product.category && p.id !== product.id)
-    .sort((a, b) => b.rating - a.rating);
+    .sort((a, b) => (getRatingStats(b.id).rating - getRatingStats(a.id).rating) || (b.bestseller - a.bestseller));
   if (pool.length === 0) return [];
   // Prefer items further down the ranked list so this differs from "Related Products"
   // (which shows the top 4), giving genuinely different suggestions.

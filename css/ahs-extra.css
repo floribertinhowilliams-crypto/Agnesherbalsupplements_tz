@@ -92,6 +92,12 @@
 .order-status-select{padding:6px 8px; border-radius:8px; border:1px solid var(--line); font-size:.78rem;}
 .order-confirm-btn{background:var(--green-deep); color:#fff; border:none; padding:6px 12px; border-radius:8px; font-size:.75rem; font-weight:700; cursor:pointer;}
 .order-row-new{background:#fff8e1;}
+.order-row-cancelled{opacity:.55;}
+.order-source-badge{display:inline-block; margin-left:6px; padding:1px 7px; border-radius:20px; font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.02em; background:#eef2ff; color:#4548c9; vertical-align:middle;}
+.order-source-facebook{background:#e7f0ff; color:#1877f2;}
+.order-source-instagram{background:#fde8f3; color:#c1276b;}
+.order-source-tiktok{background:#eafcfa; color:#0e7a72;}
+.order-source-whatsapp{background:#e6f9ec; color:#128c4b;}
 
 /* ---------- track order: live status pill ---------- */
 .track-live-pill{display:inline-flex; align-items:center; gap:6px; font-size:.72rem; font-weight:700; color:#1e7d3d; background:#e7f6ec; padding:4px 10px; border-radius:12px; margin-bottom:10px;}

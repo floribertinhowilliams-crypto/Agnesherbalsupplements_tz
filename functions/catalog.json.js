@@ -1,4 +1,4 @@
-// Route: /catalog.json — feed ya bidhaa zote inayosomeka na mashine (AI agents).
+// Route: /catalog.json — feed ya bidhaa zote inayosomeka na mashine (ukurasa /je-ipo/, AI agents).
 import { buildCatalog } from './_lib/catalog.js';
 import { SITE, WHATSAPP_NUMBER } from './_lib/seo.js';
 

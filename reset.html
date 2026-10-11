@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="sw"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>Safisha Cache</title>
+<style>body{font-family:sans-serif;background:#fbf7ee;color:#1b1b1b;padding:30px;max-width:520px;margin:auto}h2{color:#0f4d34}</style></head>
+<body><h2>Safisha cache ya duka</h2><p id="s">⏳ Inasafisha...</p>
+<script>
+(async function(){
+  var out=[];
+  try{ var rs=await navigator.serviceWorker.getRegistrations(); for(var r of rs){await r.unregister();} out.push('Service worker zilizoondolewa: '+rs.length);}catch(e){out.push('SW: '+e.message);}
+  try{ var ks=await caches.keys(); for(var k of ks){await caches.delete(k);} out.push('Cache zilizofutwa: '+ks.length);}catch(e){out.push('Cache: '+e.message);}
+  document.getElementById('s').innerHTML='✅ Imekamilika.<br>'+out.join('<br>')+'<br><br><a href="/admin.html?fresh='+Date.now()+'">➡️ Fungua Admin</a> &nbsp; <a href="/?fresh='+Date.now()+'">➡️ Fungua Duka</a>';
+})();
+</script></body></html>

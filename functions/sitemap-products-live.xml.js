@@ -9,18 +9,19 @@ import { fetchCustomProducts, productSlug, imageProxyUrl, videoProxyUrl, buildAl
 export async function onRequestGet() {
   let products = [];
   try {
-    products = await fetchCustomProducts();
+    products = await fetchCustomProducts(true); // orodha NYEPESI: bila picha/video za base64 (MB nyingi) — URL zinahitaji jina/slug tu
   } catch (e) {
-    products = [];
+    // Firestore haipatikani: 503 (Google itajaribu tena) badala ya sitemap tupu yenye 200 inayoonekana kama bidhaa zote zimeondolewa.
+    return new Response('Service unavailable', { status: 503, headers: { 'Retry-After': '300', 'Cache-Control': 'no-store' } });
   }
 
   const urls = products
-    .filter(p => p.name)
+    .filter(p => p.name && !p.hidden)
     .map(p => {
       const loc = `${SITE}/products/${productSlug(p)}`;
       const lastmod = /^\d{4}-\d{2}-\d{2}$/.test(p.dateAdded || '') ? p.dateAdded : new Date().toISOString().slice(0, 10);
-      const thumb = (Array.isArray(p.images) && p.images.length) ? imageProxyUrl(p.id, 0) : `${SITE}/assets/images/logo.png`;
-      const hasLocalVideo = !!p.videoClip;
+      const thumb = imageProxyUrl(p.id, 0); // picha ya kwanza (orodha nyepesi haina picha; URL hii hutolewa na /img/custom/)
+      const hasLocalVideo = false; // videoClip ni base64 kubwa, haimo kwenye orodha nyepesi; ukurasa wa bidhaa wenyewe bado una VideoObject
       const hasYoutubeVideo = !hasLocalVideo && !!p.videoId;
       // "video:video" (Google Video Sitemap extension) inasaidia Google
       // kutambua video ya bidhaa mahsusi — sawa na jinsi <url> ya kawaida

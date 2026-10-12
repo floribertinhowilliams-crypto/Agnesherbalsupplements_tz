@@ -130,6 +130,11 @@ export function renderProductHtml(product, products, slug, urls) {
 <meta property="og:image" content="${primaryImg}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:type" content="product">
+<meta property="og:site_name" content="Agnes Herbal Supplements">
+<meta property="og:image:alt" content="${escapeHtml(alt)}">
+<meta property="product:price:amount" content="${price}">
+<meta property="product:price:currency" content="TZS">
+<meta property="product:availability" content="${inStock ? 'in stock' : 'out of stock'}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(product.name)} - Agnes Herbal Supplements">
 <meta name="twitter:description" content="${escapeHtml(description)}">
@@ -205,7 +210,6 @@ ${related.length ? `<div class="faq-block"><h2>Bidhaa Zinazohusiana</h2>${relate
 </div>
 </div>
 <footer>&copy; ${new Date().getFullYear()} Agnes Herbal Supplements-Winstown,Dynee&amp; Duozi Distributor Tanzania, Dar es Salaam.</footer>
-<script>(function(){try{var ua=navigator.userAgent||"";if(/bot|crawl|spider|slurp|bing|google|yandex|baidu|duckduck|gpt|claude|perplexity|facebookexternalhit|whatsapp|telegram|twitterbot|linkedin|preview|lighthouse/i.test(ua)||/[?&]stay=1/.test(location.search))return;var a=document.querySelector('a.cta[href^="/#product-"]');if(a)location.replace(a.getAttribute("href"));}catch(e){}})();</script>
 <script src="/js/share-product.js" defer></script>
 </body>
 </html>`;

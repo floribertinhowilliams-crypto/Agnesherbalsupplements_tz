@@ -36,7 +36,7 @@ export async function onRequestPost({ request }) {
 
   if (!urls.length) {
     let custom = [];
-    try { custom = await fetchCustomProducts(); } catch (e) { custom = []; }
+    try { custom = await fetchCustomProducts(true); } catch (e) { custom = []; }
     urls = CORE.map(p => SITE + p)
       .concat(STATIC_CATALOG.map(p => SITE + p.page))
       .concat(custom.filter(p => p && p.name).map(p => `${SITE}/products/${productSlug(p)}`));

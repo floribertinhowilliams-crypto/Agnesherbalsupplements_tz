@@ -63,7 +63,7 @@
     <a href="tel:+255678883675">📞 +255 678 883 675</a>
   </div>
 </div>
-<script>(function(){try{var m=/^\/products\/p(\d+)-/.exec(location.pathname);if(m)location.replace('/#product-'+m[1]);}catch(e){}})();</script>
+<script>(function(){try{if(/^\/products\//.test(location.pathname)){document.addEventListener('DOMContentLoaded',function(){var p=document.querySelector('.error-page p');if(p){p.textContent='Samahani, bidhaa uliyoitafuta haipatikani kwenye URL hii. Tafuta bidhaa hapa chini au tuandikie WhatsApp.';p.removeAttribute('data-i18n');}var h=document.querySelector('.error-page h1');if(h){h.textContent='Bidhaa Haipatikani';h.removeAttribute('data-i18n');}});}}catch(e){}})();</script>
 <script src="js/i18n.js"></script>
 <script>document.addEventListener('DOMContentLoaded', applyLang);</script>
 </body>

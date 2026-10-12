@@ -73,7 +73,7 @@ export function fsDoc(doc) {
 // iliyoombwa tu hupakuliwa kwa fetchCustomProductById(). Bila hili, kila ukurasa ulikuwa
 // unapakua MB 17+ za picha za bidhaa zote.
 const LITE_FIELDS = ['id','name','slug','category','catSlug','prices','caption','effect','stock','dateAdded',
-  'benefits','faq','videoId','rating','reviewCount','seoTitle','metaDescription','imageAlt','bestseller','prefix'];
+  'benefits','faq','videoId','rating','reviewCount','seoTitle','metaDescription','imageAlt','bestseller','prefix','hidden'];
 const LITE_MASK = LITE_FIELDS.map(f => '&mask.fieldPaths=' + encodeURIComponent(f)).join('');
 
 async function fetchAllOverrides(lite) {
@@ -95,6 +95,10 @@ function mergeOverride(product, ov) {
   return {
     ...product,
     name: ov.name || product.name,
+    // Bei, stock na "ficha" kutoka Admin → Hariri Bidhaa (productOverrides) sasa zinafika kwenye ukurasa wa bidhaa moja kwa moja.
+    prices: (ov.prices && ov.prices.retail) ? ov.prices : product.prices,
+    stock: (typeof ov.stock === 'number') ? ov.stock : product.stock,
+    hidden: (typeof ov.hidden === 'boolean') ? ov.hidden : !!product.hidden,
     caption: ov.caption || product.caption,
     cover: ov.cover || product.cover,
     images: (ov.images && ov.images.length) ? ov.images : product.images,
@@ -118,7 +122,9 @@ export async function fetchCustomProducts(lite) {
   for (let i = 0; i < 10; i++) {
     const url = `${FIRESTORE_BASE}/customProducts?pageSize=300${lite ? LITE_MASK : ''}${pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : ''}`;
     const res = await fetch(url);
-    if (!res.ok) break;
+    // Ukurasa wa KWANZA ukishindwa = Firestore haipatikani: tupa kosa ili wito (mf. /products/:slug) utoe 503,
+    // si orodha tupu inayosababisha 404 ya uongo kwa bidhaa halali.
+    if (!res.ok) { if (i === 0) throw new Error('Firestore ' + res.status); break; }
     const data = await res.json();
     const docs = (data.documents || []).map(d => {
       const obj = fsDoc(d);
@@ -150,6 +156,17 @@ export async function fetchCustomProductById(id) {
     if (ovRes.ok) ov = fsDoc(await ovRes.json());
   } catch (e) { /* endelea bila override ikiwa fetch hii itashindikana */ }
   return mergeOverride(obj, ov);
+}
+
+// Override ya bidhaa MOJA (kwa bidhaa 288 za awali: jina/bei/picha/maelezo/stock/ficha zilizobadilishwa kwenye admin).
+// Inarudisha null ikiwa hakuna override au Firestore imeshindwa (ukurasa tuli unaendelea kutumika).
+export async function fetchOverrideById(id) {
+  try {
+    const res = await fetch(`${FIRESTORE_BASE}/productOverrides/${encodeURIComponent(String(id))}`);
+    if (!res.ok) return null;
+    const doc = await res.json();
+    return (doc && doc.fields) ? fsDoc(doc) : null;
+  } catch (e) { return null; }
 }
 
 export function productSlug(p) {

@@ -7,7 +7,7 @@
 // hati ya bidhaa, inachukua picha ya nafasi husika, na kuirudisha kama picha
 // halisi (bytes) yenye URL themabiti — sawa kabisa na picha za bidhaa 288 za
 // awali zinavyoonekana kwa Google.
-import { fetchCustomProductById } from '../../../_lib/seo.js';
+import { fetchCustomProductById, fetchOverrideById } from '../../../_lib/seo.js';
 
 export async function onRequestGet(context) {
   const { id, idx } = context.params;
@@ -21,6 +21,11 @@ export async function onRequestGet(context) {
     product = await fetchCustomProductById(id);
   } catch (e) {
     return new Response('Not found', { status: 404 });
+  }
+  // Bidhaa 288 za awali hazipo kwenye customProducts; picha waliyobadilisha admin iko kwenye productOverrides.
+  if ((!product || !Array.isArray(product.images) || !product.images.length) && /^\d+$/.test(String(id)) && Number(id) <= 287) {
+    const ov = await fetchOverrideById(id);
+    if (ov && Array.isArray(ov.images) && ov.images.length) product = { images: ov.images };
   }
   if (!product || !Array.isArray(product.images) || !product.images[index]) {
     return new Response('Not found', { status: 404 });

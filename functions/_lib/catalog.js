@@ -48,7 +48,8 @@ function goalOf(p, groups, st) {
 
 export async function buildCatalog() {
   let custom = [];
-  try { custom = await fetchCustomProducts(); } catch (e) { custom = []; }
+  // Orodha nyepesi: bila picha za base64.
+  try { custom = await fetchCustomProducts(true); } catch (e) { custom = []; }
   const st = await fetchSettings();
   const groups = effectiveGroups(st);
 
@@ -56,11 +57,11 @@ export async function buildCatalog() {
     id: p.id, name: p.name, effect: p.effect, category: p.category,
     price: p.price, url: SITE + p.page, image: SITE + p.image, inStock: true,
   }));
-  const customItems = custom.filter(p => p && p.name).map(p => ({
+  const customItems = custom.filter(p => p && p.name && !p.hidden).map(p => ({
     id: p.id, name: p.name, effect: p.effect || '', category: p.category || '',
     price: Math.round((p.prices && p.prices.retail) || 0),
     url: `${SITE}/products/${productSlug(p)}`,
-    image: (Array.isArray(p.images) && p.images.length) ? imageProxyUrl(p.id, 0) : `${SITE}/assets/images/logo.png`,
+    image: imageProxyUrl(p.id, 0),
     inStock: !(typeof p.stock === 'number' && p.stock <= 0),
   }));
   // Bidhaa za admin zinazobadilisha jina la bidhaa ya awali hazitumiki hapa; zinakuja kupitia customProducts tu.

@@ -101,3 +101,19 @@ Kila moja sasa ina canonical yake na iko kwenye sitemap (jumla 369).
 
 ## v65: Chagua bidhaa za kila sehemu
 Admin → Panga Sehemu & Majina: kila sehemu (Flash Sale, New Products, Best Sellers, New Arrivals, Trending, Daily Deals, Recently Added) ina kisanduku cha kuchagua bidhaa. Hifadhiwa kwenye meta/homepageSettings.sectionProducts. Hakuna bidhaa zilizochaguliwa = kiotomatiki.
+
+
+## v69: Marekebisho ya URL za bidhaa (ukaguzi wa bidhaa zote)
+- **Ukurasa wa bidhaa SASA unabaki ukurasa wa bidhaa.** Script iliyomrusha kila mtu halisi kwenda `/#product-<id>` (ukurasa mkuu)
+  imeondolewa kutoka kurasa zote 288 tuli na kutoka `functions/_lib/render-product.js`. Kiungo cha tangazo (Facebook/Instagram/WhatsApp/Google)
+  kinafungua picha, jina, bei, maelezo na kitufe cha ORDER NOW za bidhaa hiyo. Viungo vya zamani `/#product-<id>` bado vinafanya kazi.
+- **`functions/products/[slug].js`**: Cloudflare Pages huendesha Function KWANZA kisha huangukia kwenye faili tuli kupitia `context.next()`.
+  Toleo la awali lilikuwa linaelekeza (301) kila URL ya bidhaa ya awali kwenye URL ile ile (mzunguko usio na mwisho). Sasa slug ya sasa ya ukurasa tuli
+  inahudumiwa kwa `next()`; `.html`, slug za zamani (`p31-slimming-tea`), `100040-jina` na slug zisizo na `p<id>` (`mix-products`) zinaelekezwa 301 kwenye ukurasa sahihi wa bidhaa ile ile,
+  na `?src=`/`?utm_`/`fbclid` vinahifadhiwa. Bidhaa isiyokuwepo = 404 halisi. Firestore ikishindwa = 503 (si 404 ya uongo). Akiba haitegemei query string.
+- **`404.html`** haimrushi tena mtu kwenda ukurasa mkuu kwa `/products/...` isiyopatikana; inaonyesha "Bidhaa Haipatikani".
+- `functions/sitemap-products-live.xml.js` inatoa 503 (si sitemap tupu) Firestore ikishindwa; `fetchCustomProducts` inatupa kosa ukurasa wa kwanza ukishindwa.
+- Social preview: `og:site_name`, `og:image:width/height/alt`, `product:price:*` zimeongezwa. Picha za bidhaa ni 480px upana — Facebook inapendelea 600px+ kwa kadi kubwa.
+- `sw.js` cache `ahs-cache-v73`.
+- v69b: `sitemap-products-live.xml`, `/orodha/`, `/catalog.json`, `/llms-full.txt` na `/api/indexnow` sasa hutumia orodha NYEPESI ya Firestore (bila picha/video za base64). Hapo awali zilipakua picha zote za bidhaa za admin (MB nyingi) kuhesabu URL tu; sitemap ya live ilirudi tupu. Video za `videoClip` hazimo tena kwenye sitemap ya live (ukurasa wa bidhaa bado una VideoObject).
+- v69c/d (OTOMATIKI): kila ukurasa wa bidhaa unasoma Firestore papo hapo (akiba ya sekunde 60). Bidhaa za admin: kurasa zinatengenezwa live (`functions/products/[slug].js`). Bidhaa 288 za awali: ukurasa tuli ni kiolezo, na mabadiliko ya Admin → Hariri Bidhaa (`productOverrides`: jina, bei, maelezo, picha, stock, ficha) yanawekwa juu yake na `functions/_lib/apply-override.js`. Bidhaa iliyofichwa = 404 halisi. Hakuna nakala tuli za bidhaa za admin (zinakuwa za zamani). Firestore ikishindwa: bidhaa za awali hubaki (ukurasa tuli), za admin hupata 503 (jaribu tena), si 404 ya uongo. Bidhaa ya admin ikibadilishwa jina na haina slug iliyohifadhiwa, URL ya zamani inaelekezwa (301) kwenye mpya.

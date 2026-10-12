@@ -23,7 +23,18 @@ let compareList = lsGet('ahs_compare', []);
 let recentlyViewed = lsGet('ahs_recent', []);
 let currentProduct = null;
 let currentQty = 1;
-let invCounter = Math.floor(1000 + Math.random() * 8999);
+let invCounter = Math.floor(1000 + Math.random() * 8999); // (haitumiki tena kutengeneza namba ya oda — ona ahsNewOrderNo)
+// Namba ya oda ya KIPEKEE (tarakimu pekee, ili ukurasa wa kufuatilia oda uendelee kufanya kazi). Hapo awali ilikuwa tarakimu 4
+// nasibu (8999 tu): wateja wawili wakipata namba ile ile, Firestore ilikataa oda ya pili kimya kimya (kitambulisho cha hati
+// kinatumika tena = "update", ambayo wateja hawaruhusiwi). Sasa: milisekunde za sasa (tarakimu 7) + tarakimu 1 nasibu = tarakimu 8.
+function ahsNewOrderNo() {
+  const existing = new Set((lsGet('ahs_orders', []) || []).map(o => o && o.id));
+  for (let i = 0; i < 20; i++) {
+    const id = 'AHS-' + String(Date.now() % 10000000).padStart(7, '0') + Math.floor(Math.random() * 10);
+    if (!existing.has(id)) return id;
+  }
+  return 'AHS-' + String(Date.now()).slice(-9);
+}
 
 // merge admin overrides (hidden / price edits / images / caption) if any.
 // productOverrides starts from localStorage and is extended live by Firestore
@@ -1555,16 +1566,23 @@ function closeRegionDropdown() {
   const dd = document.getElementById('regionDropdown');
   if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
 }
+// Mikoa ya Tanzania ambayo haimo kwenye orodha ya bei (SHIPPING_RATES): inaonekana kwenye orodha ili mteja aichague bila
+// kuona "Hakuna mkoa"; bei yake inathibitishwa na duka. Ongeza bei kwenye js/shipping-data.js nayo ikipata bei.
+const REGIONS_WITHOUT_RATE = ['KAGERA', 'KATAVI', 'KILIMANJARO', 'MANYARA', 'MARA', 'RUKWA', 'RUVUMA', 'SIMIYU', 'SONGWE'];
 function openRegionDropdown(filterText) {
   const dd = document.getElementById('regionDropdown');
   if (!dd || typeof SHIPPING_RATES === 'undefined') return;
   const norm = shippingNormalize(filterText || '');
   const keys = Object.keys(SHIPPING_RATES).sort();
   const matches = norm ? keys.filter(k => k.includes(norm)) : keys;
-  if (matches.length === 0) {
+  const extra = REGIONS_WITHOUT_RATE.filter(k => !SHIPPING_RATES[k] && (!norm || k.includes(norm)));
+  const usdKeys = (typeof SHIPPING_USD !== 'undefined' ? Object.keys(SHIPPING_USD) : []).filter(k => !norm || k.includes(norm));
+  if (matches.length === 0 && extra.length === 0 && usdKeys.length === 0) {
     dd.innerHTML = '<div class="ccf-region-empty">Hakuna mkoa/wilaya inayolingana — bado unaweza kuandika jina, tutathibitisha bei.</div>';
   } else {
-    dd.innerHTML = matches.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">Tsh ${SHIPPING_RATES[k].toLocaleString('en-US')}</span></div>`).join('');
+    dd.innerHTML = matches.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">Tsh ${SHIPPING_RATES[k].toLocaleString('en-US')}</span></div>`).join('')
+      + usdKeys.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">USD ${SHIPPING_USD[k]}</span></div>`).join('')
+      + extra.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">bei itathibitishwa</span></div>`).join('');
   }
   dd.classList.add('open');
   dd.querySelectorAll('[data-region]').forEach(opt => {
@@ -1599,7 +1617,7 @@ function getShippingInfo() {
     if (!regionText || typeof findShippingRate !== 'function') return { price: 0, matched: false, isDar: false, regionText };
     const found = findShippingRate(regionText);
     if (!found) return { price: 0, matched: false, isDar: false, regionText };
-    return { price: found.price, matched: true, isDar: false, regionText };
+    return { price: found.price, usd: found.usd || 0, matched: true, isDar: false, regionText };
   }
   return { price: 0, matched: false, isDar: false, regionText: '' };
 }
@@ -1615,11 +1633,13 @@ function updateShippingUI(shipInfo) {
   }
   if (shipInfo.matched) {
     noteEl.className = 'ccf-shipping-note ok';
-    noteEl.innerHTML = `✅ <b>${escapeHtml(regionLabel(findShippingRate(shipInfo.regionText).region))}</b> — Tsh ${shipInfo.price.toLocaleString('en-US')}. Malipo kabla ya kutuma (mkoani unalipia kwanza).`;
-    closeRegionDropdown();
+    const foundRegion = findShippingRate(shipInfo.regionText).region;
+    noteEl.innerHTML = `✅ <b>${escapeHtml(regionLabel(foundRegion))}</b> — ${shipInfo.usd ? 'USD ' + shipInfo.usd + ' (italipwa kando, haijumuishwi kwenye jumla ya Tsh)' : 'Tsh ' + shipInfo.price.toLocaleString('en-US')}. Malipo kabla ya kutuma (mkoani unalipia kwanza).`;
+    // Funga orodha TU mteja anapokuwa ameandika jina kamili; vinginevyo (bado anaandika) iache wazi achague.
+    if (shippingNormalize(shipInfo.regionText) === foundRegion) closeRegionDropdown();
   } else if (shipInfo.isDar) {
-    noteEl.className = 'ccf-shipping-note danger';
-    noteEl.textContent = '⚠️ Bei ya usafiri BADO HAIJAWEKWA — itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii. Unalipia ukishapokea bidhaa.';
+    noteEl.className = 'ccf-shipping-note';
+    noteEl.textContent = 'ℹ️ Dar es Salaam: gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii. Unalipia ukishapokea bidhaa.';
   } else {
     noteEl.className = 'ccf-shipping-note danger';
     noteEl.textContent = '⚠️ Eneo hili halijapatikana kwenye orodha yetu ya bei — gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii. Kanuni: malipo ya usafiri hufanyika kabla ya kutuma bidhaa (mkoani unalipia kwanza).';
@@ -1676,7 +1696,7 @@ function showInvoice() {
     showToast('Jaza Jina, Simu na Mkoa kabla ya kuendelea.');
     return;
   }
-  lastOrderNo = 'AHS-' + invCounter;
+  if (!lastOrderNo) lastOrderNo = ahsNewOrderNo();
   document.getElementById('invNumber').textContent = 'INVOICE #' + lastOrderNo;
   document.getElementById('invOrderNo').textContent = lastOrderNo;
   const now = new Date();
@@ -1700,9 +1720,9 @@ function showInvoice() {
   document.getElementById('invRetail').textContent = fmt(retailTotal);
   document.getElementById('invDiscount').textContent = fmt(discount);
   const invShipRow = document.getElementById('invShippingRow');
-  if (shipInfo.matched && shippingCost > 0) {
+  if (shipInfo.matched && (shippingCost > 0 || shipInfo.usd)) {
     invShipRow.style.display = '';
-    document.getElementById('invShipping').textContent = fmt(shippingCost);
+    document.getElementById('invShipping').textContent = shipInfo.usd ? ('USD ' + shipInfo.usd + ' (italipwa kando)') : fmt(shippingCost);
     document.getElementById('invShipRegion').textContent = customer.region;
   } else {
     invShipRow.style.display = 'none';
@@ -1725,9 +1745,11 @@ function showInvoice() {
   const warnText = document.getElementById('invShippingWarnText');
   if (shipInfo.isDar) {
     warnNote.style.display = '';
+    warnNote.classList.remove('invoice-note-danger'); // Dar es Salaam si "hatari" — ni taarifa ya kawaida
     warnText.textContent = 'Kwa vile uko Dar es Salaam, gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii — si kabla.';
   } else if (!shipInfo.matched) {
     warnNote.style.display = '';
+    warnNote.classList.add('invoice-note-danger');
     warnText.textContent = 'Eneo ulilotaja halijapatikana kwenye orodha yetu ya bei — gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii.';
   } else {
     warnNote.style.display = 'none';
@@ -1741,7 +1763,7 @@ function showInvoice() {
   // save order record for tracking + admin dashboard (only once per invoice generation)
   const orders = lsGet('ahs_orders', []);
   if (!orders.find(o => o.id === lastOrderNo)) {
-    const orderRecord = { id: lastOrderNo, items: items.map(i => ({ name: i.name, qty: i.qty, unit: unitPriceFor(i, i.qty) })), total: finalTotal, date: now.toISOString(), status: 'placed', customerName: customer.name, customerPhone: customer.phone, altPhone: customer.altPhone || '', customerRegion: customer.region, district: customer.district || '', ward: customer.ward || '', notes: customer.notes || '', shippingCost: shippingCost, source: (typeof getOrderSource === 'function' ? getOrderSource() : 'direct') };
+    const orderRecord = { id: lastOrderNo, items: items.map(i => ({ name: i.name, qty: i.qty, unit: unitPriceFor(i, i.qty) })), total: finalTotal, date: now.toISOString(), status: 'placed', customerName: customer.name, customerPhone: customer.phone, altPhone: customer.altPhone || '', customerRegion: customer.region, district: customer.district || '', ward: customer.ward || '', notes: customer.notes || '', shippingCost: shippingCost, shippingUsd: shipInfo.usd || 0, source: (typeof getOrderSource === 'function' ? getOrderSource() : 'direct') };
     orders.unshift(orderRecord);
     lsSet('ahs_orders', orders);
     // Live sync to admin panel (no-op silently if Firebase isn't configured yet)
@@ -1779,7 +1801,9 @@ function checkoutWhatsApp() {
     const unit = unitPriceFor(it, it.qty);
     msg += `${i+1}. ${it.name} x${it.qty} - Tsh ${Math.round(unit*it.qty).toLocaleString('en-US')}\n`;
   });
-  if (shippingCost > 0) {
+  if (shipInfo.usd) {
+    msg += `\nGharama ya Usafiri (${customer.region}): USD ${shipInfo.usd} (italipwa kando, haipo kwenye jumla ya Tsh)\n`;
+  } else if (shippingCost > 0) {
     msg += `\nGharama ya Usafiri (${customer.region}): Tsh ${shippingCost.toLocaleString('en-US')}\n`;
   } else if (shipInfo.isDar) {
     msg += `\n⚠️ (Bei ya usafiri BADO HAIJAWEKWA — itathibitishwa na Agnes Herbal Store baada ya oda hii)\n`;

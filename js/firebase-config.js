@@ -92,14 +92,32 @@ function cloudCurrentUser() {
 }
 
 /* ===================== ORDERS ===================== */
+// Oda ambazo hazikufika Firestore (mtandao dhaifu/offline) zinahifadhiwa kwenye kifaa na kutumwa tena zenyewe
+// (ukurasa ukifunguka tena au mtandao ukirudi) — hapo awali kosa lilipuuzwa kimya na oda ilipotea.
+function ahsPendingOrders() { try { return JSON.parse(localStorage.getItem('ahs_pending_orders') || '[]'); } catch (e) { return []; } }
+function ahsSetPendingOrders(list) { try { localStorage.setItem('ahs_pending_orders', JSON.stringify(list)); } catch (e) { /* ignore */ } }
 function cloudPushOrder(order) {
-  if (!AHS_CLOUD_READY) return Promise.resolve(false);
+  if (!AHS_CLOUD_READY) { ahsSetPendingOrders(ahsPendingOrders().filter(o => o.id !== order.id).concat(order)); return Promise.resolve(false); }
   return ahsDb.collection('orders').doc(order.id).set({
     ...order,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     statusUpdated: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true }).then(() => true).catch(err => { console.warn('cloudPushOrder', err); return false; });
+  }, { merge: true }).then(() => {
+    ahsSetPendingOrders(ahsPendingOrders().filter(o => o.id !== order.id));
+    return true;
+  }).catch(err => {
+    console.warn('cloudPushOrder', err);
+    // permission-denied = kitambulisho kipo tayari (haitarekebishwa kwa kujaribu tena); makosa mengine (mtandao) = jaribu tena baadaye.
+    if (!(err && err.code === 'permission-denied')) ahsSetPendingOrders(ahsPendingOrders().filter(o => o.id !== order.id).concat(order));
+    return false;
+  });
 }
+function ahsRetryPendingOrders() {
+  if (!AHS_CLOUD_READY) return;
+  ahsPendingOrders().slice(0, 10).forEach(o => cloudPushOrder(o));
+}
+window.addEventListener('online', () => setTimeout(ahsRetryPendingOrders, 800));
+document.addEventListener('DOMContentLoaded', () => setTimeout(ahsRetryPendingOrders, 4000));
 // Real-time: admin panel hupokea oda mpya papo hapo ikiwa online, na
 // zote alizokosa zikiwa offline zinajaa moja kwa moja mara tu akiwa online tena
 // (hii ni tabia ya asili ya Firestore, hakuna usanidi wa ziada unaohitajika).

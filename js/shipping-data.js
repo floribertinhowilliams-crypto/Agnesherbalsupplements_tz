@@ -5,7 +5,7 @@
    msambazaji akibadilisha viwango vyake — hakuna haja ya kugusa app.js. */
 const SHIPPING_RATES = {
   "ARUSHA": 5000, "BABATI": 10000, "BAGAMOYO": 7000, "BAHI": 7000, "BARIADI": 10000,
-  "BENAKO": 10000, "BIHARAMULO": 10000, "BOMA": 5000, "BUKOBA": 10000, "BUKOMBE": 15000,
+  "BENAKO": 10000, "BIHARAMULO": 15000, "BOMA": 5000, "BUKOBA": 10000, "BUKOMBE": 15000,
   "BUNDA": 10000, "BUTIAMA": 15000, "CHALINZE": 7000, "CHAMWINO": 5000, "CHATO": 15000,
   "CHEMBA": 7000, "CHIMALA": 10000, "CHUNYA": 10000, "DODOMA": 5000, "GAIRO": 7000,
   "GEITA": 10000, "HANDENI": 7000, "IFAKARA": 10000, "IGAWA": 10000, "IGUNGA": 10000,
@@ -14,7 +14,7 @@ const SHIPPING_RATES = {
   "KARATU": 10000, "KASULU": 10000, "KAYANGA": 10000, "KIBAHA": 7000, "KIBONDO": 10000,
   "KIGOMA": 10000, "KIHOMBOI": 10000, "KILINDI": 10000, "KILOMBERO": 10000, "KILOSA": 10000,
   "KILWA": 10000, "KITETO": 10000, "KITUSA": 10000, "KONDOA": 10000, "KONGWA": 7000,
-  "KOROGWE": 7000, "KYELA": 10000, "LINDI": 7000, "LIWALE": 10000, "LONGIDO": 10000,
+  "KOROGWE": 7000, "KYELA": 10000, "LINDI": 10000, "LIWALE": 10000, "LONGIDO": 10000,
   "LUDEWA": 10000, "LUSHOTO": 7000, "MADABA": 10000, "MAFINGA": 7000, "MAKAMBAKO": 7000,
   "MAKETE": 10000, "MAKONGOROSI": 15000, "MALINYI": 10000, "MANGAKA": 10000, "MANYONI": 7000,
   "MASASI": 10000, "MBEYA": 10000, "MBINGA": 10000, "MBULU": 10000, "MDAULA": 7000,
@@ -27,8 +27,14 @@ const SHIPPING_RATES = {
   "SIMANJIRO": 10000, "SINGIDA": 7000, "SOMANGA": 10000, "SONGEA": 10000, "SUMBAWANGA": 10000,
   "TABORA": 10000, "TANDAHIMBA": 10000, "TANGA": 5000, "TARIME": 10000, "TUKUYU": 10000,
   "TUNDUMA": 10000, "TUNDURU": 10000, "TURIANI": 10000, "ULANGA": 10000, "URAMBO": 10000,
-  "UVINZA": 10000, "WANGING'OMBE": 10000, "NANYAMBA": 10000, "NANYUMBU": 10000, "ZANZIBAR": 10000
+  "UVINZA": 10000, "WANGING'OMBE": 10000, "NANYAMBA": 10000, "NANYUMBU": 10000, "ZANZIBAR": 10000, "PWANI": 7000,
+  /* Nje ya Tanzania (TZS) */
+  "BURUNDI": 25000, "KENYA": 20000, "UGANDA": 30000, "RWANDA": 30000, "LUBUMBASHI": 35000,
+  "ZAMBIA": 30000, "MOZAMBIQUE": 35000, "MALAWI": 35000, "LAGOS": 40000
 };
+/* Nje ya nchi — bei kwa DOLA (USD). Hazijumuishwi kwenye jumla ya Tsh; zinaonyeshwa kama
+   "USD n, italipwa kando" kwenye kikapu, invoice na ujumbe wa WhatsApp. */
+const SHIPPING_USD = { "DUBAI": 30, "OMAN": 45, "USA": 100 };
 
 function shippingNormalize(s) {
   return (s || '').trim().toUpperCase().replace(/\s+/g, ' ');
@@ -46,14 +52,30 @@ function findShippingRate(regionText) {
   if (Object.prototype.hasOwnProperty.call(SHIPPING_RATES, norm)) {
     return { region: norm, price: SHIPPING_RATES[norm] };
   }
+  // Nje ya nchi kwa USD: jina kamili au jina kisha neno lingine ("dubai uae"). Hakuna kulinganisha kwa sehemu (USA ⊂ MUSANZE).
+  for (const k of Object.keys(SHIPPING_USD)) {
+    if (norm === k || norm.startsWith(k + ' ')) return { region: k, price: 0, usd: SHIPPING_USD[k] };
+  }
   // Usilinganishe (auto-match) kabla mteja hajaandika angalau herufi 4 —
   // vinginevyo maandishi mafupi kama "Ki" yanaweza kulingana kimakosa na
   // mkoa usiokusudiwa (mfano "KIBAHA") kabla mteja hajamaliza kuandika.
   if (norm.length < 4) return null;
   const keys = Object.keys(SHIPPING_RATES);
-  // mfano mteja ameandika "kigoma mjini" -> anza na jina la mkoa
-  let match = keys.find(k => norm.startsWith(k) || k.startsWith(norm));
-  if (!match) match = keys.find(k => norm.includes(k) || k.includes(norm));
-  if (match) return { region: match, price: SHIPPING_RATES[match] };
+  const longest = arr => arr.slice().sort((a, b) => b.length - a.length)[0];
+  // 1) Mteja ameandika jina kamili la mkoa kisha maneno mengine, mfano "kigoma mjini" -> KIGOMA.
+  const typedStarts = keys.filter(k => norm.startsWith(k));
+  if (typedStarts.length) return { region: longest(typedStarts), price: SHIPPING_RATES[longest(typedStarts)] };
+  // 2) Mteja bado anaandika (mfano "kilo"): linganisha TU kama kuna mkoa MMOJA unaoanza hivyo. Zikiwa nyingi
+  //    (KILOSA, KILOMBERO...) usichague kwa kubahatisha — bei isiyo sahihi huingia kwenye oda. Mteja achague kwenye orodha.
+  const prefixOf = keys.filter(k => k.startsWith(norm));
+  // Mikoa isiyo na bei bado (REGIONS_WITHOUT_RATE, app.js) nayo inahesabiwa kuzuia kubahatisha (mfano "kili" = Kilindi AU Kilimanjaro).
+  const noRate = (typeof REGIONS_WITHOUT_RATE !== 'undefined' ? REGIONS_WITHOUT_RATE : []).filter(k => k.startsWith(norm));
+  if (prefixOf.length === 1 && noRate.length === 0) return { region: prefixOf[0], price: SHIPPING_RATES[prefixOf[0]] };
+  if (prefixOf.length + noRate.length > 1) return null;
+  // 3) Maandishi yana jina la mkoa ndani yake, mfano "kilimanjaro moshi" -> MOSHI.
+  const contained = keys.filter(k => norm.includes(k));
+  if (contained.length) return { region: longest(contained), price: SHIPPING_RATES[longest(contained)] };
+  const containing = keys.filter(k => k.includes(norm));
+  if (containing.length === 1) return { region: containing[0], price: SHIPPING_RATES[containing[0]] };
   return null;
 }

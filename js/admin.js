@@ -305,7 +305,7 @@ function renderProductsTab(filter) {
   const rows = list.slice(0, 100).map(p => {
     const ov = overrides[p.id] || {};
     const isCustom = !!adminCustomProductsMap[p.id];
-    const hidden = !!ov.hidden;
+    const hidden = (typeof ov.hidden === 'boolean') ? ov.hidden : !!p.hidden;
     const retail = ov.prices ? ov.prices.retail : p.prices.retail;
     const stock = (typeof ov.stock === 'number') ? ov.stock : null;
     const stockDisplay = stock === null ? '<span style="color:var(--ink-soft);">—</span>'
@@ -313,7 +313,7 @@ function renderProductsTab(filter) {
       : stock <= 5 ? `<span class="pg-badge stock-low" style="position:static;">${stock}</span>`
       : stock;
     const thumbSrc = ov.cover || (ov.images && ov.images.length ? ov.images[0] : null)
-      || p.cover || (p.images && p.images.length ? p.images[0] : null) || ('images/' + p.file);
+      || p.cover || (p.images && p.images.length ? p.images[0] : null) || (p.file ? ('images/' + p.file) : 'icons/icon-192.png');
     return `<tr>
       <td><img src="${thumbSrc}" alt=""></td>
       <td>${escapeHtmlA(p.name)}${isCustom ? ' <span class="admin-badge done" style="font-size:.65rem;">mpya</span>' : ''}</td>
@@ -359,7 +359,8 @@ function renderProductsTab(filter) {
       const id = parseInt(btn.dataset.toggle, 10);
       const ov = lsGetA('ahs_product_overrides', {});
       ov[id] = ov[id] || {};
-      ov[id].hidden = !ov[id].hidden;
+      const baseP = getBaseProductA(id);
+      ov[id].hidden = !((typeof ov[id].hidden === 'boolean') ? ov[id].hidden : !!(baseP && baseP.hidden));
       lsSetA('ahs_product_overrides', ov);
       renderProductsTab(document.getElementById('productSearch').value);
       renderDashboard();
@@ -416,6 +417,12 @@ function renderAddProductTab() {
       Toka (🚪 Toka) kisha Ingia tena kwa kujaza <b>EMAIL halisi</b> (ile uliyosajili kwenye Firebase Console → Authentication → Users) na password inayolingana nayo kabisa —
       siyo tu password ya ukurasa wa Admin.
     </div>` : ''}
+    <div id="bulkImportBox" style="max-width:560px; border:1px dashed var(--green-deep); border-radius:12px; padding:12px 14px; margin-bottom:18px; background:#f6faf6;">
+      <b>📦 Ingiza Orodha ya Bidhaa 2026 (bidhaa ${AP_IMPORT_2026.length})</b>
+      <p style="font-size:.76rem; color:var(--ink-soft); margin:6px 0 10px;">Inaongeza bidhaa zote kwa mara moja: jina, kundi, bei ya rejareja (bei ya mteja), jumla 5+ (punguzo 10%) na jumla 10+ (punguzo 15%). Kila bidhaa huwekwa kundi lake la kazi, ina URL na kitufe cha oda kama nyingine, ina <b>picha ya muda</b> (jina la bidhaa), na caption/stock vinabaki wazi kwako. Kwa kila moja bofya "🖼 Hariri" kwenye tab ya Bidhaa, weka picha halisi (hadi 5), caption na stock kisha Hifadhi. Majina yaliyopo tayari yanarukwa.</p>
+      <button type="button" class="btn btn-primary" id="bulkImportBtn">📦 Ingiza Bidhaa ${AP_IMPORT_2026.length}</button>
+      <p id="bulkImportStatus" style="font-size:.78rem; margin:8px 0 0;"></p>
+    </div>
     <form id="addProductForm" style="max-width:560px; display:flex; flex-direction:column; gap:12px;">
       <label>Jina la Bidhaa *<br>
         <input type="text" id="apName" required style="width:100%; padding:8px 10px; border-radius:8px; border:1px solid var(--line);"></label>
@@ -513,6 +520,7 @@ function renderAddProductTab() {
     document.getElementById('apVideoStatus').style.display = 'none';
   });
   document.getElementById('addProductForm').addEventListener('submit', handleAddProductSubmit);
+  document.getElementById('bulkImportBtn').addEventListener('click', handleBulkImport2026);
   renderApThumbs();
 }
 
@@ -749,6 +757,77 @@ function renderApThumbs() {
   }));
   document.querySelectorAll('[data-retake]').forEach(b => b.addEventListener('click', () => triggerApReplace(parseInt(b.dataset.retake, 10), 'camera')));
   document.querySelectorAll('[data-replace]').forEach(b => b.addEventListener('click', () => triggerApReplace(parseInt(b.dataset.replace, 10), 'gallery')));
+}
+
+// Orodha ya 2026: [kundi la kazi (goal), kundi la aina (category), jina, bei ya mteja (Tsh)].
+// Bei ya mwanachama (ya kununua) na PV HAZIHIFADHIWI hapa kwa makusudi: hati za bidhaa zinasomwa na kila mtu.
+// Jumla 5+ = punguzo 10%, jumla 10+ = punguzo 15% ya bei ya mteja, isipokuwa bidhaa za NO_WHOLESALE (bei ya jumla = ya mteja).
+const AP_NO_WHOLESALE_2026 = ['Pure & Broken GS Oil'];
+const AP_IMPORT_2026 = [
+  ['bones','Capsule / Jelly Series','Zaminocal Plus Capsules',105000],['bones','Tablet Candy / Powder Series','Arthro Extra Tablets',160000],['bones','Tablet Candy / Powder Series','Gluzo Joint Ultra Pro',190000],
+  ['immunity','Powder Series','4 in 1 Reishi Coffee',75000],['immunity','Powder Series','4 in 1 Ginseng Coffee',75000],['immunity','Powder Series','4 in 1 Cordyceps Coffee',75000],
+  ['immunity','Capsule / Jelly Series','Pure and Broken GS',365000],['immunity','Oil','Pure & Broken GS Oil',385000],['immunity','Drops / Patch Series','Refined Yunzh Essence',150000],
+  ['immunity','Capsule / Jelly Series','NMN Duo Release',510000],['immunity','Capsule / Jelly Series','Quad - Reish',150000],
+  ['male','Powder Series','X Power Coffee for Men',85000],['male','Capsule / Jelly Series','Prostate Relax Capsule',150000],['male','Capsule / Jelly Series','X Power Man Capsules',180000],
+  ['digest','Capsule / Jelly Series','Consti Relax',150000],['digest','Tablet Candy / Powder Series','Ntdiar Pills 12Pcs',150000],['digest','Capsule / Jelly Series','Novel Depile',105000],
+  ['digest','Powder Series','Veggie Vegie',100000],['digest','Powder Series','Probio 3',120000],
+  ['heart','Capsule / Jelly Series','Micro 2 Cycle',105000],['heart','Tablet Candy / Powder Series','Cerebrain Tablets',130000],['heart','Oil','Detoxilive Pro Oil',120000],
+  ['heart','Tea Series','Reliving Tea',95000],['heart','Capsule / Jelly Series','GymEffect Capsules',75000],
+  ['fertility','Gel','Famicare (Feminine Cleanser)',85000],['fertility','Capsule / Jelly Series','Femenergy Capsules',115000],['fertility','Gel','Cool Roll',120000],
+  ['skin','Gel',"Dr.T's Tooth Paste",25000],['fertility','Capsule / Jelly Series','Femiotic',145000],['fertility','Tablet Candy / Powder Series','Femicalcium D3',145000],
+  ['immunity','Gummies / Tablet Candy Series','Vitamin C (Chewable Tablets)',95000],['bones','Gummies / Tablet Candy Series','Calcium & Vitamin D',105000],['organs','Gummies / Tablet Candy Series','Sharp Vision',105000],
+  ['skin','Hair Care / Beauty','Anatic Herbal Soap',15000],['skin','Capsule / Jelly Series','Feminery',140000],['skin','Capsule / Jelly Series','Youth Ever',350000]
+];
+const AP_GROUPS_2026 = [['Mifupa na Maungio',3],['Kinga ya Mwili',8],['Mfumo wa Uzazi',3],["Mmeng'enyo wa Chakula",5],['Mzunguko wa Damu',5],['Matumizi Binafsi',6],['Bidhaa za Watoto',3],['Ngozi',3]];
+const apGroupOf = i => { let n = 0; for (const [g, c] of AP_GROUPS_2026) { n += c; if (i < n) return g; } return ''; };
+// Picha ya muda (nafasi) — inatengenezwa kwa canvas kama data-URL ya JPEG, umbo lile lile la picha zote za bidhaa,
+// ili ukurasa wa bidhaa, kadi, Facebook/WhatsApp na kikapu zifanye kazi mara moja. Ukiweka picha halisi kupitia "Hariri" inaibadilisha.
+function apMakePlaceholder(name) {
+  const c = document.createElement('canvas'); c.width = 800; c.height = 800;
+  const g = c.getContext('2d');
+  g.fillStyle = '#eef5ee'; g.fillRect(0, 0, 800, 800);
+  g.strokeStyle = '#2f6b3c'; g.lineWidth = 8; g.strokeRect(24, 24, 752, 752);
+  g.fillStyle = '#2f6b3c'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = 'bold 54px sans-serif';
+  const words = String(name).split(/\s+/); const lines = []; let cur = '';
+  words.forEach(w => { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > 660 && cur) { lines.push(cur); cur = w; } else cur = t; });
+  if (cur) lines.push(cur);
+  const y0 = 400 - ((lines.length - 1) * 34);
+  lines.slice(0, 6).forEach((l, i) => g.fillText(l, 400, y0 + i * 68));
+  g.font = '28px sans-serif'; g.fillStyle = '#6b7f6e'; g.fillText('Agnes Herbal Supplements', 400, 730);
+  return c.toDataURL('image/jpeg', 0.82);
+}
+async function handleBulkImport2026() {
+  const st = document.getElementById('bulkImportStatus');
+  const btn = document.getElementById('bulkImportBtn');
+  const say = (t, c) => { st.textContent = t; st.style.color = c || 'var(--ink-soft)'; };
+  if (typeof cloudNextProductId !== 'function' || typeof AHS_CLOUD_READY === 'undefined' || !AHS_CLOUD_READY) { say('⚠️ Firebase haijaunganishwa.', '#b23a3a'); return; }
+  if (typeof cloudCurrentUser === 'function' && !cloudCurrentUser()) { say('⚠️ Ingia kwanza kama Admin wa Firebase (email halisi), kisha jaribu tena.', '#b23a3a'); return; }
+  const norm = n => String(n).toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const have = new Set(allAdminProducts().map(p => norm(p.name)));
+  const todo = AP_IMPORT_2026.map((r, i) => r.concat([apGroupOf(i)])).filter(r => !have.has(norm(r[2])));
+  const skipped = AP_IMPORT_2026.length - todo.length;
+  if (!todo.length) { say('✅ Bidhaa zote tayari zipo (' + skipped + ' zimerukwa). Hakuna cha kuingiza.', 'var(--green-deep)'); return; }
+  if (!confirm('Kuingiza bidhaa ' + todo.length + ' mpya' + (skipped ? '. ' + skipped + ' zinarukwa kwa kuwa majina yapo tayari' : '') + '. Zitaonekana dukani mara moja zikiwa na picha ya muda; weka picha halisi kupitia "Hariri". Endelea?')) return;
+  btn.disabled = true;
+  let done = 0; const failed = [];
+  for (const [goal, category, name, retail, grp] of todo) {
+    say('⏳ Inaingiza ' + (done + failed.length + 1) + '/' + todo.length + ': ' + name);
+    try {
+      const id = await cloudNextProductId();
+      const noW = AP_NO_WHOLESALE_2026.includes(name);
+      const product = {
+        id, name, category, goal, effect: grp || category, catSlug: slugifyA(category), prefix: 'CUSTOM',
+        slug: 'p' + id + '-' + (slugifyA(name) || 'bidhaa'),
+        prices: { retail, w5: noW ? retail : Math.round(retail * 0.90), w10: noW ? retail : Math.round(retail * 0.85) },
+        images: [apMakePlaceholder(name)], placeholderImg: true, bestseller: false,
+        dateAdded: new Date().toISOString().slice(0, 10)
+      };
+      if (await cloudSaveNewProduct(product)) done++; else failed.push(name);
+    } catch (err) { console.warn('bulk import', name, err); failed.push(name); if (err && err.code === 'permission-denied') break; }
+  }
+  btn.disabled = false;
+  say((failed.length ? '⚠️' : '✅') + ' Zimeingizwa: ' + done + ' / ' + todo.length + (skipped ? ' · zimerukwa (zipo): ' + skipped : '') + (failed.length ? ' · zilizoshindwa: ' + failed.join(', ') + ' — bofya tena kuziingiza (zilizopo hazirudiwi).' : '. Sasa nenda tab "🛒 Bidhaa" → "🖼 Hariri" kila moja uweke picha 5, caption na idadi (stock).'), failed.length ? '#b23a3a' : 'var(--green-deep)');
 }
 
 async function handleAddProductSubmit(e) {
@@ -1182,8 +1261,8 @@ function openPeditOverlay(id) {
   const p = getBaseProductA(id);
   const ov = lsGetA('ahs_product_overrides', {})[id] || {};
   peditImages = ov.images && ov.images.length ? ov.images.slice()
-    : (p.images && p.images.length ? p.images.slice() : ['images/' + p.file]);
-  peditCover = ov.cover || p.cover || peditImages[0];
+    : (p.placeholderImg ? [] : p.images && p.images.length ? p.images.slice() : (p.placeholderImg ? [] : ['images/' + p.file]));
+  peditCover = ov.cover || p.cover || peditImages[0] || null;
   document.getElementById('peditTitle').textContent = 'Hariri: ' + p.name;
   const peditNameEl = document.getElementById('peditName');
   peditNameEl.value = ov.name || p.name;

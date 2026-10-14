@@ -2275,7 +2275,7 @@ function renderNewProducts() {
   const section = document.getElementById('newProductsSection');
   const grid = document.getElementById('newProductsGrid');
   if (!section || !grid) return;
-  const list = sectionCustomProducts('newProductsSection') || allBaseProducts()
+  const list = sectionCustomProducts('newProductsSection') || visibleProducts() // visibleProducts = na mabadiliko ya Admin (picha/bei/jina) na bila zilizofichwa
     .slice()
     .sort((a, b) => productSortDate(b) - productSortDate(a))
     .slice(0, 12);

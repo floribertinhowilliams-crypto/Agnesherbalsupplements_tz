@@ -50,7 +50,9 @@ export async function onRequestGet(context) {
     status: 200,
     headers: {
       'Content-Type': mime,
-      'Cache-Control': 'public, max-age=3600',
+      // Na ?v=<alama> (URL ya ukurasa wa bidhaa) picha haibadiliki kamwe => cache ndefu; bila ?v (sitemap/katalogi) cache fupi
+      // ili picha mpya ya admin ionekane ndani ya dakika, si saa nzima.
+      'Cache-Control': new URL(context.request.url).searchParams.has('v') ? 'public, max-age=31536000, immutable' : 'public, max-age=60, s-maxage=60',
       'X-Content-Type-Options': 'nosniff'
     }
   });

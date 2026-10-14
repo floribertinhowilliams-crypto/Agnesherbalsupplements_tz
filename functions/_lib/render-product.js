@@ -12,7 +12,7 @@ export function renderProductHtml(product, products, slug, urls) {
   const videoUrlFn = urls.video || videoProxyUrl;
   const richPage = !!urls.rich; // kurasa tuli: galari ya picha + maelezo kamili
   const images = Array.isArray(product.images) ? product.images : [];
-  const imgUrls = images.map((_, i) => imageUrlFn(product.id, i));
+  const imgUrls = images.map((im, i) => imageUrlFn(product.id, i, im));
   const primaryImg = imgUrls[0] || `${SITE}/assets/images/logo.png`;
   const title = buildTitle(product);
   const description = buildMetaDescription(product);

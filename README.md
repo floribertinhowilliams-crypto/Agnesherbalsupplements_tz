@@ -123,3 +123,10 @@ Admin → Panga Sehemu & Majina: kila sehemu (Flash Sale, New Products, Best Sel
 Inaongeza bidhaa 36 za orodha ya 2026 kwa kubofya mara moja (zilizopo kwa jina zinarukwa). Kila moja: kundi la umbo + `goal` (kundi la kazi),
 bei ya rejareja = bei ya mteja, jumla 5+ = -10%, jumla 10+ = -15% (Pure & Broken GS Oil: jumla = bei ya mteja kwa kuwa ingekuwa hasara),
 picha ya muda yenye jina (`placeholderImg`) na caption/stock tupu. Weka picha 5 kupitia "🖼 Hariri" — picha ya muda inabadilishwa. Bei ya kununua na PV HAZIHIFADHIWI.
+
+## v69g — Picha mpya za admin zinaonekana mara moja
+URL za picha za ukurasa wa bidhaa sasa zina `?v=<alama ya picha>` (picha ikibadilika URL inabadilika; cache ndefu salama), picha bila `?v` zina cache ya dakika 1 tu (zamani saa 1),
+na picha ya "Profaili" (cover) uliyochagua inakuwa ya kwanza kwa og:image/Google/ukurasa wa bidhaa.
+
+## v69h — "New Products" ilionyesha picha/bei/jina za zamani
+`renderNewProducts()` ilitumia bidhaa za msingi (bila mabadiliko ya Admin). Sasa inatumia `visibleProducts()` (mabadiliko ya Admin + zilizofichwa hazionekani).

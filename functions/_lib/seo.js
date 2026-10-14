@@ -90,8 +90,19 @@ async function fetchAllOverrides(lite) {
   }
   return map;
 }
+// Picha ya "Profaili" (cover) iliyochaguliwa na admin inakuwa ya KWANZA (ndiyo inayotumika kwa og:image, ukurasa na Google).
+function coverFirst(images, cover) {
+  if (!Array.isArray(images) || !cover) return images;
+  const i = images.indexOf(cover);
+  return i > 0 ? [cover, ...images.slice(0, i), ...images.slice(i + 1)] : images;
+}
 function mergeOverride(product, ov) {
   if (!ov) return product;
+  const merged = mergeOverrideRaw(product, ov);
+  merged.images = coverFirst(merged.images, merged.cover);
+  return merged;
+}
+function mergeOverrideRaw(product, ov) {
   return {
     ...product,
     name: ov.name || product.name,
@@ -178,8 +189,14 @@ export function productSlug(p) {
   return byName ? `p${p.id}-${byName}` : `bidhaa-${p.id}`;
 }
 
-export function imageProxyUrl(productId, index) {
-  return `${SITE}/img/custom/${productId}/${index}.jpg`;
+// Alama fupi inayobadilika picha ikibadilika: URL mpya => hakuna picha ya zamani kwenye cache ya kivinjari/CDN/Facebook.
+export function imageVersion(img) {
+  const t = String(img || ''); let h = 0;
+  for (let i = 0; i < t.length; i += 97) h = (h * 31 + t.charCodeAt(i)) >>> 0;
+  return (h + t.length).toString(36);
+}
+export function imageProxyUrl(productId, index, img) {
+  return `${SITE}/img/custom/${productId}/${index}.jpg${img ? '?v=' + imageVersion(img) : ''}`;
 }
 
 // Video HALISI (videoClip) admin aliyopakia kwenye "Ongeza Bidhaa" imehifadhiwa

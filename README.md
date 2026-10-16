@@ -130,3 +130,7 @@ na picha ya "Profaili" (cover) uliyochagua inakuwa ya kwanza kwa og:image/Google
 
 ## v69h — "New Products" ilionyesha picha/bei/jina za zamani
 `renderNewProducts()` ilitumia bidhaa za msingi (bila mabadiliko ya Admin). Sasa inatumia `visibleProducts()` (mabadiliko ya Admin + zilizofichwa hazionekani).
+
+## v69i — Picha ya share (og:image) haikufunguka kwa bidhaa zilizohaririwa
+Ukihariri bidhaa ya awali kwenye Admin, picha ilihifadhiwa kama njia ya faili ("images/p282.jpg"), na seva iliiweka kwenye /img/custom/ (inarudisha 404).
+Sasa picha zisizo data-URL (njia ya faili au https) zinatumika moja kwa moja, na /img/custom/ inaelekeza (302) kwenye picha halisi.

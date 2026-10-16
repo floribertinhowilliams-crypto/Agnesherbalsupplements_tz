@@ -195,7 +195,17 @@ export function imageVersion(img) {
   for (let i = 0; i < t.length; i += 97) h = (h * 31 + t.charCodeAt(i)) >>> 0;
   return (h + t.length).toString(36);
 }
+// Picha ya admin inaweza kuwa data-URL (base64), kiungo kamili (https://...) au njia ya faili ya tovuti ("images/p282.jpg").
+// Data-URL pekee ndiyo inayopitia /img/custom/; nyingine zinatumika moja kwa moja (vinginevyo proxy hurudisha 404 na picha haionekani kwenye share).
+export function directImageUrl(img) {
+  const t = String(img || '').trim();
+  if (!t || /^data:/i.test(t)) return null;
+  if (/^https?:\/\//i.test(t)) return t;
+  return `${SITE}/${t.replace(/^\.?\/+/, '')}`;
+}
 export function imageProxyUrl(productId, index, img) {
+  const direct = directImageUrl(img);
+  if (direct) return direct;
   return `${SITE}/img/custom/${productId}/${index}.jpg${img ? '?v=' + imageVersion(img) : ''}`;
 }
 

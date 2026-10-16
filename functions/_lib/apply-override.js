@@ -1,7 +1,7 @@
 // Inatumia mabadiliko ya Admin (productOverrides) kwenye ukurasa TULI wa bidhaa ya awali, papo hapo,
 // bila kuutengeneza upya: jina, bei, maelezo, picha ya kwanza, stock. Ukurasa tuli unabaki kiolezo
 // (Manufaa, Viungo, Jinsi ya Kutumia, FAQ n.k.). Hakuna mabadiliko => rudisha null (tumia ukurasa tuli kama ulivyo).
-import { SITE, escapeHtml } from './seo.js';
+import { SITE, escapeHtml, directImageUrl } from './seo.js';
 
 const unesc = s => String(s).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const jsonInner = s => JSON.stringify(String(s)).slice(1, -1);                 // ndani ya JSON-LD
@@ -60,7 +60,8 @@ export function patchStaticProductHtml(html, id, ov) {
   }
   // 5) Picha ya kwanza (inatolewa na /img/custom/<id>/0.jpg kutoka productOverrides). ?v= inabadilika picha ikibadilika (Facebook/WhatsApp cache).
   if (imgs.length) {
-    const url = `${SITE}/img/custom/${id}/0.jpg?v=${hashStr(imgs[0])}`;
+    // Admin anaweza kuwa amehifadhi njia ya faili ("images/p282.jpg") badala ya picha mpya: itumike moja kwa moja (si proxy, ambayo ingerudisha 404).
+    const url = directImageUrl(imgs[0]) || `${SITE}/img/custom/${id}/0.jpg?v=${hashStr(imgs[0])}`;
     h = h.replace(new RegExp(`${SITE.replace(/[.]/g, '\\.')}/images/p\\d+\\.jpg`, 'g'), url);
     h = h.replace(/\s*<meta property="og:image:(?:width|height)" content="\d+">/g, '');
   }

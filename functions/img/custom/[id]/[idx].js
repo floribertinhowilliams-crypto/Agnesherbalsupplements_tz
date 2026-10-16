@@ -7,7 +7,7 @@
 // hati ya bidhaa, inachukua picha ya nafasi husika, na kuirudisha kama picha
 // halisi (bytes) yenye URL themabiti — sawa kabisa na picha za bidhaa 288 za
 // awali zinavyoonekana kwa Google.
-import { fetchCustomProductById, fetchOverrideById } from '../../../_lib/seo.js';
+import { fetchCustomProductById, fetchOverrideById, SITE } from '../../../_lib/seo.js';
 
 export async function onRequestGet(context) {
   const { id, idx } = context.params;
@@ -32,6 +32,12 @@ export async function onRequestGet(context) {
   }
 
   const dataUrl = product.images[index];
+  // Picha isiyo data-URL (kiungo au njia ya faili): elekeza kwenye picha halisi badala ya 404.
+  if (!/^data:/i.test(String(dataUrl))) {
+    const t = String(dataUrl).trim();
+    const abs = /^https?:\/\//i.test(t) ? t : `${SITE}/${t.replace(/^\.?\/+/, '')}`;
+    return new Response(null, { status: 302, headers: { Location: abs, 'Cache-Control': 'public, max-age=60' } });
+  }
   const match = /^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]+)$/.exec(dataUrl);
   if (!match) return new Response('Not found', { status: 404 });
 

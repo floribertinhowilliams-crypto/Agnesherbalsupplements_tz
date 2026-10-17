@@ -162,3 +162,12 @@ Sasa picha zisizo data-URL (njia ya faili au https) zinatumika moja kwa moja, na
 ## v71c — Hero 3D
 - Slider ya juu: slaidi 3 mpya (Apple Cider Vinegar Gummies, Glutathione + Collagen, Nchi 8 za usafirishaji) zenye picha halisi za bidhaa; slaidi ya chai imeondolewa. Sehemu nyingine za homepage hazijaguswa.
 - Trust bar chini ya slider; namba zinasomwa kutoka `js/site-config.js` (stats).
+
+## v71d — Je, Ipo? utafutaji
+- Umoja/wingi (gummy=gummies, capsule=capsules), makosa ya kuandika (glutathion, shilajeet), maneno ya Kiswahili zaidi (vidonge, poda, acv, siki, hedhi...) na maneno ya ziada yanapuuzwa (je, ipo, nataka...).
+- Jaribio: majina yote 288 ya bidhaa yanapatikana kwa kila mtindo wa kuandika; kabla ya hapo 42 ("... Gummy") zilikosekana.
+
+## v71e — ukaguzi wa ukurasa mzima
+- Kurasa 13 zimejaribiwa (simu 390px): hakuna 404, hakuna overflow, hakuna picha zilizovunjika.
+- Counter ya nchi: "8+ Nchi Tunazotuma (na Duniani Kote)" (awali ilionyesha globe mara mbili); counters zina usalama zisibaki "0".
+- Placeholder ya search imefupishwa isikatike.

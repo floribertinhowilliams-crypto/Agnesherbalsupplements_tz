@@ -362,10 +362,15 @@ function initStatsCounter() {
   }
   const section = document.getElementById('statsCounter');
   if (!section) return;
+  // v71: usalama — kama kivinjari hakina IntersectionObserver, au sehemu haionekani kamwe,
+  // namba zisibaki "0": zinajazwa baada ya sekunde 6 bila animation.
+  const fillNow = () => nums.forEach(el => { el.textContent = (parseInt(el.dataset.target, 10) || 0).toLocaleString('en-US') + (el.dataset.suffix || ''); });
+  if (typeof IntersectionObserver === 'undefined') { fillNow(); return; }
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(entry => { if (entry.isIntersecting) { animate(); obs.disconnect(); } });
-  }, { threshold: 0.3 });
+  }, { threshold: 0.1 });
   obs.observe(section);
+  setTimeout(() => { if (!animated) { animated = true; fillNow(); obs.disconnect(); } }, 6000);
 }
 
 /* ===================== REVIEWS ZA WHATSAPP (screenshots halisi) ===================== */

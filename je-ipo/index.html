@@ -100,23 +100,31 @@ h1{font-family:'Fraunces',serif;color:var(--g);font-size:1.55rem;margin:10px 0 6
     sukari:['sugar','diabet'],kisukari:['sugar','diabet'],shinikizo:['pressure','hypertension','blood'],moyo:['heart','cardio'],usingizi:['sleep','melatonin','calm'],
     nguvu:['power','energy','men'],kiume:['men','male'],kibofu:['prostate'],ini:['liver'],figo:['kidney'],macho:['eye'],damu:['blood'],vitamini:['vitamin','multi'],
     watoto:['kids','children'],mtoto:['kids'],tumbo:['digest','probiotic','tummy'],choo:['bowel','colon'],kifua:['lung','breast'],kimo:['height'],kuongeza:['gain','increase'],
-    urembo:['beauty','collagen'],ganda:['skin'],kikohozi:['lung','cough'],mafuta:['fat','oil']};
+    urembo:['beauty','collagen'],ganda:['skin'],kikohozi:['lung','cough'],mafuta:['fat','oil'],
+    acv:['apple cider','vinegar'],siki:['vinegar','apple'],vidonge:['capsule','tablet','softgel'],kidonge:['capsule','tablet'],kapsuli:['capsule'],poda:['powder'],unga:['powder'],
+    jelly:['jelly','gummy'],peremende:['gummy','candy'],gummy:['gummy','gummies'],gummies:['gummy','gummies'],vitamin:['vitamin','vitamins','multi'],vitamins:['vitamin','multi'],
+    ujauzito:['pregnan','fertility','womb'],hedhi:['womb','pms','hormone'],homoni:['hormone','pms'],unene:['gain','weight'],kuongeza:['gain','increase','enhanc'],
+    mkojo:['kidney','bladder'],kinywa:['oral'],meno:['teeth','oral'],mwili:['body'],stamina:['energy','power','maca','men'],nishati:['energy','power']};
   function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();}
-  function hay(p){return norm(p.name+' '+p.effect+' '+p.category);}
+  function hay(p){var h=norm(p.name+' '+p.effect+' '+p.category);return h+' '+stemAll(h);}
   function lev1(a,b){ // hitilafu ya herufi moja (maandishi yenye makosa ya kuandika)
     if(Math.abs(a.length-b.length)>1)return false;var i=0,j=0,e=0;
     while(i<a.length&&j<b.length){ if(a[i]===b[j]){i++;j++;continue;} if(++e>1)return false;
       if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++;} }
     return e+(a.length-i)+(b.length-j)<=1;
   }
-  var STOP={ya:1,za:1,wa:1,na:1,la:1,kwa:1,mwili:1,dawa:1,bidhaa:1,ni:1,the:1,of:1,for:1,and:1};
+  function lev2(a,b){if(Math.abs(a.length-b.length)>2)return false;var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i];}for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]<=2;}
+  var STOP={ya:1,za:1,wa:1,na:1,la:1,kwa:1,mwili:1,dawa:1,bidhaa:1,ni:1,the:1,of:1,for:1,and:1,je:1,ipo:1,mna:1,mnazo:1,nataka:1,kuna:1,naomba:1,tafuta:1,hii:1,hizi:1,a:0};
+  // umoja/wingi: gummies=gummy, capsules=capsule, vitamins=vitamin
+  function stem(w){w=String(w||'');if(w.length>4&&/ies$/.test(w))return w.slice(0,-3)+'y';if(w.length>3&&/s$/.test(w)&&!/ss$/.test(w))return w.slice(0,-1);return w;}
+  function stemAll(s){return s.split(' ').map(stem).join(' ');}
   function tokenHit(tok,h,words){
     if(tok.length===1){ // herufi moja (mfano "d" kwenye "vitamin d") lazima iwe neno lenyewe au ifuatwe na namba (d3)
       return words.some(function(w){return w===tok||new RegExp('^'+tok+'\\d+$').test(w)});
     }
-    if(h.indexOf(tok)>-1)return true;
-    var s=SYN[tok]; if(s&&s.some(function(x){return h.indexOf(x)>-1}))return true;
-    if(tok.length>=5)return words.some(function(w){return w.length>=5&&lev1(tok,w)});
+    if(h.indexOf(tok)>-1||h.indexOf(stem(tok))>-1)return true;
+    var s=SYN[tok]||SYN[stem(tok)]; if(s&&s.some(function(x){return h.indexOf(x)>-1}))return true;
+    if(tok.length>=4)return words.some(function(w){return w.length>=4&&(lev1(tok,w)||lev1(stem(tok),stem(w))||(tok.length>=7&&w.length>=7&&lev2(tok,w)))});
     return false;
   }
   function search(q){

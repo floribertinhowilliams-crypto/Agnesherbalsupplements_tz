@@ -6,7 +6,7 @@ window.AHS_SITE = {
   flashSaleEnd: '',
 
   // Takwimu zinazoonekana kwenye ukurasa mkuu (counters)
-  stats: { products: 410, categories: 12, countries: 4, customers: 1000 },
+  stats: { products: 410, categories: 12, countries: 8, customers: 1000 },
 
   // Ofa ya Leo kwenye ukurasa wa bidhaa (andika mwenyewe, mfano 'Nunua 2 upate usafiri bure'). Tupu = haionekani.
   todayOffer: '',

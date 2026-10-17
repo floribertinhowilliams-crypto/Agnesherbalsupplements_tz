@@ -2757,7 +2757,7 @@ function ahsRenderTodayOffer() {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); e.stopImmediatePropagation(); go(input); }
     }, true);
-    input.placeholder = '🔎 Je, ipo? Andika bidhaa, mfano: collagen, chai ya tumbo...';
+    input.placeholder = '🔎 Je, ipo? Tafuta bidhaa...';
     input.removeAttribute('data-i18n-placeholder');
     ['voiceSearchBtn', 'imgSearchBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = 'none'; });
     const icon = document.querySelector('#searchWrap .search-icon');

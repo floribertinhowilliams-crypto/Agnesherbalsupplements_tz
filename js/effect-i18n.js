@@ -1,6 +1,9 @@
 // Agnes Herbal Supplements — translations for the product "effect" tag (benefit label shown as a badge)
 // Keyed by the English effect string (lowercased, trimmed) as stored in js/products-data.js
 const EFFECT_I18N = {
+  "breast firming and curves support": { sw: "Kusaidia Kuimarisha na Umbo la Matiti", fr: "Soutien du Raffermissement et des Courbes de la Poitrine", zh: "胸部紧致与曲线支持" },
+  "hip and butt curves support": { sw: "Kusaidia Umbo la Nyonga na Makalio", fr: "Soutien des Courbes des Hanches et des Fesses", zh: "髋部与臀部曲线支持" },
+  "traditionally used for women's wellness support": { sw: "Hutumika Jadi Kusaidia Ustawi wa Mwanamke", fr: "Traditionnellement utilisé pour le bien-être des femmes", zh: "传统上用于女性健康支持" },
   "abundant buttocks": { sw: "Kukuza Matako", fr: "Fesses Rebondies", zh: "丰臀", rn: "Gutera Amakofi" },
   "acne treatment": { sw: "Tibu Chunusi", fr: "Traitement de l'Acné", zh: "祛痘", rn: "Kuvura Ibisebe" },
   "alleviate menopausal symptoms": { sw: "Punguza Dalili za Ukoma wa Hedhi", fr: "Soulage les Symptômes de la Ménopause", zh: "缓解更年期症状", rn: "Kugabanya Ibimenyetso vyo Guhagarika Imihango" },

@@ -170,22 +170,33 @@ function renderFlashSale() {
   hpBindCards(grid);
 }
 function startFlashCountdown() {
+  // Tarehe ya mwisho inatoka js/site-config.js (flashSaleEnd). Tupu au imepita = sehemu nzima
+  // ya Flash Sale inafichwa (hakuna "00:00:00"). Ofa mpya: weka tarehe mpya kwenye site-config.js.
+  const section = document.getElementById('flashSale');
   const hrsEl = document.getElementById('fsHrs'), minEl = document.getElementById('fsMin'), secEl = document.getElementById('fsSec');
   if (!hrsEl) return;
+  const cfg = (window.AHS_SITE && window.AHS_SITE.flashSaleEnd) || '';
+  const endMs = cfg ? new Date(cfg).getTime() : NaN;
+  function setVisible(on) {
+    if (section) section.style.display = on ? '' : 'none';
+    // Kitufe cha hero kilichoelekeza #flashSale kinaelekezwa kwenye orodha ya bidhaa ofa ikiwa imefichwa.
+    document.querySelectorAll('a[data-flash-link]').forEach(a => a.setAttribute('href', on ? '#flashSale' : '#bidhaa'));
+  }
+  if (!isFinite(endMs) || endMs <= Date.now()) { setVisible(false); return; }
+  setVisible(true);
+  let timer = null;
   function tick() {
-    const now = new Date();
-    const end = new Date(now);
-    end.setHours(23, 59, 59, 999);
-    let diff = Math.max(0, end - now);
+    const diff = Math.max(0, endMs - Date.now());
+    if (diff <= 0) { clearInterval(timer); setVisible(false); return; }
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
+    const sec = Math.floor((diff % 60000) / 1000);
     hrsEl.textContent = String(h).padStart(2, '0');
     minEl.textContent = String(m).padStart(2, '0');
-    secEl.textContent = String(s).padStart(2, '0');
+    secEl.textContent = String(sec).padStart(2, '0');
   }
   tick();
-  setInterval(tick, 1000);
+  timer = setInterval(tick, 1000);
 }
 
 /* ===================== DAILY DEALS (rotates by day of year) ===================== */
@@ -325,6 +336,12 @@ function goToCategorySlug(slug) {
 function initStatsCounter() {
   const nums = document.querySelectorAll('.sc-num[data-target]');
   if (!nums.length) return;
+  // Takwimu zinasomwa kutoka js/site-config.js (stats); kama haipo, thamani za HTML zinabaki.
+  const st = (window.AHS_SITE && window.AHS_SITE.stats) || {};
+  nums.forEach(el => {
+    const v = parseInt(st[el.dataset.stat], 10);
+    if (v > 0) el.dataset.target = String(v);
+  });
   let animated = false;
   function animate() {
     if (animated) return;
@@ -349,6 +366,21 @@ function initStatsCounter() {
     entries.forEach(entry => { if (entry.isIntersecting) { animate(); obs.disconnect(); } });
   }, { threshold: 0.3 });
   obs.observe(section);
+}
+
+/* ===================== REVIEWS ZA WHATSAPP (screenshots halisi) ===================== */
+// Picha na majina vinatoka js/site-config.js (waReviews). Hakuna maoni yanayobuniwa: orodha tupu = sehemu imefichwa.
+function renderWaReviews() {
+  const section = document.getElementById('waReviews'), grid = document.getElementById('waReviewsGrid');
+  if (!section || !grid) return;
+  const list = ((window.AHS_SITE && window.AHS_SITE.waReviews) || []).filter(r => r && r.img);
+  if (!list.length) { section.style.display = 'none'; return; }
+  grid.innerHTML = list.map(r => `
+    <figure class="wa-review">
+      <img src="${hp_esc(r.img)}" alt="Maoni ya mteja ${hp_esc(r.name || '')} kwenye WhatsApp" loading="lazy" decoding="async">
+      ${r.name ? `<figcaption>${hp_esc(r.name)}</figcaption>` : ''}
+    </figure>`).join('');
+  section.style.display = '';
 }
 
 /* ===================== TESTIMONIALS v2 ===================== */
@@ -441,5 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
   hpRenderAll();
   initStatsCounter();
   renderTestimonialsV2();
+  renderWaReviews();
   initBackToTop();
 });

@@ -134,3 +134,20 @@ na picha ya "Profaili" (cover) uliyochagua inakuwa ya kwanza kwa og:image/Google
 ## v69i — Picha ya share (og:image) haikufunguka kwa bidhaa zilizohaririwa
 Ukihariri bidhaa ya awali kwenye Admin, picha ilihifadhiwa kama njia ya faili ("images/p282.jpg"), na seva iliiweka kwenye /img/custom/ (inarudisha 404).
 Sasa picha zisizo data-URL (njia ya faili au https) zinatumika moja kwa moja, na /img/custom/ inaelekeza (302) kwenye picha halisi.
+
+## v70 — marekebisho 12 (Oktoba 2026)
+- `js/site-config.js` sasa inatumika: `flashSaleEnd` (tupu/imepita = Flash Sale inafichwa; weka tarehe mpya kama '2026-11-30T23:59:59+03:00'), `stats` (counters: 410 / 12 / 4 / 1000+), `waReviews` (screenshots halisi za WhatsApp; picha kwenye `assets/reviews/`).
+- Pagination ya bidhaa 24 kwa ukurasa kwenye "Bidhaa Zetu Zote" (`renderGrid` + `renderGridPager` kwenye js/app.js). Mpangilio wa admin haubadiliki; picha zinapakia lazy.
+- Bidhaa zenye jina lilelile zinaonyeshwa mara moja (`ahsDuplicateIds`): pacha 5 (p66, p67, p222, p227, p280) zimefichwa kwenye orodha; URL zao zinaelekezwa 301 na zimetolewa kwenye sitemap.xml.
+- `js/descriptions-data.js` imeunganishwa: maelezo yanatumika TU bidhaa isipokuwa na maelezo; Admin → Hariri → Maelezo yanaonyesha na kuhariri maandishi hayo.
+- Namba za malipo kwenye dirisha la bidhaa karibu na Ongeza Kwenye Kikapu; location ya Makumbusho Bus Stand + Google Maps embed + schema Store/LocalBusiness (hasMap) kwenye contact na footer.
+- Makala 3 mpya kwenye `js/content-data.js`; maneno ya "effect" ya Meta Ads yamebadilishwa kuwa salama (majina ya bidhaa hayajabadilishwa ili URL zisivunjike).
+- `sw.js` cache `ahs-cache-v83`.
+
+
+## v71 — Viral East Africa
+- Title/meta/schema (areaServed, slogan, keywords), counter ya 'Tunatuma East Africa na Duniani Kote', footer yenye bendera.
+- Share: WhatsApp, Facebook, TikTok (nakili link), Copy Link, '🔥 Share na Rafiki'.
+- 'Ofa ya Leo' kupitia `todayOffer` ndani ya `js/site-config.js`.
+- Fomu ya oda: chaguo 'Nje ya Tanzania' (nchi + mji), simu ya kimataifa, oda inatumwa WhatsApp.
+- FOMO bandia (watu 47, zimebaki 12, 4.9/5) HAIJAWEKWA kwa makusudi.

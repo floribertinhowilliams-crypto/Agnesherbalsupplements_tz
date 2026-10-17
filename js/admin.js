@@ -1268,7 +1268,7 @@ function openPeditOverlay(id) {
   peditNameEl.value = ov.name || p.name;
   updatePeditNameCount();
   peditNameEl.oninput = updatePeditNameCount;
-  document.getElementById('peditCaption').value = ov.caption || '';
+  document.getElementById('peditCaption').value = ov.caption || p.caption || ((typeof ahsDefaultDescription === 'function') ? ahsDefaultDescription(ov.name || p.name) : '') || '';
   updatePeditCharCount();
   document.getElementById('peditW5').value = ov.prices ? ov.prices.w5 : p.prices.w5;
   document.getElementById('peditW10').value = ov.prices ? ov.prices.w10 : p.prices.w10;

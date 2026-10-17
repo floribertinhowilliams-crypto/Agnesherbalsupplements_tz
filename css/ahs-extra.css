@@ -387,3 +387,38 @@
 .wb-s3{bottom:10px; left:46%; animation-delay:2s;}
 @keyframes wbTwinkle{0%,100%{opacity:0; transform:scale(.6);}50%{opacity:1; transform:scale(1);}}
 @media(min-width:640px){ .wb-title{font-size:1.6rem;} .wb-sub{font-size:.9rem;} }
+
+/* ===== Pagination ya bidhaa (24 kwa ukurasa) ===== */
+.grid-pager { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; margin:26px 0 8px; }
+.grid-pager .gp-btn { min-width:42px; height:42px; padding:0 14px; border:1px solid var(--line, #e3dcc9); background:var(--card-bg, #fff); color:var(--ink, #222); border-radius:10px; font:inherit; font-weight:600; cursor:pointer; }
+.grid-pager .gp-btn.active { background:var(--green, #2f6b3f); border-color:var(--green, #2f6b3f); color:#fff; }
+.grid-pager .gp-btn:disabled { opacity:.45; cursor:default; }
+.grid-pager .gp-dots { padding:0 4px; color:var(--ink-soft, #777); }
+.grid-pager .gp-info { flex-basis:100%; text-align:center; font-size:.82rem; color:var(--ink-soft, #777); }
+
+/* ===== Namba za malipo karibu na kitufe cha Add to Cart (dirisha la bidhaa) ===== */
+.pm-pay-box{margin-top:12px; padding:10px 12px; border:1px dashed var(--line); border-radius:12px; background:var(--card-bg); font-size:.84rem;}
+.pm-pay-title{font-weight:700; margin-bottom:6px;}
+.pm-pay-row{display:flex; align-items:center; gap:10px; padding:3px 0;}
+.pm-pay-row span{flex:0 0 84px; color:var(--ink-soft);}
+.pm-pay-row b{flex:1; letter-spacing:.02em;}
+
+/* ===== Location ya duka (Makumbusho Bus Stand) ===== */
+.store-map{margin-top:16px;}
+.store-map-link{display:inline-flex; margin-bottom:10px;}
+.store-map-frame{display:block; width:100%; height:300px; border:0; border-radius:12px;}
+
+/* ===== Reviews za WhatsApp ===== */
+.wa-reviews{padding:44px 0;}
+.wa-reviews-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px;}
+.wa-review{margin:0; background:var(--card-bg); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+.wa-review img{display:block; width:100%; height:auto;}
+.wa-review figcaption{padding:8px 10px; font-size:.8rem; color:var(--ink-soft); text-align:center;}
+
+/* ===== Footer: nchi tunazotuma + info ya bidhaa ===== */
+.footer-ship{margin:18px auto 6px; max-width:900px; text-align:center; font-size:.82rem; line-height:1.7;}
+.footer-ship .fs-title{font-weight:700; margin-bottom:6px;}
+.footer-ship .fs-note{opacity:.85; margin-top:6px;}
+.footer-ship a{text-decoration:underline;}
+.pm-info-box{margin-top:12px; font-size:.84rem; display:grid; gap:6px;}
+.pm-friend-btn{width:100%; justify-content:center;}

@@ -477,7 +477,7 @@ table.compare-table img{width:70px; height:70px; object-fit:cover; border-radius
 .blog-article img{width:100%; border-radius:18px; margin-bottom:24px;}
 .blog-article h1{color:var(--green-deep); margin-bottom:10px;}
 .blog-article .meta{font-size:.8rem; color:var(--ink-soft); margin-bottom:20px;}
-.blog-article .body-text{font-size:1rem; line-height:1.8; color:var(--ink);}
+.blog-article .body-text{font-size:1rem; line-height:1.8; color:var(--ink); white-space:pre-line;}
 .back-link{display:inline-flex; align-items:center; gap:6px; color:var(--green-deep); font-weight:700; margin-bottom:20px; font-size:.88rem;}
 
 /* ================= ORDER TRACKING ================= */

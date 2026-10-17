@@ -1,5 +1,5 @@
 // Agnes Herbal Supplements — Service Worker (offline-first cache)
-const CACHE_NAME = 'ahs-cache-v82';
+const CACHE_NAME = 'ahs-cache-v85';
 const CORE_ASSETS = [
   './index.html',
   './blog.html',
@@ -10,6 +10,8 @@ const CORE_ASSETS = [
   './css/style.css',
   './css/ahs-extra.css',
   './js/products-data.js',
+  './js/site-config.js',
+  './js/descriptions-data.js',
   './js/content-data.js',
   './js/product-page-data.js',
   './js/i18n.js',

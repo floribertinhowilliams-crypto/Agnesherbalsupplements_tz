@@ -111,7 +111,7 @@ function getEffectiveProduct(id) {
   const base = getBaseProduct(id);
   if (!base) return null;
   const ov = productOverrides[id];
-  const merged = !ov ? base : {
+  const merged0 = !ov ? base : {
     ...base,
     name: ov.name || base.name,
     ...(ov.prices ? { prices: ov.prices } : {}),
@@ -130,6 +130,11 @@ function getEffectiveProduct(id) {
     // document ya bidhaa, si link.
     videoClip: ov.videoClip || base.videoClip,
   };
+  // Maelezo ya Admin (Hariri → Maelezo) na ya bidhaa yenyewe yanashinda kila mara; maelezo ya kawaida
+  // (js/descriptions-data.js) yanatumika TU pale bidhaa haina maelezo kabisa.
+  const merged = (merged0.caption || typeof ahsDefaultDescription !== 'function')
+    ? merged0
+    : { ...merged0, caption: ahsDefaultDescription(merged0.name) || merged0.caption };
   // Ofa ya kundi (imewekwa na admin kwenye "🎯 Mpangilio wa Duka") inatumika
   // kwa BEI HALISI ya bidhaa (rejareja + jumla), si onyesho tu — hivyo
   // kikapu/invoice/gridi zote zinatumia bei moja iliyopunguzwa moja kwa moja.
@@ -144,8 +149,23 @@ function getEffectiveProduct(id) {
 function allBaseProducts() {
   return CUSTOM_PRODUCTS.length ? [...PRODUCTS, ...CUSTOM_PRODUCTS] : PRODUCTS;
 }
+// Bidhaa zenye jina lilelile (mfano pacha 5 za awali: Fertility Tea, Plump Hips Tea, Skin Whitening
+// Capsules, 3 Days Hip Big Butt Capsules, Myo-Inositol D-Chiro) zinaonyeshwa MARA MOJA tu kwenye orodha:
+// ya kwanza inabaki, pacha wake anafichwa kwenye gridi/utafutaji. Kurasa zake bado zipo (zimeelekezwa
+// kwa 301 kupitia _redirects), hakuna data inayofutwa.
+function ahsNameKey(name) { return String(name || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+function ahsDuplicateIds() {
+  const seen = new Set(), dup = new Set();
+  allBaseProducts().forEach(p => {
+    const k = ahsNameKey((productOverrides[p.id] && productOverrides[p.id].name) || p.name);
+    if (!k) return;
+    if (seen.has(k)) dup.add(p.id); else seen.add(k);
+  });
+  return dup;
+}
 function visibleProducts() {
-  return allBaseProducts().map(p => getEffectiveProduct(p.id)).filter(p => p && !p.hidden);
+  const dup = ahsDuplicateIds();
+  return allBaseProducts().filter(p => !dup.has(p.id)).map(p => getEffectiveProduct(p.id)).filter(p => p && !p.hidden);
 }
 // Bidhaa alizochagua admin ("🎯 Mpangilio wa Duka" → "Bidhaa za Leo") kwa
 // mfuatano aliouweka mwenyewe — hizi ndizo zinazoonekana MWANZONI kabisa
@@ -637,7 +657,7 @@ function renderGrid() {
   const wrap = document.getElementById('gallery-wrap');
   const list = getFilteredSorted();
   if (typeof renderCategoryChips === 'function') renderCategoryChips();
-  document.getElementById('resultsCount').textContent = `${list.length} / ${allBaseProducts().length} bidhaa`;
+  document.getElementById('resultsCount').textContent = `${list.length} / ${visibleProducts().length} bidhaa`;
   if (list.length === 0) {
     const query = (filterState.keywordSet && filterState.keywordSet.length) ? '' : filterState.search.trim();
     wrap.innerHTML = (typeof svNoResultsGridHTML === 'function')
@@ -647,12 +667,55 @@ function renderGrid() {
     updateProductSchema([]);
     return;
   }
-  wrap.innerHTML = list.map(productCardHTML).join('');
+  // PAGINATION: bidhaa 24 kwa kila ukurasa (mpangilio na mfumo wa orodha haubadiliki; ni kipande
+  // cha orodha iliyochujwa/kupangwa tayari). Ukurasa unarudi 1 pale tu kichujio/utafutaji/mpangilio unapobadilika.
+  const sig = JSON.stringify([filterState.search, filterState.category, filterState.goal, filterState.price, filterState.sort, filterState.keywordSet, !!filterState.imageSearch]);
+  if (sig !== gridPageSig) { gridPageSig = sig; gridPage = 1; }
+  const pages = Math.max(1, Math.ceil(list.length / GRID_PAGE_SIZE));
+  if (gridPage > pages) gridPage = pages;
+  const pageList = list.slice((gridPage - 1) * GRID_PAGE_SIZE, gridPage * GRID_PAGE_SIZE);
+  wrap.innerHTML = pageList.map(productCardHTML).join('');
+  renderGridPager(pages, list.length);
   bindGridEvents();
   initLazyObserver();
   initRevealObserver();
   if (typeof renderNewProducts === 'function') renderNewProducts();
-  updateProductSchema(list);
+  updateProductSchema(pageList);
+}
+
+const GRID_PAGE_SIZE = 24;
+let gridPage = 1, gridPageSig = '';
+function renderGridPager(pages, total) {
+  const wrap = document.getElementById('gallery-wrap');
+  if (!wrap) return;
+  let pager = document.getElementById('gridPager');
+  if (!pager) {
+    pager = document.createElement('nav');
+    pager.id = 'gridPager';
+    pager.className = 'grid-pager';
+    pager.setAttribute('aria-label', 'Kurasa za bidhaa');
+    wrap.parentNode.insertBefore(pager, wrap.nextSibling);
+    pager.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-page]');
+      if (!b || b.disabled) return;
+      gridPage = parseInt(b.dataset.page, 10) || 1;
+      renderGrid();
+      ahsScrollToResults();
+    });
+  }
+  if (pages <= 1) { pager.innerHTML = ''; pager.style.display = 'none'; return; }
+  pager.style.display = '';
+  const nums = [];
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || Math.abs(i - gridPage) <= 1) nums.push(i);
+    else if (nums[nums.length - 1] !== '…') nums.push('…');
+  }
+  const btn = (label, page, extra) => `<button type="button" class="gp-btn${extra || ''}" data-page="${page}"${extra && extra.includes('disabled') ? ' disabled' : ''}>${label}</button>`;
+  pager.innerHTML =
+    btn('‹ Nyuma', Math.max(1, gridPage - 1), gridPage === 1 ? ' disabled' : '') +
+    nums.map(n => n === '…' ? '<span class="gp-dots">…</span>' : btn(n, n, n === gridPage ? ' active' : '')).join('') +
+    btn('Mbele ›', Math.min(pages, gridPage + 1), gridPage === pages ? ' disabled' : '') +
+    `<span class="gp-info">Ukurasa ${gridPage} / ${pages} · bidhaa ${total}</span>`;
 }
 
 function showSkeletonThenRender() {
@@ -816,6 +879,7 @@ function openProduct(id) {
   }).join('');
   document.getElementById('modalReviewsList').innerHTML = revHtml || `<p class="review-empty" style="font-size:.85rem; color:var(--ink-soft, #777); padding:6px 0;">${t('no_reviews_yet_cta')}</p>`;
 
+  ahsRenderTodayOffer();
   // share links
   const shareText = encodeURIComponent(`${currentProduct.name} - ${fmt(currentProduct.prices.retail)} - Agnes Herbal Supplements`);
   // URL rasmi ya bidhaa (inafunguka moja kwa moja kwenye bidhaa; Google/AI wanaisoma pia).
@@ -1490,7 +1554,7 @@ document.addEventListener('click', (e) => {
 /* ===================== CUSTOMER INFO (jina/simu/mkoa) ===================== */
 function getLocationType() {
   const checked = document.querySelector('input[name="custLocationType"]:checked');
-  return checked ? checked.value : null; // 'dar' | 'mkoani' | null
+  return checked ? checked.value : null; // 'dar' | 'mkoani' | 'nje' | null
 }
 function toggleLocationFields() {
   const type = getLocationType();
@@ -1498,6 +1562,8 @@ function toggleLocationFields() {
   const mkoaniField = document.getElementById('mkoaniField');
   if (darField) darField.style.display = (type === 'dar') ? '' : 'none';
   if (mkoaniField) mkoaniField.style.display = (type === 'mkoani') ? '' : 'none';
+  const njeField = document.getElementById('njeField');
+  if (njeField) njeField.style.display = (type === 'nje') ? '' : 'none';
   updateCartUI();
 }
 function isCustomerInfoFilled() {
@@ -1507,7 +1573,10 @@ function isCustomerInfoFilled() {
   let location = '';
   if (locationType === 'dar') location = (document.getElementById('cartDarArea') || {}).value || '';
   else if (locationType === 'mkoani') location = (document.getElementById('cartCustRegion') || {}).value || '';
-  return !!(name.trim() && (typeof isValidTzPhone === 'function' ? isValidTzPhone(phone) : phone.trim()) && locationType && location.trim());
+  else if (locationType === 'nje') location = (document.getElementById('cartCustCountry') || {}).value || '';
+  const phoneOk = (typeof isValidTzPhone === 'function' ? isValidTzPhone(phone) : !!phone.trim())
+    || (locationType === 'nje' && /^\+?\d{8,15}$/.test(phone.replace(/[\s-]/g, '')));
+  return !!(name.trim() && phoneOk && locationType && location.trim());
 }
 function updateCheckoutButtonsState() {
   const ready = isCustomerInfoFilled();
@@ -1539,9 +1608,16 @@ function getCustomerInfo() {
   const ward = wardEl ? wardEl.value.trim() : '';
   const notes = notesEl ? notesEl.value.trim() : '';
   const locationType = getLocationType();
-  const region = locationType === 'dar' ? (darAreaEl ? darAreaEl.value.trim() : '') : (regionEl ? regionEl.value.trim() : '');
-  const locationEl = locationType === 'dar' ? darAreaEl : regionEl;
-  const phoneOk = isValidTzPhone(phone);
+  const countryEl = document.getElementById('cartCustCountry');
+  const cityEl = document.getElementById('cartCustCity');
+  const country = countryEl ? countryEl.value.trim() : '';
+  const city = cityEl ? cityEl.value.trim() : '';
+  const region = locationType === 'dar' ? (darAreaEl ? darAreaEl.value.trim() : '')
+    : locationType === 'nje' ? (country ? (country + (city ? ', ' + city : '')) : '')
+    : (regionEl ? regionEl.value.trim() : '');
+  const locationEl = locationType === 'dar' ? darAreaEl : (locationType === 'nje' ? countryEl : regionEl);
+  // Wateja wa nje ya Tanzania wanaweza kutumia namba ya kimataifa (+971..., +254..., n.k.)
+  const phoneOk = isValidTzPhone(phone) || (locationType === 'nje' && /^\+?\d{8,15}$/.test(phone.replace(/[\s-]/g, '')));
   const hintEl = document.getElementById('cartPhoneHint');
   if (hintEl) {
     if (!phone) { hintEl.textContent = ''; }
@@ -1611,6 +1687,10 @@ function getShippingInfo() {
     const areaText = document.getElementById('cartDarArea') ? document.getElementById('cartDarArea').value.trim() : '';
     return { price: 0, matched: false, isDar: true, regionText: areaText };
   }
+  if (locationType === 'nje') {
+    const cEl = document.getElementById('cartCustCountry');
+    return { price: 0, matched: false, isDar: false, isAbroad: true, regionText: cEl ? cEl.value.trim() : '' };
+  }
   if (locationType === 'mkoani') {
     const regionEl = document.getElementById('cartCustRegion');
     const regionText = regionEl ? regionEl.value.trim() : '';
@@ -1637,6 +1717,9 @@ function updateShippingUI(shipInfo) {
     noteEl.innerHTML = `✅ <b>${escapeHtml(regionLabel(foundRegion))}</b> — ${shipInfo.usd ? 'USD ' + shipInfo.usd + ' (italipwa kando, haijumuishwi kwenye jumla ya Tsh)' : 'Tsh ' + shipInfo.price.toLocaleString('en-US')}. Malipo kabla ya kutuma (mkoani unalipia kwanza).`;
     // Funga orodha TU mteja anapokuwa ameandika jina kamili; vinginevyo (bado anaandika) iache wazi achague.
     if (shippingNormalize(shipInfo.regionText) === foundRegion) closeRegionDropdown();
+  } else if (shipInfo.isAbroad) {
+    noteEl.className = 'ccf-shipping-note';
+    noteEl.textContent = 'ℹ️ Nje ya Tanzania: gharama ya usafiri (basi au ndege) itathibitishwa na Agnes Herbal Store kupitia WhatsApp baada ya kutuma oda hii. Malipo hufanyika kabla ya kutuma bidhaa.';
   } else if (shipInfo.isDar) {
     noteEl.className = 'ccf-shipping-note';
     noteEl.textContent = 'ℹ️ Dar es Salaam: gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii. Unalipia ukishapokea bidhaa.';
@@ -1651,6 +1734,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (darAreaEl) darAreaEl.addEventListener('input', updateCartUI);
   const regionEl = document.getElementById('cartCustRegion');
   if (regionEl) regionEl.addEventListener('input', updateCartUI);
+  ['cartCustCountry', 'cartCustCity'].forEach(id => { const el = document.getElementById(id); if (el) { el.addEventListener('input', updateCartUI); el.addEventListener('change', updateCartUI); } });
   const nameEl = document.getElementById('cartCustName');
   if (nameEl) nameEl.addEventListener('input', updateCheckoutButtonsState);
   const phoneEl = document.getElementById('cartCustPhone');
@@ -1673,11 +1757,17 @@ function prefillCustomerInfo() {
   if (districtEl && !districtEl.value) districtEl.value = saved.district || '';
   if (wardEl && !wardEl.value) wardEl.value = saved.ward || '';
   if (saved.locationType) {
-    const radio = document.getElementById(saved.locationType === 'dar' ? 'locDar' : 'locMkoani');
+    const radio = document.getElementById(saved.locationType === 'dar' ? 'locDar' : (saved.locationType === 'nje' ? 'locNje' : 'locMkoani'));
     if (radio) { radio.checked = true; toggleLocationFields(); }
   }
   if (saved.locationType === 'dar' && darAreaEl && !darAreaEl.value) darAreaEl.value = saved.region || '';
   if (saved.locationType === 'mkoani' && regionEl && !regionEl.value) regionEl.value = saved.region || '';
+  if (saved.locationType === 'nje') {
+    const cEl = document.getElementById('cartCustCountry'), ctEl = document.getElementById('cartCustCity');
+    const parts = String(saved.region || '').split(', ');
+    if (cEl && !cEl.value) cEl.value = parts[0] || '';
+    if (ctEl && !ctEl.value) ctEl.value = parts.slice(1).join(', ');
+  }
   updateCheckoutButtonsState();
 }
 document.addEventListener('DOMContentLoaded', prefillCustomerInfo);
@@ -1747,6 +1837,10 @@ function showInvoice() {
     warnNote.style.display = '';
     warnNote.classList.remove('invoice-note-danger'); // Dar es Salaam si "hatari" — ni taarifa ya kawaida
     warnText.textContent = 'Kwa vile uko Dar es Salaam, gharama ya usafiri itathibitishwa na Agnes Herbal Store baada ya kutuma oda hii — si kabla.';
+  } else if (shipInfo.isAbroad) {
+    warnNote.style.display = '';
+    warnNote.classList.remove('invoice-note-danger');
+    warnText.textContent = 'Nje ya Tanzania: tunatuma kwa basi au ndege (uwanja wa karibu). Gharama ya usafiri itathibitishwa kupitia WhatsApp; malipo kabla ya kutuma.';
   } else if (!shipInfo.matched) {
     warnNote.style.display = '';
     warnNote.classList.add('invoice-note-danger');
@@ -1805,6 +1899,8 @@ function checkoutWhatsApp() {
     msg += `\nGharama ya Usafiri (${customer.region}): USD ${shipInfo.usd} (italipwa kando, haipo kwenye jumla ya Tsh)\n`;
   } else if (shippingCost > 0) {
     msg += `\nGharama ya Usafiri (${customer.region}): Tsh ${shippingCost.toLocaleString('en-US')}\n`;
+  } else if (shipInfo.isAbroad) {
+    msg += `\n🌍 (Nje ya Tanzania — bei ya usafiri kwa basi/ndege itathibitishwa na Agnes Herbal Store kupitia WhatsApp baada ya oda hii)\n`;
   } else if (shipInfo.isDar) {
     msg += `\n⚠️ (Bei ya usafiri BADO HAIJAWEKWA — itathibitishwa na Agnes Herbal Store baada ya oda hii)\n`;
   } else {
@@ -2620,3 +2716,52 @@ document.addEventListener('DOMContentLoaded', () => {
     else { panel.setAttribute('hidden', ''); btn.setAttribute('aria-expanded', 'false'); }
   });
 });
+
+
+/* ===================== SHARE ZAIDI (TikTok, Copy Link, Share na Rafiki) + Ofa ya Leo ===================== */
+function ahsShareExtra(kind) {
+  const p = currentProduct;
+  if (!p) return;
+  const url = productPageUrl(p);
+  const text = `🌿 ${p.name} - ${fmt(p.prices.retail)} - Agnes Herbal Supplements, Makumbusho Dar es Salaam`;
+  if (kind === 'native' && navigator.share) {
+    navigator.share({ title: p.name, text, url }).catch(() => {});
+    return;
+  }
+  ahsCopyText(`${text}\n${url}`);
+  if (kind === 'tiktok') { showToast('♪ Link imenakiliwa. Fungua TikTok na ubandike kwenye video/bio yako.'); setTimeout(() => window.open('https://www.tiktok.com/', '_blank', 'noopener'), 900); }
+  else showToast('🔗 Link imenakiliwa. Bandika popote kumshirikisha rafiki.');
+}
+function ahsRenderTodayOffer() {
+  const el = document.getElementById('pmTodayOffer');
+  if (!el) return;
+  const offer = (window.AHS_SITE && window.AHS_SITE.todayOffer) || '';
+  if (offer) { el.textContent = '🎁 Ofa ya Leo: ' + offer; el.style.display = ''; } else { el.style.display = 'none'; }
+}
+
+/* ===================== SEARCH = "JE, IPO?" (v71) =====================
+   Kisanduku cha search cha juu sasa kinampeleka mteja moja kwa moja kwenye
+   ukurasa wa "Je, Ipo?" (Enter au kubonyeza 🔍). Hakuna kuchuja gridi wala
+   dropdown ya zamani; sauti na picha vimefichwa. Vichujio (Chuja/Panga) na
+   kategoria vinabaki kama zamani. Kurudisha search ya zamani: ondoa kizuizi hiki. */
+(function ahsSearchToJeIpo() {
+  function go(input) {
+    const q = (input.value || '').trim();
+    location.href = 'je-ipo/' + (q ? '?q=' + encodeURIComponent(q) : '');
+  }
+  function init() {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    ['input', 'focus'].forEach(ev => input.addEventListener(ev, e => e.stopImmediatePropagation(), true));
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); e.stopImmediatePropagation(); go(input); }
+    }, true);
+    input.placeholder = '🔎 Je, ipo? Andika bidhaa, mfano: collagen, chai ya tumbo...';
+    input.removeAttribute('data-i18n-placeholder');
+    ['voiceSearchBtn', 'imgSearchBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = 'none'; });
+    const icon = document.querySelector('#searchWrap .search-icon');
+    if (icon) { icon.style.cursor = 'pointer'; icon.style.pointerEvents = 'auto'; icon.setAttribute('role', 'button'); icon.addEventListener('click', () => go(input)); }
+    const box = document.getElementById('searchSuggestions'); if (box) box.style.display = 'none';
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

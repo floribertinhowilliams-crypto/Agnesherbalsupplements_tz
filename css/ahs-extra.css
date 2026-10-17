@@ -422,3 +422,23 @@
 .footer-ship a{text-decoration:underline;}
 .pm-info-box{margin-top:12px; font-size:.84rem; display:grid; gap:6px;}
 .pm-friend-btn{width:100%; justify-content:center;}
+
+
+/* v71: marekebisho ya simu — kikapu juu ya menyu ya chini, fomu bila kukatika */
+@media (max-width: 768px) {
+  .cart-drawer { z-index: 1100; }
+  .cart-drawer .cart-foot { padding-bottom: max(28px, calc(env(safe-area-inset-bottom) + 20px)); }
+  .cart-customer-info input, .cart-customer-info select, .cart-customer-info textarea { min-width: 0; max-width: 100%; box-sizing: border-box; text-overflow: ellipsis; }
+  #wasiliana-form input, #wasiliana-form textarea, #wasiliana-form button { max-width: 100%; box-sizing: border-box; }
+  #wasiliana-form button[type="submit"] { width: 100%; white-space: normal; }
+  .cart-foot .btn, .cart-foot button { white-space: normal; max-width: 100%; box-sizing: border-box; }
+}
+
+/* v71: vitufe vinavyoelea visifunike maandishi/fomu kwenye simu — vinahamia kulia juu ya kitufe cha ↑,
+   vilivyobaki ni WhatsApp na Simu tu (Facebook/Instagram ziko kwenye footer na Contact) */
+@media (max-width: 768px) {
+  body .float-actions { left: auto !important; right: 12px !important; bottom: 146px !important; flex-direction: column; }
+  .float-btn.fb-float, .float-btn.ig-float { display: none !important; }
+  .ln-popup-host { bottom: 90px !important; }
+  #wasiliana-form .btn.btn-primary[type="submit"] { display: flex; align-items: center; justify-content: center; text-align: center; padding-left: 16px; padding-right: 16px; }
+}

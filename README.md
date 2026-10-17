@@ -151,3 +151,14 @@ Sasa picha zisizo data-URL (njia ya faili au https) zinatumika moja kwa moja, na
 - 'Ofa ya Leo' kupitia `todayOffer` ndani ya `js/site-config.js`.
 - Fomu ya oda: chaguo 'Nje ya Tanzania' (nchi + mji), simu ya kimataifa, oda inatumwa WhatsApp.
 - FOMO bandia (watu 47, zimebaki 12, 4.9/5) HAIJAWEKWA kwa makusudi.
+
+## v71b — marekebisho ya simu
+- Search ya juu inapeleka kwenye ukurasa wa Je, Ipo? (Enter au 🔍).
+- Je, Ipo?: kitufe cha "Angalia" hakikatiki tena.
+- Kikapu kiko juu ya menyu ya chini (vitufe vya Invoice/WhatsApp vinaonekana); maandishi ya fomu yamefupishwa.
+- Vitufe vinavyoelea (WhatsApp/Simu) vimehamia kulia kwenye simu — havifuniki fomu tena.
+- Cache kubwa ya bidhaa za admin kwenye IndexedDB (zaidi ya 3MB) — bidhaa zinaonekana papo hapo ziara zinazofuata.
+
+## v71c — Hero 3D
+- Slider ya juu: slaidi 3 mpya (Apple Cider Vinegar Gummies, Glutathione + Collagen, Nchi 8 za usafirishaji) zenye picha halisi za bidhaa; slaidi ya chai imeondolewa. Sehemu nyingine za homepage hazijaguswa.
+- Trust bar chini ya slider; namba zinasomwa kutoka `js/site-config.js` (stats).

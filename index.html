@@ -60,8 +60,8 @@
 <link rel="preload" as="image" href="assets/images/logo.png" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v29">
-<link rel="stylesheet" href="css/ahs-extra.css?v30">
-<link rel="stylesheet" href="css/homepage-v2.css?v20">
+<link rel="stylesheet" href="css/ahs-extra.css?v32">
+<link rel="stylesheet" href="css/homepage-v2.css?v23">
 <link rel="stylesheet" href="css/search-v2.css?v18">
 <link rel="stylesheet" href="css/live-notifications.css?v18">
 <link rel="stylesheet" href="css/ai-assistant.css?v18">
@@ -376,38 +376,53 @@
 </section>
 
 <!-- ============ HERO SLIDER (Homepage Upgrade v2) ============ -->
-<section class="hero-slider" id="heroSlider">
+<section class="hero-slider hero3d" id="heroSlider" aria-label="Bidhaa zinazopendwa">
   <div class="hs-track" id="hsTrack">
-    <div class="hs-slide active" style="background-image:linear-gradient(120deg, rgba(15,77,52,.78), rgba(15,77,52,.15)), url('images/p001.jpg');">
-      <div class="wrap hs-inner">
-        <span class="hs-tag" data-i18n="hero1_tag">🔥 Ofa Maalum ya Wiki</span>
-        <h2 data-i18n="hero1_title">Punguza Uzito kwa Njia ya Asili</h2>
-        <p data-i18n="hero1_desc">Chai za detox na slimming tea zenye ubora wa hali ya juu — bei ya rejareja na jumla.</p>
-        <a class="btn btn-gold" href="#flashSale" data-flash-link data-i18n="hero1_btn">Ona Ofa za Flash Sale →</a>
+    <div class="hs-slide hs3d s-acv active">
+      <div class="h3-bokeh" aria-hidden="true"></div>
+      <div class="wrap hs-inner h3-grid">
+        <div class="h3-text">
+          <span class="hs-tag">🔥 Maarufu Sana</span>
+          <h2><span class="h3-white">APPLE CIDER VINEGAR</span><span class="h3-gold">GUMMIES</span></h2>
+          <p>Kirutubisho cha kila siku chenye ladha nzuri. Tunatuma Tanzania na nje ya nchi.</p>
+          <a class="btn-glass" href="#bidhaa" onclick="if(window.openProduct){openProduct(86);return false;}">AGIZA SASA Tsh 55,000 →</a>
+          <small class="h3-note">Hii ni kirutubisho, si dawa.</small>
+        </div>
+        <div class="h3-stage" data-parallax>
+          <img class="h3-prod h3-main" src="images/p087.jpg" alt="Apple Cider Vinegar Gummies" width="300" height="300" fetchpriority="high">
+          <img class="h3-prod h3-side" src="images/p273.jpg" alt="Duozi Apple Cider Vinegar Gummies" width="180" height="180" loading="lazy">
+          <i class="h3-spark s1"></i><i class="h3-spark s2"></i><i class="h3-spark s3"></i>
+        </div>
       </div>
     </div>
-    <div class="hs-slide" style="background-image:linear-gradient(120deg, rgba(15,77,52,.78), rgba(15,77,52,.15)), url('images/p069.jpg');">
-      <div class="wrap hs-inner">
-        <span class="hs-tag" data-i18n="hero2_tag">✨ Bidhaa Mpya</span>
-        <h2 data-i18n="hero2_title">Gummies za Vitamini kwa Familia Nzima</h2>
-        <p data-i18n="hero2_desc">Ladha nzuri, virutubisho kamili — kwa watoto na watu wazima.</p>
-        <a class="btn btn-gold" href="#newArrivals" data-i18n="hero2_btn">Angalia Bidhaa Mpya →</a>
+    <div class="hs-slide hs3d s-glow">
+      <div class="h3-bokeh" aria-hidden="true"></div>
+      <div class="wrap hs-inner h3-grid">
+        <div class="h3-text">
+          <span class="hs-tag">✨ Wanawake 25–45</span>
+          <h2><span class="h3-white">NGOZI YENYE MNG'AO</span><span class="h3-gold">Glutathione + Collagen</span></h2>
+          <p>Gummies za Glutathione na Collagen kwa utunzaji wa ngozi na nywele kila siku.</p>
+          <a class="btn-glass" href="#bidhaa" onclick="if(window.openProduct){openProduct(92);return false;}">ONA GLUTATHIONE →</a>
+          <small class="h3-note">Hii ni kirutubisho, si dawa.</small>
+        </div>
+        <div class="h3-stage" data-parallax>
+          <img class="h3-prod h3-main" src="images/p093.jpg" alt="Glutathione Collagen Gummies" width="300" height="300" loading="lazy">
+          <img class="h3-prod h3-side" src="images/p089.jpg" alt="Collagen Gummies" width="180" height="180" loading="lazy">
+          <i class="h3-spark s1"></i><i class="h3-spark s2"></i><i class="h3-spark s3"></i>
+        </div>
       </div>
     </div>
-    <div class="hs-slide" style="background-image:linear-gradient(120deg, rgba(15,77,52,.78), rgba(15,77,52,.15)), url('images/p262.jpg');">
-      <div class="wrap hs-inner">
-        <span class="hs-tag" data-i18n="hero3_tag">💪 Best Sellers</span>
-        <h2 data-i18n="hero3_title">Bidhaa Zinazopendwa Zaidi na Wateja</h2>
-        <p data-i18n="hero3_desc">Zaidi ya bidhaa 280+ — kutoka afya ya ngozi hadi nguvu za mwili.</p>
-        <a class="btn btn-gold" href="#bestSellers" data-i18n="hero3_btn">Ona Best Sellers →</a>
-      </div>
-    </div>
-    <div class="hs-slide" style="background-image:linear-gradient(120deg, rgba(15,77,52,.78), rgba(15,77,52,.15)), url('images/p145.jpg');">
-      <div class="wrap hs-inner">
-        <span class="hs-tag" data-i18n="hero4_tag">🚚 Usafirishaji TZ · KE · UG · BI</span>
-        <h2 data-i18n="hero4_title">Agiza Sasa, Ipate Haraka</h2>
-        <p data-i18n="hero4_desc">Wasiliana nasi kwa WhatsApp na tutakusaidia mara moja.</p>
-        <a class="btn btn-gold" href="https://wa.me/255678883675" target="_blank" rel="noopener" data-i18n="hero4_btn">Agiza kwa WhatsApp →</a>
+    <div class="hs-slide hs3d s-map">
+      <div class="h3-dots" aria-hidden="true"></div>
+      <div class="wrap hs-inner h3-grid">
+        <div class="h3-text">
+          <span class="hs-tag">🚚 Usafirishaji</span>
+          <h2><span class="h3-white">TUNAFIKISHA NCHI 8</span><span class="h3-gold">ZA AFRIKA MASHARIKI</span></h2>
+          <p class="h3-flags">🇹🇿 🇰🇪 🇺🇬 🇧🇮 🇷🇼 🇨🇩 🇿🇲 🇲🇼</p>
+          <p>Na nchi nyingine duniani kwa basi au ndege. Tuma WhatsApp tukuthibitishie gharama.</p>
+          <a class="btn-glass" href="delivery-information/">ANGALIA USAFIRISHAJI →</a>
+        </div>
+        <div class="h3-stage h3-truck" data-parallax><span class="h3-truck-ico">🚚</span><i class="h3-trail"></i></div>
       </div>
     </div>
   </div>
@@ -415,6 +430,9 @@
   <button class="hs-nav hs-next" onclick="hsMove(1)" aria-label="Slaidi Ijayo" type="button">›</button>
   <div class="hs-dots" id="hsDots"></div>
 </section>
+<div class="trust-bar3" id="trustBar3">
+  <span>🚚 Nchi 8</span><span>📦 <b data-trust="products">410</b>+ Bidhaa</span><span>🌿 Asili</span><span>💳 M-Pesa · Mixx · Halo · NMB</span><span>👥 <b data-trust="customers">1000</b>+ Wateja</span>
+</div>
 
 <!-- COMPACT INSTALL APP BUTTON (moved from fixed bottom banner) -->
 <div class="install-banner" id="installBanner">
@@ -4434,15 +4452,15 @@
     </div>
     <div class="ccf-field">
       <label for="cartCustDistrict">Wilaya (si lazima)</label>
-      <input type="text" id="cartCustDistrict" maxlength="60" placeholder="Mfano: Ilala, Kinondoni, Temeke..." autocomplete="off">
+      <input type="text" id="cartCustDistrict" maxlength="60" placeholder="Mfano: Ilala, Temeke" autocomplete="off">
     </div>
     <div class="ccf-field">
       <label for="cartCustWard">Kata / Mtaa (si lazima)</label>
-      <input type="text" id="cartCustWard" maxlength="60" placeholder="Mfano: Sinza, Mikocheni, Buguruni..." autocomplete="off">
+      <input type="text" id="cartCustWard" maxlength="60" placeholder="Mfano: Sinza, Buguruni" autocomplete="off">
     </div>
     <div class="ccf-field">
       <label for="cartCustNotes">Maelezo ya Ziada (si lazima)</label>
-      <input type="text" id="cartCustNotes" maxlength="200" placeholder="Mfano: alama ya nyumba, muda mzuri wa kupokea...">
+      <input type="text" id="cartCustNotes" maxlength="200" placeholder="Mfano: alama ya nyumba">
     </div>
     <div class="ccf-shipping-note" id="shippingNote"></div>
   </div>
@@ -4650,9 +4668,9 @@ function openMobileSearch(){
 <script src="js/i18n.js?v27" defer></script>
 <script src="js/effect-i18n.js?v19" defer></script>
 <script src="js/goal-groups.js?v2" defer></script>
-<script src="js/app.js?v48" defer></script>
+<script src="js/app.js?v49" defer></script>
 <script src="js/sw-register.js?v18" defer></script>
-<script src="js/homepage-v2.js?v26" defer></script>
+<script src="js/homepage-v2.js?v27" defer></script>
 <script src="js/search-v2.js?v20" defer></script>
 <script src="js/live-notifications.js?v18" defer></script>
 <script src="js/ai-assistant.js?v18" defer></script>

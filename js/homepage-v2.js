@@ -476,3 +476,18 @@ document.addEventListener('DOMContentLoaded', () => {
   renderWaReviews();
   initBackToTop();
 });
+
+
+/* v71: trust bar (namba kutoka js/site-config.js) + parallax ya panya kwenye hero */
+document.addEventListener('DOMContentLoaded', () => {
+  const st = (window.AHS_SITE && window.AHS_SITE.stats) || {};
+  document.querySelectorAll('[data-trust]').forEach(el => { const v = st[el.dataset.trust]; if (v) el.textContent = v; });
+  const hero = document.getElementById('heroSlider');
+  if (hero && window.matchMedia('(hover:hover)').matches) {
+    hero.addEventListener('mousemove', e => {
+      const r = hero.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      hero.querySelectorAll('[data-parallax]').forEach(el => { el.style.transform = `rotateY(${x * 10}deg) rotateX(${-y * 8}deg)`; });
+    });
+    hero.addEventListener('mouseleave', () => hero.querySelectorAll('[data-parallax]').forEach(el => { el.style.transform = ''; }));
+  }
+});

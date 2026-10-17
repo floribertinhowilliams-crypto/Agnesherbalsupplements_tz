@@ -2643,6 +2643,7 @@ function initCloudCustomProductsSync() {
       const raw = JSON.stringify(list);
       if (raw.length < 3000000) localStorage.setItem('ahs_custom_cache', raw); // ikizidi, usihifadhi (Firestore bado inafanya kazi)
       else localStorage.removeItem('ahs_custom_cache');
+      if (raw.length >= 3000000) ahsIdbSet('ahs_custom_cache', raw); // v71: cache kubwa huenda IndexedDB (haina kikomo cha 3MB)
     } catch (e) { /* hifadhi imejaa */ }
     CUSTOM_PRODUCTS_MAP = {};
     list.forEach(p => {
@@ -2765,3 +2766,32 @@ function ahsRenderTodayOffer() {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
+
+/* ===================== v71: CACHE KUBWA YA BIDHAA ZA ADMIN (IndexedDB) =====================
+   Picha za bidhaa za admin zimo ndani ya Firestore (base64), hivyo orodha inaweza kuzidi 3MB
+   na localStorage haiwezi kuihifadhi — ndipo kila ziara ilikuwa inasubiri Firestore. Sasa
+   cache kubwa inahifadhiwa IndexedDB na kuonyeshwa papo hapo ziara zinazofuata. */
+function ahsIdb() {
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('ahs_cache', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+}
+function ahsIdbSet(k, v) { ahsIdb().then(db => { try { db.transaction('kv', 'readwrite').objectStore('kv').put(v, k); } catch (e) {} }).catch(() => {}); }
+function ahsIdbGet(k) { return ahsIdb().then(db => new Promise(res => { try { const q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } })).catch(() => null); }
+function ahsLoadBigCustomCache() {
+  if (CUSTOM_PRODUCTS.length) return;
+  ahsIdbGet('ahs_custom_cache').then(raw => {
+    if (!raw || CUSTOM_PRODUCTS.length) return;
+    try {
+      const list = JSON.parse(raw); if (!Array.isArray(list) || !list.length) return;
+      CUSTOM_PRODUCTS = list; CUSTOM_PRODUCTS_MAP = {};
+      list.forEach(p => { if (!p || p.id === undefined) return; CUSTOM_PRODUCTS_MAP[p.id] = p; if (p.category && !CATEGORIES.includes(p.category)) CATEGORIES.push(p.category); });
+      _searchIndex = null; renderFilterControls(); cloudRerenderNow();
+    } catch (e) {}
+  });
+}
+document.addEventListener('DOMContentLoaded', () => setTimeout(ahsLoadBigCustomCache, 0));

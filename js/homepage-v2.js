@@ -382,7 +382,7 @@ function renderWaReviews() {
   if (!list.length) { section.style.display = 'none'; return; }
   grid.innerHTML = list.map(r => `
     <figure class="wa-review">
-      <img src="${hp_esc(r.img)}" alt="Maoni ya mteja ${hp_esc(r.name || '')} kwenye WhatsApp" loading="lazy" decoding="async">
+      <img src="${hp_esc(r.img)}" alt="${hp_esc(t('wa_review_alt', { name: r.name || '' }))}" loading="lazy" decoding="async">
       ${r.name ? `<figcaption>${hp_esc(r.name)}</figcaption>` : ''}
     </figure>`).join('');
   section.style.display = '';

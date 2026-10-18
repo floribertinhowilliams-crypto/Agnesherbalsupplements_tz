@@ -1,6 +1,18 @@
 // Agnes Herbal Supplements — translations for the product "effect" tag (benefit label shown as a badge)
 // Keyed by the English effect string (lowercased, trimmed) as stored in js/products-data.js
 const EFFECT_I18N = {
+  "blood sugar wellness support": { sw: "Kusaidia Ustawi wa Sukari ya Damu", fr: "Soutien du bien-être de la glycémie", zh: "支持血糖健康" },
+  "cardiovascular wellness support": { sw: "Kusaidia Ustawi wa Moyo na Mishipa ya Damu", fr: "Soutien du bien-être cardiovasculaire", zh: "支持心血管健康" },
+  "kidney wellness support": { sw: "Kusaidia Ustawi wa Figo", fr: "Soutien du bien-être des reins", zh: "支持肾脏健康" },
+  "joint and metabolic wellness support": { sw: "Kusaidia Ustawi wa Viungo na Kimetaboliki", fr: "Soutien du bien-être articulaire et métabolique", zh: "支持关节与代谢健康" },
+  "digestive wellness support": { sw: "Kusaidia Ustawi wa Mmeng'enyo wa Chakula", fr: "Soutien du bien-être digestif", zh: "支持消化健康" },
+  "joint wellness support": { sw: "Kusaidia Ustawi wa Viungo", fr: "Soutien du bien-être articulaire", zh: "支持关节健康" },
+  "supports a smoke-free lifestyle": { sw: "Kusaidia Maisha Bila Sigara", fr: "Soutient un mode de vie sans tabac", zh: "支持无烟生活方式" },
+  "cardiovascular and metabolic wellness support": { sw: "Kusaidia Ustawi wa Moyo, Mishipa ya Damu na Kimetaboliki", fr: "Soutien du bien-être cardiovasculaire et métabolique", zh: "支持心血管与代谢健康" },
+  "balance body secretions": { sw: "Kusawazisha Majimaji ya Mwili", fr: "Équilibre les sécrétions corporelles", zh: "平衡体液分泌" },
+  "energy and vitality support": { sw: "Kusaidia Nguvu na Uchangamfu", fr: "Soutien de l'énergie et de la vitalité", zh: "支持能量与活力" },
+  "men's wellness support": { sw: "Kusaidia Ustawi wa Mwanaume", fr: "Soutien du bien-être masculin", zh: "支持男性健康" },
+  "skin clarity support": { sw: "Kusaidia Uwazi na Usafi wa Ngozi", fr: "Soutien de la clarté de la peau", zh: "支持肌肤净透" },
   "breast firming and curves support": { sw: "Kusaidia Kuimarisha na Umbo la Matiti", fr: "Soutien du Raffermissement et des Courbes de la Poitrine", zh: "胸部紧致与曲线支持" },
   "hip and butt curves support": { sw: "Kusaidia Umbo la Nyonga na Makalio", fr: "Soutien des Courbes des Hanches et des Fesses", zh: "髋部与臀部曲线支持" },
   "traditionally used for women's wellness support": { sw: "Hutumika Jadi Kusaidia Ustawi wa Mwanamke", fr: "Traditionnellement utilisé pour le bien-être des femmes", zh: "传统上用于女性健康支持" },
@@ -159,6 +171,17 @@ function translateEffect(effect, lang) {
   if (lang === "en") return effect;
   var key = String(effect).trim().replace(/[.,]+$/, "").toLowerCase();
   var entry = EFFECT_I18N[key];
-  if (entry && entry[lang]) return entry[lang];
+  if (entry) {
+    if (entry[lang]) return entry[lang];
+    // Kirundi bila tafsiri → Kifaransa (lugha rasmi ya Burundi); vinginevyo Kiingereza kama ilivyo.
+    if (lang === "rn" && entry.fr) return entry.fr;
+  }
   return effect;
+}
+// Maandishi yote ya faida katika lugha ZOTE (hutumika na utafutaji ili mteja aweze kutafuta kwa lugha yake).
+function allEffectTranslations(effect) {
+  var key = String(effect || "").trim().replace(/[.,]+$/, "").toLowerCase();
+  var entry = EFFECT_I18N[key], out = [];
+  if (entry) for (var l in entry) if (Object.prototype.hasOwnProperty.call(entry, l) && entry[l]) out.push(entry[l]);
+  return out;
 }

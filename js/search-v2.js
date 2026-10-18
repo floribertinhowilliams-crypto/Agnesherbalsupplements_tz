@@ -18,37 +18,37 @@
 // search already uses. Add more keywords here if new product lines are
 // added later and a topic stops finding matches.
 const SYMPTOMS = [
-  { key: 'bowel', icon: '🚽', label: { sw: 'Kuvimbiwa / Tumbo', en: 'Constipation / Stomach' }, keywords: ['bowel', 'constipat', 'colon', 'hemorrhoid', 'stomach', 'gut', 'ulcer', 'digest'] },
-  { key: 'sleep', icon: '😴', label: { sw: 'Kukosa Usingizi', en: 'Insomnia / Poor Sleep' }, keywords: ['sleep', 'insomnia', 'calm', 'relax', 'bedtime'] },
-  { key: 'overweight', icon: '⚖️', label: { sw: 'Uzito Kupindukia', en: 'Being Overweight' }, keywords: ['weight loss', 'loss weight', 'fat burning', 'slim', 'tummy'] },
-  { key: 'bp', icon: '❤️', label: { sw: 'Shinikizo la Damu', en: 'High Blood Pressure' }, keywords: ['blood pressure', 'hypertension', 'cardiovascular', 'blood vessel'] },
-  { key: 'sugar', icon: '🩸', label: { sw: 'Kisukari', en: 'Diabetes / Blood Sugar' }, keywords: ['blood sugar', 'diabet', 'glucose', 'uric acid'] },
-  { key: 'skin', icon: '✨', label: { sw: 'Chunusi na Tatizo la Ngozi', en: 'Acne & Skin Problems' }, keywords: ['acne', 'skin whit', 'skin health', 'complexion'] },
-  { key: 'fatigue', icon: '🔋', label: { sw: 'Uchovu / Kukosa Nguvu', en: 'Fatigue / Low Energy' }, keywords: ['fatigue', 'energy', 'vitality', 'endurance'] },
-  { key: 'joint', icon: '🦴', label: { sw: 'Maumivu ya Viungo', en: 'Joint & Bone Pain' }, keywords: ['joint', 'arthritis', 'bone', 'rheumat'] },
-  { key: 'liver', icon: '🫀', label: { sw: 'Matatizo ya Ini', en: 'Liver Problems' }, keywords: ['liver'] },
-  { key: 'male', icon: '💪', label: { sw: 'Nguvu za Kiume', en: "Men's Performance" }, keywords: ['tonify', 'tonifying kidney', 'kidney tonif', 'aphrodisiac', 'performance', 'male'] },
-  { key: 'fertility', icon: '🤰', label: { sw: 'Ugumba / Utasa', en: 'Fertility Issues' }, keywords: ['fertility', 'pregnan', 'reproduct', 'womb'] },
-  { key: 'menopause', icon: '🌸', label: { sw: 'Kukoma Hedhi (PMS)', en: 'Menopause / PMS' }, keywords: ['menopaus', 'pms', 'hormone'] },
-  { key: 'smoking', icon: '🚭', label: { sw: 'Tabia ya Kuvuta Sigara', en: 'Smoking Habit' }, keywords: ['smok'] },
-  { key: 'prostate', icon: '🔬', label: { sw: 'Tatizo la Kibofu (Prostate)', en: 'Prostate Issues' }, keywords: ['prostate'] },
-  { key: 'kidney', icon: '🫘', label: { sw: 'Matatizo ya Figo', en: 'Kidney Problems' }, keywords: ['kidney'] },
-  { key: 'eye', icon: '👁️', label: { sw: 'Matatizo ya Macho', en: 'Eye Problems' }, keywords: ['eye'] },
+  { key: 'bowel', icon: '🚽', label: { sw: 'Kuvimbiwa / Tumbo', en: 'Constipation / Stomach', fr: "Constipation / Estomac", zh: "便秘 / 肠胃" }, keywords: ['bowel', 'constipat', 'colon', 'hemorrhoid', 'stomach', 'gut', 'ulcer', 'digest'] },
+  { key: 'sleep', icon: '😴', label: { sw: 'Kukosa Usingizi', en: 'Insomnia / Poor Sleep', fr: "Insomnie / Mauvais sommeil", zh: "失眠 / 睡眠不佳" }, keywords: ['sleep', 'insomnia', 'calm', 'relax', 'bedtime'] },
+  { key: 'overweight', icon: '⚖️', label: { sw: 'Uzito Kupindukia', en: 'Being Overweight', fr: "Surpoids", zh: "超重" }, keywords: ['weight loss', 'loss weight', 'fat burning', 'slim', 'tummy'] },
+  { key: 'bp', icon: '❤️', label: { sw: 'Shinikizo la Damu', en: 'High Blood Pressure', fr: "Hypertension", zh: "高血压" }, keywords: ['blood pressure', 'hypertension', 'cardiovascular', 'blood vessel'] },
+  { key: 'sugar', icon: '🩸', label: { sw: 'Kisukari', en: 'Diabetes / Blood Sugar', fr: "Diabète / Glycémie", zh: "糖尿病 / 血糖" }, keywords: ['blood sugar', 'diabet', 'glucose', 'uric acid'] },
+  { key: 'skin', icon: '✨', label: { sw: 'Chunusi na Tatizo la Ngozi', en: 'Acne & Skin Problems', fr: "Acné & problèmes de peau", zh: "痤疮与皮肤问题" }, keywords: ['acne', 'skin whit', 'skin health', 'complexion'] },
+  { key: 'fatigue', icon: '🔋', label: { sw: 'Uchovu / Kukosa Nguvu', en: 'Fatigue / Low Energy', fr: "Fatigue / Manque d’énergie", zh: "疲劳 / 精力不足" }, keywords: ['fatigue', 'energy', 'vitality', 'endurance'] },
+  { key: 'joint', icon: '🦴', label: { sw: 'Maumivu ya Viungo', en: 'Joint & Bone Pain', fr: "Douleurs articulaires & osseuses", zh: "关节与骨骼疼痛" }, keywords: ['joint', 'arthritis', 'bone', 'rheumat'] },
+  { key: 'liver', icon: '🫀', label: { sw: 'Matatizo ya Ini', en: 'Liver Problems', fr: "Problèmes de foie", zh: "肝脏问题" }, keywords: ['liver'] },
+  { key: 'male', icon: '💪', label: { sw: 'Nguvu za Kiume', en: "Men's Performance", fr: "Performance masculine", zh: "男性活力" }, keywords: ['tonify', 'tonifying kidney', 'kidney tonif', 'aphrodisiac', 'performance', 'male'] },
+  { key: 'fertility', icon: '🤰', label: { sw: 'Ugumba / Utasa', en: 'Fertility Issues', fr: "Problèmes de fertilité", zh: "生育问题" }, keywords: ['fertility', 'pregnan', 'reproduct', 'womb'] },
+  { key: 'menopause', icon: '🌸', label: { sw: 'Kukoma Hedhi (PMS)', en: 'Menopause / PMS', fr: "Ménopause / SPM", zh: "更年期 / 经前综合征" }, keywords: ['menopaus', 'pms', 'hormone'] },
+  { key: 'smoking', icon: '🚭', label: { sw: 'Tabia ya Kuvuta Sigara', en: 'Smoking Habit', fr: "Habitude de fumer", zh: "吸烟习惯" }, keywords: ['smok'] },
+  { key: 'prostate', icon: '🔬', label: { sw: 'Tatizo la Kibofu (Prostate)', en: 'Prostate Issues', fr: "Problèmes de prostate", zh: "前列腺问题" }, keywords: ['prostate'] },
+  { key: 'kidney', icon: '🫘', label: { sw: 'Matatizo ya Figo', en: 'Kidney Problems', fr: "Problèmes de reins", zh: "肾脏问题" }, keywords: ['kidney'] },
+  { key: 'eye', icon: '👁️', label: { sw: 'Matatizo ya Macho', en: 'Eye Problems', fr: "Problèmes de vue", zh: "眼部问题" }, keywords: ['eye'] },
 ];
 
 const HEALTH_GOALS = [
-  { key: 'weightloss', icon: '⚖️', label: { sw: 'Kupunguza Uzito', en: 'Weight Loss' }, keywords: ['weight loss', 'loss weight', 'fat burning', 'slim', 'tummy', 'detox'] },
-  { key: 'weightgain', icon: '💪', label: { sw: 'Kuongeza Uzito / Misuli', en: 'Weight Gain / Muscle' }, keywords: ['weight gain', 'muscle', 'weight gainer'] },
-  { key: 'skinglow', icon: '🌟', label: { sw: "Ngozi Kung'aa", en: 'Glowing Skin' }, keywords: ['skin whit', 'glow', 'collagen', 'glutathione', 'whitening', 'brighten'] },
-  { key: 'curves', icon: '🍑', label: { sw: 'Maumbo ya Mwili', en: 'Body Curves' }, keywords: ['buttock', 'butt', 'breast', 'curve', 'hip'] },
-  { key: 'immunity', icon: '🛡️', label: { sw: 'Kinga ya Mwili', en: 'Immunity Boost' }, keywords: ['immun'] },
-  { key: 'fertility', icon: '👶', label: { sw: 'Afya ya Uzazi', en: 'Reproductive Health' }, keywords: ['fertility', 'pregnan', 'womb', 'reproduct'] },
-  { key: 'vitality', icon: '🔥', label: { sw: 'Nguvu na Hamu', en: 'Vitality & Libido' }, keywords: ['tonify', 'tonifying kidney', 'libido', 'aphrodisiac', 'performance', 'power energy'] },
-  { key: 'sleep', icon: '🌙', label: { sw: 'Kulala Vizuri', en: 'Better Sleep' }, keywords: ['sleep', 'calm', 'relax'] },
-  { key: 'hair', icon: '💇', label: { sw: 'Nywele Nzuri', en: 'Healthy Hair' }, keywords: ['hair'] },
-  { key: 'height', icon: '📏', label: { sw: 'Kuongeza Kimo', en: 'Height Growth' }, keywords: ['height'] },
-  { key: 'detox', icon: '🌿', label: { sw: 'Kusafisha Mwili (Detox)', en: 'Detox & Cleansing' }, keywords: ['detox', 'toxin', 'cleanse'] },
-  { key: 'heart', icon: '❤️‍🩹', label: { sw: 'Afya ya Moyo', en: 'Heart Health' }, keywords: ['cardiovascular', 'blood pressure', 'blood vessel', 'heart'] },
+  { key: 'weightloss', icon: '⚖️', label: { sw: 'Kupunguza Uzito', en: 'Weight Loss', fr: "Perte de poids", zh: "减肥" }, keywords: ['weight loss', 'loss weight', 'fat burning', 'slim', 'tummy', 'detox'] },
+  { key: 'weightgain', icon: '💪', label: { sw: 'Kuongeza Uzito / Misuli', en: 'Weight Gain / Muscle', fr: "Prise de poids / Muscle", zh: "增重 / 增肌" }, keywords: ['weight gain', 'muscle', 'weight gainer'] },
+  { key: 'skinglow', icon: '🌟', label: { sw: "Ngozi Kung'aa", en: 'Glowing Skin', fr: "Peau éclatante", zh: "亮肤" }, keywords: ['skin whit', 'glow', 'collagen', 'glutathione', 'whitening', 'brighten'] },
+  { key: 'curves', icon: '🍑', label: { sw: 'Maumbo ya Mwili', en: 'Body Curves', fr: "Courbes du corps", zh: "身材曲线" }, keywords: ['buttock', 'butt', 'breast', 'curve', 'hip'] },
+  { key: 'immunity', icon: '🛡️', label: { sw: 'Kinga ya Mwili', en: 'Immunity Boost', fr: "Renforcer l’immunité", zh: "增强免疫力" }, keywords: ['immun'] },
+  { key: 'fertility', icon: '👶', label: { sw: 'Afya ya Uzazi', en: 'Reproductive Health', fr: "Santé reproductive", zh: "生殖健康" }, keywords: ['fertility', 'pregnan', 'womb', 'reproduct'] },
+  { key: 'vitality', icon: '🔥', label: { sw: 'Nguvu na Hamu', en: 'Vitality & Libido', fr: "Vitalité & Libido", zh: "活力与性欲" }, keywords: ['tonify', 'tonifying kidney', 'libido', 'aphrodisiac', 'performance', 'power energy'] },
+  { key: 'sleep', icon: '🌙', label: { sw: 'Kulala Vizuri', en: 'Better Sleep', fr: "Mieux dormir", zh: "更好睡眠" }, keywords: ['sleep', 'calm', 'relax'] },
+  { key: 'hair', icon: '💇', label: { sw: 'Nywele Nzuri', en: 'Healthy Hair', fr: "Cheveux sains", zh: "健康头发" }, keywords: ['hair'] },
+  { key: 'height', icon: '📏', label: { sw: 'Kuongeza Kimo', en: 'Height Growth', fr: "Croissance en taille", zh: "增高" }, keywords: ['height'] },
+  { key: 'detox', icon: '🌿', label: { sw: 'Kusafisha Mwili (Detox)', en: 'Detox & Cleansing', fr: "Détox & Nettoyage", zh: "排毒清洁" }, keywords: ['detox', 'toxin', 'cleanse'] },
+  { key: 'heart', icon: '❤️‍🩹', label: { sw: 'Afya ya Moyo', en: 'Heart Health', fr: "Santé du cœur", zh: "心脏健康" }, keywords: ['cardiovascular', 'blood pressure', 'blood vessel', 'heart'] },
 ];
 
 // Swahili slang → the English word actually used in the catalog, so typing
@@ -62,7 +62,10 @@ const CATEGORY_SYNONYMS = {
 
 function searchLabel(entry, lang) {
   if (!entry || !entry.label) return '';
-  return entry.label[lang] || entry.label.en || entry.label.sw || '';
+  // Kirundi → Kifaransa → Kiingereza → Kiswahili (sawa na t() kwenye i18n.js)
+  const chain = typeof ahsLangFallbacks === 'function' ? ahsLangFallbacks(lang) : [lang, 'en', 'sw'];
+  for (let i = 0; i < chain.length; i++) if (entry.label[chain[i]]) return entry.label[chain[i]];
+  return '';
 }
 
 /* ===================== ENGINE: matching helpers ===================== */
@@ -147,7 +150,12 @@ function svDidYouMean(query, maxSuggestions) {
     }
   });
   scored.sort((a, b) => a.dist - b.dist);
-  return scored.slice(0, maxSuggestions).map(s => s.phrase);
+  const out = scored.slice(0, maxSuggestions).map(s => s.phrase);
+  // Makosa ya maneno ya Kiswahili/Kifaransa (mf. "kisukri" → "kisukari")
+  if (typeof ahsSuggestConceptWords === 'function') {
+    ahsSuggestConceptWords(query, maxSuggestions).forEach(w => { if (out.length < maxSuggestions + 1 && !out.includes(w)) out.unshift(w); });
+  }
+  return out.slice(0, maxSuggestions);
 }
 
 /* ===================== TRENDING / POPULAR ===================== */
@@ -211,6 +219,11 @@ function svRemoveHistory(idx) {
 function svClearHistory() { lsSet('ahs_search_history', []); }
 
 /* ===================== APPLY ACTIONS (shared by dropdown, grid, history) ===================== */
+// Matokeo halisi (#bidhaa) yako chini ya Flash Sale; bila kuteleza mteja hakuona kilichobadilika
+// na alidhani utafutaji umeshindwa. Sasa tunateleza hadi matokeo baada ya kila hatua ya kuthibitisha.
+function svScrollToResults() {
+  if (typeof ahsScrollToResults === 'function') setTimeout(ahsScrollToResults, 60);
+}
 function svApplyTextSearch(phrase, input) {
   filterState.search = phrase;
   filterState.goal = 'all';
@@ -218,6 +231,7 @@ function svApplyTextSearch(phrase, input) {
   input.value = phrase;
   renderGrid();
   svSaveHistory('text', phrase, null);
+  svScrollToResults();
 }
 function svApplyKeywordSearch(keywords, label, kind, input) {
   filterState.keywordSet = keywords.slice();
@@ -229,6 +243,7 @@ function svApplyKeywordSearch(keywords, label, kind, input) {
   input.value = label;
   renderGrid();
   svSaveHistory(kind, label, keywords.slice());
+  svScrollToResults();
 }
 function svApplyCategory(slug, label, input) {
   filterState.category = slug;
@@ -240,6 +255,7 @@ function svApplyCategory(slug, label, input) {
   if (catSel) catSel.value = slug;
   renderGrid();
   svSaveHistory('category', label, slug);
+  svScrollToResults();
 }
 function svRunHistoryEntry(entry, input) {
   if (entry.type === 'text') {
@@ -326,13 +342,13 @@ function svNoMatchHTML(query) {
       <button type="button" class="sugg-explore-btn" data-sv-action="explore-open" data-sv-kind="goal">🎯 ${escapeHtml(t('search_by_goal'))}</button>
     </div>
     <a class="sugg-whatsapp-cta" href="https://wa.me/255678883675?text=${waText}" target="_blank" rel="noopener">💬 ${escapeHtml(t('ask_whatsapp_search'))}</a>
-    <a class="sugg-explore-btn" style="display:inline-block;margin-top:8px;text-decoration:none;" href="/je-ipo/${query ? '?q=' + encodeURIComponent(query) : ''}">🔎 Je, ipo? Angalia upatikanaji</a>
+    <a class="sugg-explore-btn" style="display:inline-block;margin-top:8px;text-decoration:none;" href="/je-ipo/${query ? '?q=' + encodeURIComponent(query) : ''}">${escapeHtml(t('jeipo_link'))}</a>
   </div>`;
   return html;
 }
 
 function svJeIpoLink(query) {
-  return `<div class="sugg-jeipo-row" style="padding:8px 10px 10px;border-top:1px dashed var(--line,#ddd);"><a class="sugg-explore-btn" style="display:block;text-align:center;text-decoration:none;" href="/je-ipo/${query ? '?q=' + encodeURIComponent(query) : ''}">🔎 Je, ipo? Angalia upatikanaji</a></div>`;
+  return `<div class="sugg-jeipo-row" style="padding:8px 10px 10px;border-top:1px dashed var(--line,#ddd);"><a class="sugg-explore-btn" style="display:block;text-align:center;text-decoration:none;" href="/je-ipo/${query ? '?q=' + encodeURIComponent(query) : ''}">${escapeHtml(t('jeipo_link'))}</a></div>`;
 }
 
 function svRenderDropdown(input, box) {
@@ -349,11 +365,11 @@ function svRenderDropdown(input, box) {
   svExploreMode = null;
   box.classList.add('open');
   const q = query.toLowerCase();
-  const idx = (typeof buildSearchIndex === 'function') ? buildSearchIndex() : null;
-  const matches = idx
-    ? idx.search(query, { prefix: true, fuzzy: 0.2, combineWith: 'OR' }).slice(0, 6)
-        .map(r => visibleProducts().find(p => p.id === r.id)).filter(Boolean)
-    : visibleProducts().filter(p => (p.name + ' ' + p.effect).toLowerCase().includes(q)).slice(0, 6);
+  // v72: injini moja ileile ya gridi (searchProductsText) — dropdown na gridi haviwezi tena kutofautiana.
+  // Kata (slice) BAADA ya kuchuja bidhaa zilizofichwa/mapacha, si kabla.
+  const matches = (typeof searchProductsText === 'function'
+    ? searchProductsText(query, visibleProducts())
+    : visibleProducts().filter(p => (p.name + ' ' + p.effect).toLowerCase().includes(q))).slice(0, 6);
   const catMatches = svMatchingCategories(query);
 
   let html = '';
@@ -387,6 +403,7 @@ function svCommitSearch(input, box) {
   }
   svCloseDropdown(box);
   input.blur();
+  if (q.length >= 1) svScrollToResults();
 }
 function svHandleEscape(input, box) {
   svCloseDropdown(box);
@@ -517,7 +534,7 @@ function svBindNoResultsEvents(wrap) {
 
 /* ===================== VOICE SEARCH ===================== */
 function svLangToBCP47(lang) {
-  return { sw: 'sw-TZ', en: 'en-US', fr: 'fr-FR', rn: 'rn-BI', rw: 'rw-RW' }[lang] || 'sw-TZ';
+  return { sw: 'sw-TZ', en: 'en-US', fr: 'fr-FR', zh: 'zh-CN', rn: 'rn-BI' }[lang] || 'sw-TZ';
 }
 function svInitVoiceSearch() {
   const btn = document.getElementById('voiceSearchBtn');

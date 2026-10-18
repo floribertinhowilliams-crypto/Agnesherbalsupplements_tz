@@ -1,4 +1,4 @@
-# Agnes Herbal Supplements — agnesherbalsupplements.com (v56)
+# Agnes Herbal Supplements — agnesherbalsupplements.com (v72)
 
 Duka la mtandaoni: HTML/CSS/JavaScript safi + Firebase (Firestore, Auth, Storage)
 kwa data ya live, na `functions/` (Cloudflare Pages Functions) kwa SEO ya bidhaa
@@ -171,3 +171,13 @@ Sasa picha zisizo data-URL (njia ya faili au https) zinatumika moja kwa moja, na
 - Kurasa 13 zimejaribiwa (simu 390px): hakuna 404, hakuna overflow, hakuna picha zilizovunjika.
 - Counter ya nchi: "8+ Nchi Tunazotuma (na Duniani Kote)" (awali ilionyesha globe mara mbili); counters zina usalama zisibaki "0".
 - Placeholder ya search imefupishwa isikatike.
+
+## v71f — Je, Ipo? makosa ya kuandika
+- Herufi zilizobadilishana (meloa → MELAO Hot Cream), herufi iliyopungua/kuzidi, umoja/wingi. Jaribio: bidhaa 375 (zikiwemo 87 za admin) × aina 5 za makosa = hakuna iliyokosekana.
+
+## Utafutaji na lugha (v72)
+- `js/search-engine.js`: injini MOJA ya utafutaji (gridi, dropdown na ukurasa wa `/je-ipo/`). Inaelewa Kiswahili, Kiingereza,
+  Kifaransa, Kichina na Kirundi, makosa ya herufi, wingi/umoja; haitegemei MiniSearch/CDN. Neno jipya la mteja
+  likikosa matokeo, ongeza mstari kwenye `CONCEPTS` juu ya faili hilo.
+- `js/i18n.js`: kamusi ya lugha 5 (funguo 352 kila lugha), `?lang=fr` kwenye kiungo, storage ikizuiwa haivunji tovuti.
+- Tafsiri za Kirundi (rn) mpya zimeandikwa kwa juhudi bora — zihakikiwe na mzungumzaji wa Kirundi.

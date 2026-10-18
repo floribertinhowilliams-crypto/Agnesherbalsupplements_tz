@@ -23,6 +23,8 @@
 body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:#1b1b1b;margin:0;line-height:1.5}
 .wrap{max-width:720px;margin:0 auto;padding:18px}
 .back{color:var(--g);text-decoration:none;font-weight:600;font-size:.9rem}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.langs{display:flex;gap:4px}.langs button{background:#fff;border:1px solid #e4dcc8;border-radius:8px;padding:4px 8px;font-size:.72rem;font-weight:700;color:var(--g);cursor:pointer}.langs button.on{background:var(--g);color:#fff;border-color:var(--g)}
 h1{font-family:'Fraunces',serif;color:var(--g);font-size:1.55rem;margin:10px 0 6px;line-height:1.25}
 .sub{color:#555;font-size:.92rem;margin:0 0 16px}
 .sbox{display:flex;gap:8px}
@@ -51,9 +53,10 @@ h1{font-family:'Fraunces',serif;color:var(--g);font-size:1.55rem;margin:10px 0 6
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="../index.html">← Rudi Dukani</a>
-<h1>Je, Ipo? Angalia Upatikanaji</h1>
-<p class="sub">Andika jina la vitamini, chai au kirutubisho (au unachotaka kusaidiwa, mfano "kinga", "uzito", "ngozi"). Ukikosa, tunaweza kukuagizia.</p>
+<div class="top"><a class="back" id="tBack" href="../index.html">← Rudi Dukani</a>
+<div class="langs" id="langs" role="group" aria-label="Language"><button type="button" data-l="sw">SW</button><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button><button type="button" data-l="zh">中文</button><button type="button" data-l="rn">RN</button></div></div>
+<h1 id="tH1">Je, Ipo? Angalia Upatikanaji</h1>
+<p class="sub" id="tSub">Andika jina la vitamini, chai au kirutubisho (au unachotaka kusaidiwa, mfano "kinga", "uzito", "ngozi"). Ukikosa, tunaweza kukuagizia.</p>
 <form class="sbox" id="f" onsubmit="return false">
   <input id="q" type="search" placeholder="Mfano: collagen, chai ya tumbo, vitamin D..." autocomplete="off" aria-label="Tafuta bidhaa">
   <button type="submit" id="go">Angalia</button>
@@ -61,9 +64,11 @@ h1{font-family:'Fraunces',serif;color:var(--g);font-size:1.55rem;margin:10px 0 6
 <div class="chips" id="chips"></div>
 <div id="out" aria-live="polite"></div>
 <noscript><p>Washa JavaScript ili kutafuta, au tazama <a href="../orodha/">orodha kamili ya bidhaa</a>, au tuandikie WhatsApp: <a href="https://wa.me/255678883675">0678 883 675</a>.</p></noscript>
-<p class="foot"><a href="../orodha/">Orodha kamili ya bidhaa</a> · <a href="https://wa.me/255678883675">WhatsApp 0678 883 675</a><br>Bidhaa hazikusudiwi kutibu au kuzuia ugonjwa. Wasiliana na daktari kabla ya kuanza virutubisho vipya.</p>
+<p class="foot"><a href="../orodha/" id="tCat">Orodha kamili ya bidhaa</a> · <a href="https://wa.me/255678883675">WhatsApp 0678 883 675</a><br><span id="tDisc">Bidhaa hazikusudiwi kutibu au kuzuia ugonjwa. Wasiliana na daktari kabla ya kuanza virutubisho vipya.</span></p>
 </div>
 <script src="../js/products-data.js"></script>
+<script src="../js/effect-i18n.js"></script>
+<script src="../js/search-engine.js?v72"></script>
 <script>
 (function(){
   var WA='255678883675';
@@ -94,91 +99,116 @@ h1{font-family:'Fraunces',serif;color:var(--g);font-size:1.55rem;margin:10px 0 6
     }
   }).catch(function(){});
 
-  // Maneno ya Kiswahili -> Kiingereza kinachotumika kwenye majina ya bidhaa
-  var SYN={chai:['tea'],uzito:['weight','slim','loss'],kupunguza:['loss','slim','reduce'],tumbo:['tummy','belly','slim','detox'],kinga:['immune','immunity','vitamin'],
-    ngozi:['skin','collagen','glow'],nywele:['hair','biotin'],mifupa:['bone','calcium','joint'],viungo:['joint'],uzazi:['fertility','womb'],mimba:['pregnan','fertility'],
-    sukari:['sugar','diabet'],kisukari:['sugar','diabet'],shinikizo:['pressure','hypertension','blood'],moyo:['heart','cardio'],usingizi:['sleep','melatonin','calm'],
-    nguvu:['power','energy','men'],kiume:['men','male'],kibofu:['prostate'],ini:['liver'],figo:['kidney'],macho:['eye'],damu:['blood'],vitamini:['vitamin','multi'],
-    watoto:['kids','children'],mtoto:['kids'],tumbo:['digest','probiotic','tummy'],choo:['bowel','colon'],kifua:['lung','breast'],kimo:['height'],kuongeza:['gain','increase'],
-    urembo:['beauty','collagen'],ganda:['skin'],kikohozi:['lung','cough'],mafuta:['fat','oil'],
-    acv:['apple cider','vinegar'],siki:['vinegar','apple'],vidonge:['capsule','tablet','softgel'],kidonge:['capsule','tablet'],kapsuli:['capsule'],poda:['powder'],unga:['powder'],
-    jelly:['jelly','gummy'],peremende:['gummy','candy'],gummy:['gummy','gummies'],gummies:['gummy','gummies'],vitamin:['vitamin','vitamins','multi'],vitamins:['vitamin','multi'],
-    ujauzito:['pregnan','fertility','womb'],hedhi:['womb','pms','hormone'],homoni:['hormone','pms'],unene:['gain','weight'],kuongeza:['gain','increase','enhanc'],
-    mkojo:['kidney','bladder'],kinywa:['oral'],meno:['teeth','oral'],mwili:['body'],stamina:['energy','power','maca','men'],nishati:['energy','power']};
-  function norm(s){return String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();}
-  function hay(p){var h=norm(p.name+' '+p.effect+' '+p.category);return h+' '+stemAll(h);}
-  function lev1(a,b){ // hitilafu ya herufi moja (maandishi yenye makosa ya kuandika)
-    if(Math.abs(a.length-b.length)>1)return false;var i=0,j=0,e=0;
-    while(i<a.length&&j<b.length){ if(a[i]===b[j]){i++;j++;continue;} if(++e>1)return false;
-      if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++;} }
-    return e+(a.length-i)+(b.length-j)<=1;
-  }
-  function lev2(a,b){if(Math.abs(a.length-b.length)>2)return false;var d=[],i,j;for(i=0;i<=a.length;i++){d[i]=[i];}for(j=1;j<=b.length;j++)d[0][j]=j;for(i=1;i<=a.length;i++)for(j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]<=2;}
-  var STOP={ya:1,za:1,wa:1,na:1,la:1,kwa:1,mwili:1,dawa:1,bidhaa:1,ni:1,the:1,of:1,for:1,and:1,je:1,ipo:1,mna:1,mnazo:1,nataka:1,kuna:1,naomba:1,tafuta:1,hii:1,hizi:1,a:0};
-  // umoja/wingi: gummies=gummy, capsules=capsule, vitamins=vitamin
-  function stem(w){w=String(w||'');if(w.length>4&&/ies$/.test(w))return w.slice(0,-3)+'y';if(w.length>3&&/s$/.test(w)&&!/ss$/.test(w))return w.slice(0,-1);return w;}
-  function stemAll(s){return s.split(' ').map(stem).join(' ');}
-  function tokenHit(tok,h,words){
-    if(tok.length===1){ // herufi moja (mfano "d" kwenye "vitamin d") lazima iwe neno lenyewe au ifuatwe na namba (d3)
-      return words.some(function(w){return w===tok||new RegExp('^'+tok+'\\d+$').test(w)});
-    }
-    if(h.indexOf(tok)>-1||h.indexOf(stem(tok))>-1)return true;
-    var s=SYN[tok]||SYN[stem(tok)]; if(s&&s.some(function(x){return h.indexOf(x)>-1}))return true;
-    if(tok.length>=4)return words.some(function(w){return w.length>=4&&(lev1(tok,w)||lev1(stem(tok),stem(w))||(tok.length>=7&&w.length>=7&&lev2(tok,w)))});
-    return false;
-  }
+  // v72: injini moja ya utafutaji kwa duka zima (js/search-engine.js) — inaelewa Kiswahili, Kiingereza,
+  // Kifaransa, Kichina na Kirundi (mf. "ugumba", "presha", "tezi dume", "chunusi", "kupauka", "糖尿病").
   function search(q){
-    var nq=norm(q);
-    var toks=nq.split(' ').filter(function(t){return t&&!STOP[t]});
-    if(!toks.length)return {full:[],part:[]};
-    var full=[],part=[];
-    items.forEach(function(p){
-      var h=hay(p),words=h.split(' '),n=0;
-      toks.forEach(function(t){if(tokenHit(t,h,words))n++;});
-      var nm=norm(p.name);
-      var score=(nm.indexOf(nq)>-1?3:(h.indexOf(nq)>-1?2:1));
-      if(n===toks.length)full.push({p:p,s:score});else if(n>0)part.push({p:p,n:n});
-    });
-    full.sort(function(a,b){return b.s-a.s});
-    part.sort(function(a,b){return b.n-a.n});
-    return {full:full.map(function(x){return x.p}),part:part.map(function(x){return x.p})};
+    if(typeof ahsSearchProductsEx==='function'){ try{ return ahsSearchProductsEx(q,items); }catch(e){} }
+    // fallback ya mwisho (injini ikishindwa kupakia): substring rahisi
+    var w=String(q).toLowerCase().split(/\s+/).filter(Boolean),full=items.filter(function(p){var h=(p.name+' '+p.effect+' '+p.category).toLowerCase();return w.every(function(x){return h.indexOf(x)>-1;});});
+    return {full:full,part:[]};
   }
   function fmt(n){return 'Tsh '+Number(n||0).toLocaleString('en-US');}
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]});}
   function waLink(text){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(text);}
+  /* ===================== LUGHA (sw/en/fr/zh/rn) ===================== */
+  var L={
+   sw:{back:'← Rudi Dukani',h1:'Je, Ipo? Angalia Upatikanaji',sub:'Andika jina la vitamini, chai au kirutubisho (au unachotaka kusaidiwa, mfano "kinga", "uzito", "ngozi"). Ukikosa, tunaweza kukuagizia.',ph:'Mfano: collagen, chai ya tumbo, vitamin D...',go:'Angalia',aria:'Tafuta bidhaa',
+     chips:['Chai ya kupunguza tumbo','Vitamin C','Collagen','Kinga ya mwili','Uzazi','Usingizi','Watoto'],
+     yes:'✅ Ndiyo, tunayo — {n} inayolingana na "{q}"',more:'Inaonyesha 12 kati ya {n}. Andika jina kamili zaidi kupunguza.',part:'Hatujapata jina hilo kamili, lakini hizi zinafanana:',
+     nf1:'Unatafuta kitu tofauti? Tuulize — tutakuthibitishia kama ipo au tunaweza kukuagizia.',ask:'💬 Uliza WhatsApp: "{q}"',none:'Hatuna "{q}" kwenye orodha yetu ya mtandaoni.',
+     nf2:'<b>Usiache hapo.</b> Mara nyingi tunaweza kukuagizia bidhaa isiyo kwenye orodha. Tuandikie tukuthibitishie kama ipo au itapatikana lini.',
+     seeall:'Au angalia <a href="../orodha/">orodha kamili ya bidhaa zote</a>.',dym:'Ulimaanisha:',inst:'✅ Ipo',outst:'Haipo kwa sasa',view:'Ona bidhaa',order:'Agiza',askS:'Uliza',cat:'Orodha kamili ya bidhaa',disc:'Bidhaa hazikusudiwi kutibu au kuzuia ugonjwa. Wasiliana na daktari kabla ya kuanza virutubisho vipya.',title:'Je, Ipo? Angalia Upatikanaji wa Vitamini na Virutubisho | Agnes Herbal Supplements Tanzania'},
+   en:{back:'← Back to Shop',h1:'Is it available? Check availability',sub:'Type the name of a vitamin, tea or supplement (or what you need help with, e.g. "immunity", "weight", "skin"). If we don’t have it, we can order it for you.',ph:'e.g. collagen, tummy tea, vitamin D...',go:'Check',aria:'Search products',
+     chips:['Tummy slimming tea','Vitamin C','Collagen','Immunity','Fertility','Sleep','Kids'],
+     yes:'✅ Yes, we have it — {n} matching "{q}"',more:'Showing 12 of {n}. Type a fuller name to narrow down.',part:'We couldn’t find that exact name, but these are similar:',
+     nf1:'Looking for something different? Ask us — we’ll confirm if it’s in stock or if we can order it.',ask:'💬 Ask on WhatsApp: "{q}"',none:'We don’t have "{q}" in our online list.',
+     nf2:'<b>Don’t stop here.</b> We can often order products that aren’t listed. Message us and we’ll confirm if it’s available or when it will be.',
+     seeall:'Or see the <a href="../orodha/">full product list</a>.',dym:'Did you mean:',inst:'✅ In stock',outst:'Not available now',view:'View product',order:'Order',askS:'Ask',cat:'Full product list',disc:'Products are not intended to treat or prevent any disease. Consult a doctor before starting new supplements.',title:'Is it available? Check vitamins & supplements | Agnes Herbal Supplements Tanzania'},
+   fr:{back:'← Retour à la boutique',h1:'Disponible ? Vérifier la disponibilité',sub:'Saisissez le nom d’une vitamine, d’un thé ou d’un complément (ou ce dont vous avez besoin, ex. « immunité », « poids », « peau »). Si nous ne l’avons pas, nous pouvons le commander.',ph:'Ex. : collagène, thé ventre plat, vitamine D...',go:'Vérifier',aria:'Rechercher un produit',
+     chips:['Thé minceur ventre','Vitamine C','Collagène','Immunité','Fertilité','Sommeil','Enfants'],
+     yes:'✅ Oui, nous l’avons — {n} résultat(s) pour « {q} »',more:'Affichage de 12 sur {n}. Saisissez un nom plus précis pour affiner.',part:'Nous n’avons pas trouvé ce nom exact, mais voici des produits proches :',
+     nf1:'Vous cherchez autre chose ? Demandez-nous — nous confirmerons s’il est en stock ou si nous pouvons le commander.',ask:'💬 Demander sur WhatsApp : « {q} »',none:'Nous n’avons pas « {q} » dans notre liste en ligne.',
+     nf2:'<b>N’abandonnez pas.</b> Nous pouvons souvent commander des produits non listés. Écrivez-nous et nous confirmerons la disponibilité.',
+     seeall:'Ou consultez la <a href="../orodha/">liste complète des produits</a>.',dym:'Vous vouliez dire :',inst:'✅ Disponible',outst:'Indisponible pour le moment',view:'Voir le produit',order:'Commander',askS:'Demander',cat:'Liste complète des produits',disc:'Ces produits ne sont pas destinés à traiter ou prévenir une maladie. Consultez un médecin avant de commencer un nouveau complément.',title:'Disponible ? Vitamines et compléments | Agnes Herbal Supplements Tanzanie'},
+   zh:{back:'← 返回商店',h1:'有货吗？查询库存',sub:'输入维生素、茶或补充剂的名称（或您的需求，如“免疫”“体重”“皮肤”）。如果没有，我们可以为您订购。',ph:'例如：胶原蛋白、瘦肚茶、维生素D...',go:'查询',aria:'搜索产品',
+     chips:['瘦肚茶','维生素C','胶原蛋白','增强免疫','生育','睡眠','儿童'],
+     yes:'✅ 有货 — 找到 {n} 件与“{q}”相关的产品',more:'显示 {n} 件中的 12 件。请输入更完整的名称以缩小范围。',part:'没有找到完全相同的名称，但这些产品相近：',
+     nf1:'想找别的？请联系我们——我们会确认是否有货或能否为您订购。',ask:'💬 通过 WhatsApp 询问：“{q}”',none:'我们的在线列表中没有“{q}”。',
+     nf2:'<b>别放弃。</b>未列出的产品我们常常也能订购。联系我们，我们会确认是否有货或何时到货。',
+     seeall:'或查看<a href="../orodha/">完整产品列表</a>。',dym:'您是不是想找：',inst:'✅ 有货',outst:'暂时无货',view:'查看产品',order:'订购',askS:'询问',cat:'完整产品列表',disc:'产品不用于治疗或预防任何疾病。开始使用新补充剂前请咨询医生。',title:'有货吗？维生素与补充剂库存查询 | Agnes Herbal Supplements 坦桑尼亚'},
+   rn:{back:'← Subira mw’iduka',h1:'Irahari? Raba niba ihari',sub:'Andika izina ry’ivitamini, icayi canke inyongera (canke ico ushaka gufashwa, nk’ "ubudahangarwa", "ibiro", "uruhu"). Ntitugira, turashobora kuyigutumiza.',ph:'Nk’: collagen, icayi c’inda, vitamin D...',go:'Raba',aria:'Shakisha ibicuruzwa',
+     chips:['Icayi co kugabanya inda','Vitamin C','Collagen','Ubudahangarwa','Kubona inda','Gusinzira','Abana'],
+     yes:'✅ Ego, turayifise — {n} zihuye na "{q}"',more:'Herekanywe 12 kuri {n}. Andika izina ryuzuye kugira ugabanye.',part:'Ntitwabonye iryo zina nyaryo, ariko izi zirasa:',
+     nf1:'Urondera ikindi? Utubaze — tuzokwemeza niba ihari canke tuyigutumize.',ask:'💬 Baza kuri WhatsApp: "{q}"',none:'Ntitugira "{q}" ku rutonde rwacu rwo kuri murandasi.',
+     nf2:'<b>Ntureke aho.</b> Kenshi turashobora gutumiza ibicuruzwa bitari ku rutonde. Twandikire tukwemeze niba ihari canke izoboneka ryari.',
+     seeall:'Canke raba <a href="../orodha/">urutonde rwose rw’ibicuruzwa</a>.',dym:'Wari ushaka kuvuga:',inst:'✅ Irahari',outst:'Ntihari ubu',view:'Raba igicuruzwa',order:'Tumiza',askS:'Baza',cat:'Urutonde rwose rw’ibicuruzwa',disc:'Ibicuruzwa ntibigenewe kuvura canke kurinda indwara. Raba umuganga imbere yo gutangura inyongera nshasha.',title:'Irahari? Raba vitamini n’inyongera | Agnes Herbal Supplements Tanzaniya'}
+  };
+  var LANGS=['sw','en','fr','zh','rn'];
+  function getL(){var v=null;try{var m=/[?&]lang=([a-z]{2})\b/i.exec(location.search);if(m&&L[m[1].toLowerCase()]){v=m[1].toLowerCase();try{localStorage.setItem('ahs_lang',v);}catch(e){}}}catch(e){}
+    if(!v){try{v=localStorage.getItem('ahs_lang');}catch(e){}} return L[v]?v:'sw';}
+  var lang=getL();
+  function T(k,v){var s=(L[lang]&&L[lang][k]!=null)?L[lang][k]:(L.en[k]!=null?L.en[k]:L.sw[k]);if(typeof s==='string'&&v){for(var x in v){s=s.split('{'+x+'}').join(v[x]);}}return s;}
+  function eff(e){try{return typeof translateEffect==='function'?translateEffect(e,lang):e;}catch(x){return e;}}
+
   function card(p){
+    // Ujumbe kwa duka (WhatsApp) unabaki Kiswahili: mmiliki ndiye anayeusoma.
     var ask='Habari Agnes Herbal Supplements, nataka kuagiza: '+p.name+' ('+fmt(p.price)+'). Ipo?';
     return '<div class="card"><img src="'+esc(p.image)+'" alt="'+esc(p.name)+'" loading="lazy">'+
-      '<div style="flex:1;min-width:0"><b>'+esc(p.name)+(p.inStock?'<span class="st in">✅ Ipo</span>':'<span class="st out">Haipo kwa sasa</span>')+'</b>'+
-      (p.effect?'<div class="eff">'+esc(p.effect)+'</div>':'')+'<div class="pr">'+fmt(p.price)+'</div>'+
-      '<div class="acts"><a class="view" href="'+esc(p.url)+'">Ona bidhaa</a><a class="wa" target="_blank" rel="noopener" href="'+waLink(p.inStock?ask:'Habari, nataka kuagiza '+p.name+' — haipo kwenye orodha, mnaweza kunipatia?')+'">💬 '+(p.inStock?'Agiza':'Uliza')+'</a></div></div></div>';
+      '<div style="flex:1;min-width:0"><b>'+esc(p.name)+(p.inStock?'<span class="st in">'+T('inst')+'</span>':'<span class="st out">'+T('outst')+'</span>')+'</b>'+
+      (p.effect?'<div class="eff">'+esc(eff(p.effect))+'</div>':'')+'<div class="pr">'+fmt(p.price)+'</div>'+
+      '<div class="acts"><a class="view" href="'+esc(p.url)+'">'+T('view')+'</a><a class="wa" target="_blank" rel="noopener" href="'+waLink(p.inStock?ask:'Habari, nataka kuagiza '+p.name+' — haipo kwenye orodha, mnaweza kunipatia?')+'">💬 '+(p.inStock?T('order'):T('askS'))+'</a></div></div></div>';
+  }
+  function dymHtml(q){
+    var w=(typeof ahsSuggestConceptWords==='function')?ahsSuggestConceptWords(q,3):[];
+    if(!w.length)return '';
+    return '<p class="foot" style="text-align:left">'+T('dym')+' '+w.map(function(x){return '<a href="#" data-dym="'+esc(x)+'">'+esc(x)+'</a>';}).join(' · ')+'</p>';
   }
   function run(){
     var q=document.getElementById('q').value.trim(), out=document.getElementById('out');
     if(!q){out.innerHTML='';return;}
     var r=search(q), ask=waLink('Habari Agnes Herbal Supplements, je mna "'+q+'"? Nataka kujua kama ipo au mnaweza kuniagizia.');
+    var askBtn='<a class="big" target="_blank" rel="noopener" href="'+ask+'">'+esc(T('ask',{q:q}))+'</a>';
     var h='';
     if(r.full.length){
-      h+='<div class="msg ok">✅ Ndiyo, tunayo — '+r.full.length+' inayolingana na "'+esc(q)+'"</div>'+r.full.slice(0,12).map(card).join('');
-      if(r.full.length>12)h+='<p class="foot">Inaonyesha 12 kati ya '+r.full.length+'. Andika jina kamili zaidi kupunguza.</p>';
+      h+='<div class="msg ok">'+esc(T('yes',{n:r.full.length,q:q}))+'</div>'+r.full.slice(0,12).map(card).join('');
+      if(r.full.length>12)h+='<p class="foot">'+esc(T('more',{n:r.full.length}))+'</p>';
     } else if(r.part.length){
-      h+='<div class="msg no">Hatujapata jina hilo kamili, lakini hizi zinafanana:</div>'+r.part.slice(0,8).map(card).join('')+
-        '<div class="nf"><p>Unatafuta kitu tofauti? Tuulize — tutakuthibitishia kama ipo au tunaweza kukuagizia.</p><a class="big" target="_blank" rel="noopener" href="'+ask+'">💬 Uliza WhatsApp: "'+esc(q)+'"</a></div>';
+      h+='<div class="msg no">'+T('part')+'</div>'+r.part.slice(0,8).map(card).join('')+dymHtml(q)+'<div class="nf"><p>'+T('nf1')+'</p>'+askBtn+'</div>';
     } else {
-      h+='<div class="msg no">Hatuna "'+esc(q)+'" kwenye orodha yetu ya mtandaoni.</div>'+
-        '<div class="nf"><p><b>Usiache hapo.</b> Mara nyingi tunaweza kukuagizia bidhaa isiyo kwenye orodha. Tuandikie tukuthibitishie kama ipo au itapatikana lini.</p><a class="big" target="_blank" rel="noopener" href="'+ask+'">💬 Uliza WhatsApp: "'+esc(q)+'"</a></div>'+
-        '<p class="foot">Au angalia <a href="../orodha/">orodha kamili ya bidhaa zote</a>.</p>';
+      h+='<div class="msg no">'+esc(T('none',{q:q}))+'</div>'+dymHtml(q)+'<div class="nf"><p>'+T('nf2')+'</p>'+askBtn+'</div><p class="foot">'+T('seeall')+'</p>';
     }
     out.innerHTML=h;
   }
   var input=document.getElementById('q');
+  function paintChips(){
+    var c=document.getElementById('chips'); c.innerHTML='';
+    // chips za Kiswahili zinatafutwa kwa Kiswahili (injini inaelewa lugha zote); maandishi yanaonyeshwa kwa lugha ya mteja
+    T('chips').forEach(function(s){var b=document.createElement('button');b.type='button';b.textContent=s;b.onclick=function(){input.value=s;run();};c.appendChild(b);});
+  }
+  function paintLang(){
+    document.documentElement.setAttribute('lang',lang);
+    document.title=T('title');
+    document.getElementById('tBack').textContent=T('back');
+    document.getElementById('tH1').textContent=T('h1');
+    document.getElementById('tSub').textContent=T('sub');
+    input.placeholder=T('ph'); input.setAttribute('aria-label',T('aria'));
+    document.getElementById('go').textContent=T('go');
+    document.getElementById('tCat').textContent=T('cat');
+    document.getElementById('tDisc').textContent=T('disc');
+    Array.prototype.forEach.call(document.querySelectorAll('#langs button'),function(b){b.className=(b.getAttribute('data-l')===lang)?'on':'';});
+    paintChips(); run();
+  }
+  document.getElementById('langs').addEventListener('click',function(e){
+    var l=e.target&&e.target.getAttribute&&e.target.getAttribute('data-l'); if(!l||!L[l])return;
+    lang=l; try{localStorage.setItem('ahs_lang',l);}catch(x){} paintLang();
+  });
+  document.getElementById('out').addEventListener('click',function(e){
+    var d=e.target&&e.target.getAttribute&&e.target.getAttribute('data-dym'); if(!d)return; e.preventDefault(); input.value=d; run();
+  });
   document.getElementById('f').addEventListener('submit',function(){run();history.replaceState(null,'','?q='+encodeURIComponent(input.value.trim()));});
   var t;input.addEventListener('input',function(){clearTimeout(t);t=setTimeout(run,220);});
-  ['Chai ya kupunguza tumbo','Vitamin C','Collagen','Kinga ya mwili','Uzazi','Usingizi','Watoto'].forEach(function(s){
-    var b=document.createElement('button');b.type='button';b.textContent=s;b.onclick=function(){input.value=s;run();};document.getElementById('chips').appendChild(b);
-  });
   var qs=new URLSearchParams(location.search).get('q');if(qs){input.value=qs;}
-  run();
+  paintLang();
 })();
 </script>
 </body>

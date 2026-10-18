@@ -7,6 +7,53 @@
 const AHS_SUPPORTED_LANGS = ["sw", "en", "fr", "zh", "rn"];
 const I18N = {
   sw: {
+    "search_placeholder_jeipo": "🔎 Je, ipo? Tafuta bidhaa...",
+    "st_offline": "📡 Uko nje ya mtandao (offline) — baadhi ya vipengele vinaweza kutofanya kazi.",
+    "st_wb_sub": "Uaminifu kwa Mteja Ndio Mtaji Wetu",
+    "st_hero1_p": "Kirutubisho cha kila siku chenye ladha nzuri. Tunatuma Tanzania na nje ya nchi.",
+    "st_hero2_p": "Gummies za Glutathione na Collagen kwa utunzaji wa ngozi na nywele kila siku.",
+    "st_hero3_p": "Na nchi nyingine duniani kwa basi au ndege. Tuma WhatsApp tukuthibitishie gharama.",
+    "st_ship_btn": "ANGALIA USAFIRISHAJI →",
+    "st_all_health": "Shida Zote Za Kiafya",
+    "st_wholesale_b": "Bei ya Jumla (Wholesale):",
+    "st_wholesale_t": "Ukinunua kuanzia vipande 5 vya bidhaa moja, bei ya jumla inatumika kiotomatiki kwenye kikapu chako — bei inapungua zaidi ukinunua kuanzia vipande 10.",
+    "st_cloud_sync": "⏳ Tunapakia bidhaa mpya zaidi kutoka mtandaoni... (haitachukua muda mrefu)",
+    "st_featured_sub": "Bidhaa alizochagua admin ziwe za kwanza kuonekana leo.",
+    "st_fast_ship": "Usafirishaji wa Haraka",
+    "st_wa_reviews_h": "Maoni ya Wateja Wetu (WhatsApp)",
+    "st_wa_reviews_p": "Ujumbe halisi kutoka kwa wateja wetu, umewekwa kwa idhini yao.",
+    "st_after_pay_b": "Baada ya kulipa:",
+    "st_after_pay_t": "Piga screenshot ya risiti ya malipo kisha itume kwa WhatsApp <a href=\"https://wa.me/255678883675\" target=\"_blank\" rel=\"noopener\">0678 883 675</a> pamoja na namba yako ya oda (inaonekana kwenye Invoice). Oda yako itathibitishwa ndani ya dakika chache wakati wa saa za kazi.",
+    "err_name": "Tafadhali jaza jina lako.",
+    "err_phone": "Tafadhali weka namba sahihi ya simu.",
+    "err_message": "Tafadhali andika ujumbe wako.",
+    "st_direct_contact": "Mawasiliano ya Moja kwa Moja",
+    "st_trust_badge": "🌿 Duka Namba 1 la Herbal Supplements Tanzania",
+    "st_full_catalog": "Orodha Kamili ya Bidhaa",
+    "st_customer_service": "Huduma kwa Wateja",
+    "st_ship_title": "🚚 Tunatuma Tanzania, East Africa na Duniani Kote",
+    "st_ship_note": "Kwa basi pale basi linapofika, na kwa ndege kwenye uwanja wa ndege ulio karibu nawe. Dar es Salaam: tunafikisha haraka. Duka: Makumbusho Bus Stand, Dar es Salaam · <a href=\"https://maps.app.goo.gl/onL2YBgbXaiwdXiT6\" target=\"_blank\" rel=\"noopener\">Google Maps</a>",
+    "st_disclaimer": "Bidhaa zetu hazikusudiwi kutibu, kuponya au kuzuia ugonjwa wowote. Si mbadala wa ushauri wa kitabibu — wasiliana na daktari kabla ya kuanza matumizi ya virutubisho vipya. / Our products are not intended to diagnose, treat, cure, or prevent any disease.",
+    "st_ship_today": "🚚 Tunatuma Leo: Tanzania, East Africa na duniani kote (basi au ndege)",
+    "st_pay_title": "💳 Lipa Namba (jina: Agnes Alfred)",
+    "st_alt_phone": "Namba ya Simu Mbadala (si lazima)",
+    "st_ccf_hint": "Tunatuma kwa basi pale basi linapofika, na kwa ndege kwenye uwanja wa ndege ulio karibu nawe. Weka namba ya WhatsApp pamoja na code ya nchi (mfano +971...).",
+    "st_order_history": "📜 Historia ya Oda Zako",
+    "st_order_ok": "✅ Oda Imepokelewa Kikamilifu! Tutawasiliana nawe hivi karibuni kuthibitisha oda yako.",
+    "inv_ship_rule_dar": "Dar es Salaam: unalipia ukishapokea bidhaa (malipo baada ya kupokea).",
+    "inv_ship_rule_regions": "Mikoani: malipo hufanyika kabla ya kutuma bidhaa (mkoani unalipia kwanza).",
+    "inv_bill_to": "Bili kwa:",
+    "inv_phone_label": "Simu:",
+    "inv_region_label": "Mkoa/Mji:",
+    "wa_review_alt": "Maoni ya mteja {name} kwenye WhatsApp",
+    "sold_out_badge": "Imeisha",
+    "results_count": "{shown} / {total} bidhaa",
+    "pager_label": "Kurasa za bidhaa",
+    "pager_info": "Ukurasa {page} / {pages} · bidhaa {total}",
+    "per_piece_retail": "/ kipande (rejareja)",
+    "wholesale_line": "Jumla: {w5} (5+) · {w10} (10+)",
+    "region_empty": "Hakuna mkoa/wilaya inayolingana — bado unaweza kuandika jina, tutathibitisha bei.",
+    "jeipo_link": "🔎 Je, ipo? Angalia upatikanaji",
     "prod_title": "Bidhaa Zetu Zote",
     "prod_desc": "Bofya bidhaa yoyote kusoma maelezo kamili, chagua idadi, na uiongeze kwenye kikapu chako.",
     "how_title": "Jinsi Inavyofanya Kazi",
@@ -313,6 +360,53 @@ const I18N = {
     "inv_wholesale_note_3": "Asante kwa kununua Agnes Herbal Supplements!",
   },
   en: {
+    "search_placeholder_jeipo": "🔎 Is it available? Search products...",
+    "st_offline": "📡 You are offline — some features may not work.",
+    "st_wb_sub": "Customer trust is our capital",
+    "st_hero1_p": "A tasty daily supplement. We ship across Tanzania and abroad.",
+    "st_hero2_p": "Glutathione and Collagen gummies for daily skin and hair care.",
+    "st_hero3_p": "And other countries worldwide by bus or plane. Message us on WhatsApp to confirm the cost.",
+    "st_ship_btn": "VIEW DELIVERY INFO →",
+    "st_all_health": "All Health Concerns",
+    "st_wholesale_b": "Wholesale price:",
+    "st_wholesale_t": "Buy 5 or more pieces of one product and the wholesale price applies automatically in your cart — the price drops further from 10 pieces.",
+    "st_cloud_sync": "⏳ Loading more new products online... (this won’t take long)",
+    "st_featured_sub": "Products picked by our team to appear first today.",
+    "st_fast_ship": "Fast Delivery",
+    "st_wa_reviews_h": "Our Customers’ Reviews (WhatsApp)",
+    "st_wa_reviews_p": "Real messages from our customers, shared with their permission.",
+    "st_after_pay_b": "After paying:",
+    "st_after_pay_t": "Take a screenshot of the payment receipt and send it on WhatsApp to <a href=\"https://wa.me/255678883675\" target=\"_blank\" rel=\"noopener\">0678 883 675</a> together with your order number (shown on the invoice). Your order will be confirmed within a few minutes during working hours.",
+    "err_name": "Please enter your name.",
+    "err_phone": "Please enter a valid phone number.",
+    "err_message": "Please write your message.",
+    "st_direct_contact": "Direct Contact",
+    "st_trust_badge": "🌿 No. 1 Herbal Supplements Store in Tanzania",
+    "st_full_catalog": "Full Product List",
+    "st_customer_service": "Customer Service",
+    "st_ship_title": "🚚 We ship across Tanzania, East Africa and worldwide",
+    "st_ship_note": "By bus to wherever the bus arrives, and by plane to the airport nearest you. Dar es Salaam: fast delivery. Shop: Makumbusho Bus Stand, Dar es Salaam · <a href=\"https://maps.app.goo.gl/onL2YBgbXaiwdXiT6\" target=\"_blank\" rel=\"noopener\">Google Maps</a>",
+    "st_disclaimer": "Our products are not intended to diagnose, treat, cure, or prevent any disease. They are not a substitute for medical advice — consult a doctor before starting any new supplement.",
+    "st_ship_today": "🚚 We ship today: Tanzania, East Africa and worldwide (bus or plane)",
+    "st_pay_title": "💳 Payment number (name: Agnes Alfred)",
+    "st_alt_phone": "Alternative phone number (optional)",
+    "st_ccf_hint": "We send by bus to wherever the bus arrives, and by plane to the airport nearest you. Enter your WhatsApp number with the country code (e.g. +971...).",
+    "st_order_history": "📜 Your Order History",
+    "st_order_ok": "✅ Order received successfully! We will contact you shortly to confirm your order.",
+    "inv_ship_rule_dar": "Dar es Salaam: you pay after receiving the goods (payment on delivery).",
+    "inv_ship_rule_regions": "Other regions: payment is made before the goods are sent (you pay first).",
+    "inv_bill_to": "Bill to:",
+    "inv_phone_label": "Phone:",
+    "inv_region_label": "Region/City:",
+    "wa_review_alt": "Customer review from {name} on WhatsApp",
+    "sold_out_badge": "Sold out",
+    "results_count": "{shown} / {total} products",
+    "pager_label": "Product pages",
+    "pager_info": "Page {page} / {pages} · {total} products",
+    "per_piece_retail": "/ piece (retail)",
+    "wholesale_line": "Wholesale: {w5} (5+) · {w10} (10+)",
+    "region_empty": "No matching region/district — you can still type the name and we will confirm the price.",
+    "jeipo_link": "🔎 Is it available? Check availability",
     "prod_title": "All Our Products",
     "prod_desc": "Click any product to read full details, choose a quantity, and add it to your cart.",
     "how_title": "How It Works",
@@ -619,6 +713,53 @@ const I18N = {
     "inv_wholesale_note_3": "Thank you for shopping with Agnes Herbal Supplements!",
   },
   fr: {
+    "search_placeholder_jeipo": "🔎 Disponible ? Rechercher un produit...",
+    "st_offline": "📡 Vous êtes hors ligne — certaines fonctionnalités peuvent ne pas marcher.",
+    "st_wb_sub": "La confiance de nos clients est notre capital",
+    "st_hero1_p": "Un complément quotidien au goût agréable. Nous livrons en Tanzanie et à l’étranger.",
+    "st_hero2_p": "Gummies au glutathion et collagène pour le soin quotidien de la peau et des cheveux.",
+    "st_hero3_p": "Et d’autres pays dans le monde par bus ou avion. Écrivez-nous sur WhatsApp pour confirmer le coût.",
+    "st_ship_btn": "VOIR LA LIVRAISON →",
+    "st_all_health": "Tous les problèmes de santé",
+    "st_wholesale_b": "Prix de gros :",
+    "st_wholesale_t": "Dès 5 pièces d’un même produit, le prix de gros s’applique automatiquement dans votre panier — le prix baisse encore à partir de 10 pièces.",
+    "st_cloud_sync": "⏳ Chargement de nouveaux produits en ligne... (cela ne prendra pas longtemps)",
+    "st_featured_sub": "Produits sélectionnés par notre équipe, à découvrir en premier aujourd’hui.",
+    "st_fast_ship": "Livraison rapide",
+    "st_wa_reviews_h": "Avis de nos clients (WhatsApp)",
+    "st_wa_reviews_p": "De vrais messages de nos clients, publiés avec leur accord.",
+    "st_after_pay_b": "Après le paiement :",
+    "st_after_pay_t": "Faites une capture d’écran du reçu de paiement et envoyez-la sur WhatsApp au <a href=\"https://wa.me/255678883675\" target=\"_blank\" rel=\"noopener\">0678 883 675</a> avec votre numéro de commande (affiché sur la facture). Votre commande sera confirmée en quelques minutes pendant les heures de travail.",
+    "err_name": "Veuillez saisir votre nom.",
+    "err_phone": "Veuillez saisir un numéro de téléphone valide.",
+    "err_message": "Veuillez écrire votre message.",
+    "st_direct_contact": "Contact direct",
+    "st_trust_badge": "🌿 Boutique n°1 de compléments à base de plantes en Tanzanie",
+    "st_full_catalog": "Liste complète des produits",
+    "st_customer_service": "Service client",
+    "st_ship_title": "🚚 Nous livrons en Tanzanie, en Afrique de l’Est et dans le monde entier",
+    "st_ship_note": "Par bus là où le bus arrive, et par avion jusqu’à l’aéroport le plus proche de chez vous. Dar es Salaam : livraison rapide. Boutique : gare routière de Makumbusho, Dar es Salaam · <a href=\"https://maps.app.goo.gl/onL2YBgbXaiwdXiT6\" target=\"_blank\" rel=\"noopener\">Google Maps</a>",
+    "st_disclaimer": "Nos produits ne sont pas destinés à diagnostiquer, traiter, guérir ou prévenir une maladie. Ils ne remplacent pas un avis médical — consultez un médecin avant de commencer tout nouveau complément.",
+    "st_ship_today": "🚚 Expédition aujourd’hui : Tanzanie, Afrique de l’Est et monde entier (bus ou avion)",
+    "st_pay_title": "💳 Numéro de paiement (nom : Agnes Alfred)",
+    "st_alt_phone": "Numéro de téléphone alternatif (facultatif)",
+    "st_ccf_hint": "Nous expédions par bus là où le bus arrive, et par avion vers l’aéroport le plus proche. Saisissez votre numéro WhatsApp avec l’indicatif du pays (ex. +971...).",
+    "st_order_history": "📜 Historique de vos commandes",
+    "st_order_ok": "✅ Commande bien reçue ! Nous vous contacterons bientôt pour la confirmer.",
+    "inv_ship_rule_dar": "Dar es Salaam : vous payez après réception des produits (paiement à la livraison).",
+    "inv_ship_rule_regions": "Autres régions : le paiement se fait avant l’envoi des produits (vous payez d’abord).",
+    "inv_bill_to": "Facturé à :",
+    "inv_phone_label": "Tél. :",
+    "inv_region_label": "Région/Ville :",
+    "wa_review_alt": "Avis client de {name} sur WhatsApp",
+    "sold_out_badge": "Épuisé",
+    "results_count": "{shown} / {total} produits",
+    "pager_label": "Pages de produits",
+    "pager_info": "Page {page} / {pages} · {total} produits",
+    "per_piece_retail": "/ pièce (détail)",
+    "wholesale_line": "Gros : {w5} (5+) · {w10} (10+)",
+    "region_empty": "Aucune région/district correspondant — vous pouvez saisir le nom, nous confirmerons le prix.",
+    "jeipo_link": "🔎 Disponible ? Vérifier la disponibilité",
     "prod_title": "Tous Nos Produits",
     "prod_desc": "Cliquez sur un produit pour lire les détails complets, choisir une quantité et l'ajouter à votre panier.",
     "how_title": "Comment Ça Marche",
@@ -925,6 +1066,53 @@ const I18N = {
     "inv_wholesale_note_3": "Merci d'avoir choisi Agnes Herbal Supplements !",
   },
   zh: {
+    "search_placeholder_jeipo": "🔎 有货吗？搜索产品...",
+    "st_offline": "📡 您已离线 — 部分功能可能无法使用。",
+    "st_wb_sub": "客户的信任是我们的资本",
+    "st_hero1_p": "美味的每日营养补充剂。我们配送至坦桑尼亚及海外。",
+    "st_hero2_p": "谷胱甘肽与胶原蛋白软糖，日常呵护肌肤与头发。",
+    "st_hero3_p": "也可发往世界其他国家（巴士或飞机）。请通过 WhatsApp 联系我们确认费用。",
+    "st_ship_btn": "查看配送信息 →",
+    "st_all_health": "所有健康问题",
+    "st_wholesale_b": "批发价：",
+    "st_wholesale_t": "同一产品购买5件或以上，购物车将自动适用批发价；购买10件或以上价格更低。",
+    "st_cloud_sync": "⏳ 正在在线加载更多新产品…（不会太久）",
+    "st_featured_sub": "我们团队今日精选的产品，优先展示。",
+    "st_fast_ship": "快速配送",
+    "st_wa_reviews_h": "客户评价（WhatsApp）",
+    "st_wa_reviews_p": "来自客户的真实留言，已征得其同意后展示。",
+    "st_after_pay_b": "付款后：",
+    "st_after_pay_t": "请截取付款凭证截图，并连同订单号（显示在发票上）通过 WhatsApp 发送至 <a href=\"https://wa.me/255678883675\" target=\"_blank\" rel=\"noopener\">0678 883 675</a>。工作时间内我们会在几分钟内确认您的订单。",
+    "err_name": "请填写您的姓名。",
+    "err_phone": "请输入有效的电话号码。",
+    "err_message": "请填写您的留言。",
+    "st_direct_contact": "直接联系",
+    "st_trust_badge": "🌿 坦桑尼亚第一草本补充剂商店",
+    "st_full_catalog": "完整产品列表",
+    "st_customer_service": "客户服务",
+    "st_ship_title": "🚚 我们配送至坦桑尼亚、东非及全球",
+    "st_ship_note": "巴士送至巴士到达地点，飞机送至离您最近的机场。达累斯萨拉姆：快速配送。门店：Makumbusho 汽车站，达累斯萨拉姆 · <a href=\"https://maps.app.goo.gl/onL2YBgbXaiwdXiT6\" target=\"_blank\" rel=\"noopener\">Google Maps</a>",
+    "st_disclaimer": "我们的产品不用于诊断、治疗、治愈或预防任何疾病，也不能替代医疗建议——开始使用任何新补充剂前请咨询医生。",
+    "st_ship_today": "🚚 今日发货：坦桑尼亚、东非及全球（巴士或飞机）",
+    "st_pay_title": "💳 付款号码（名称：Agnes Alfred）",
+    "st_alt_phone": "备用电话号码（可选）",
+    "st_ccf_hint": "我们通过巴士送至巴士到达地点，通过飞机送至离您最近的机场。请填写带国家区号的 WhatsApp 号码（如 +971...）。",
+    "st_order_history": "📜 您的订单历史",
+    "st_order_ok": "✅ 订单已成功接收！我们将尽快联系您确认订单。",
+    "inv_ship_rule_dar": "达累斯萨拉姆：收货后付款（货到付款）。",
+    "inv_ship_rule_regions": "其他地区：发货前付款（先付款）。",
+    "inv_bill_to": "账单收件人：",
+    "inv_phone_label": "电话：",
+    "inv_region_label": "地区/城市：",
+    "wa_review_alt": "客户 {name} 的 WhatsApp 评价",
+    "sold_out_badge": "已售罄",
+    "results_count": "{shown} / {total} 件产品",
+    "pager_label": "产品分页",
+    "pager_info": "第 {page} / {pages} 页 · 共 {total} 件产品",
+    "per_piece_retail": "/ 件（零售）",
+    "wholesale_line": "批发：{w5}（5件以上）· {w10}（10件以上）",
+    "region_empty": "没有匹配的地区 — 您仍可输入名称，我们会确认价格。",
+    "jeipo_link": "🔎 有货吗？查询库存",
     "prod_title": "我们的全部产品",
     "prod_desc": "点击任意产品查看完整详情,选择数量并加入购物车。",
     "how_title": "使用方法",
@@ -1231,6 +1419,53 @@ const I18N = {
     "inv_wholesale_note_3": "感谢您选购Agnes Herbal Supplements！",
   },
   rn: {
+    "search_placeholder_jeipo": "🔎 Irahari? Shakisha ibicuruzwa...",
+    "st_offline": "📡 Nturi kuri murandasi — ibindi bikorwa bishobora kudakora.",
+    "st_wb_sub": "Ukwizerwa n’abakiriya ni ryo shingiro ryacu",
+    "st_hero1_p": "Inyongera ya buri musi irimwo uburyohe. Turatuma muri Tanzaniya no hanze.",
+    "st_hero2_p": "Gummies za Glutathione na Collagen zo kwitaho uruhu n’umusatsi buri musi.",
+    "st_hero3_p": "No mu bindi bihugu vyo ku isi, mu modoka canke mu ndege. Twandikire kuri WhatsApp tukwemeze igiciro.",
+    "st_ship_btn": "RABA UKO DUTWARA →",
+    "st_all_health": "Ingorane zose z’ubuzima",
+    "st_wholesale_b": "Igiciro co mu bwinshi:",
+    "st_wholesale_t": "Waguze ibice 5 canke birenga vy’igicuruzwa kimwe, igiciro co mu bwinshi gikoreshwa mu buryo bwikora mu gitebo cawe — igiciro kirarushiriza kugabanuka guhera ku bice 10.",
+    "st_cloud_sync": "⏳ Turimo gukuramo ibicuruzwa bishasha kuri murandasi... (ntibizotwara umwanya munini)",
+    "st_featured_sub": "Ibicuruzwa vyatoranijwe n’ikipe yacu kugira biboneke imbere uyu musi.",
+    "st_fast_ship": "Gutanga vuba",
+    "st_wa_reviews_h": "Ivyiyumviro vy’abakiriya bacu (WhatsApp)",
+    "st_wa_reviews_p": "Ubutumwa nyabwo buvuye ku bakiriya bacu, bushizweho babanje kubwemera.",
+    "st_after_pay_b": "Nyuma yo kwishura:",
+    "st_after_pay_t": "Fata ifoto y’inyandiko yo kwishura uyitume kuri WhatsApp <a href=\"https://wa.me/255678883675\" target=\"_blank\" rel=\"noopener\">0678 883 675</a> hamwe n’inomero y’oda yawe (iboneka kuri fagitire). Oda yawe izokwemezwa mu minuta mikeyi mu masaha y’akazi.",
+    "err_name": "Nimwandike izina ryawe.",
+    "err_phone": "Nimwandike inomero ya telefone nyakuri.",
+    "err_message": "Nimwandike ubutumwa bwawe.",
+    "st_direct_contact": "Twandikire mu buryo butaziguye",
+    "st_trust_badge": "🌿 Iduka rya mbere ry’inyongera z’ibimera muri Tanzaniya",
+    "st_full_catalog": "Urutonde rwose rw’ibicuruzwa",
+    "st_customer_service": "Serivisi ku bakiriya",
+    "st_ship_title": "🚚 Turatuma muri Tanzaniya, Afrika y’Iburasirazuba no ku isi yose",
+    "st_ship_note": "Mu modoka aho ica ihagarara, no mu ndege ku kibuga c’indege kiri hafi yawe. Dar es Salaam: turagezayo vuba. Iduka: Makumbusho Bus Stand, Dar es Salaam · <a href=\"https://maps.app.goo.gl/onL2YBgbXaiwdXiT6\" target=\"_blank\" rel=\"noopener\">Google Maps</a>",
+    "st_disclaimer": "Ibicuruzwa vyacu ntibigenewe kuvura, gukiza canke kurinda indwara iyo ari yo yose. Ntibisubira mu mwanya w’inama z’abaganga — raba umuganga imbere yo gutangura gukoresha inyongera nshasha.",
+    "st_ship_today": "🚚 Turatuma uyu musi: Tanzaniya, Afrika y’Iburasirazuba n’isi yose (mu modoka canke mu ndege)",
+    "st_pay_title": "💳 Inomero yo kwishura (izina: Agnes Alfred)",
+    "st_alt_phone": "Inomero ya telefone y’inyongera (si ngombwa)",
+    "st_ccf_hint": "Turatuma mu modoka aho ica ihagarara, no mu ndege ku kibuga c’indege kiri hafi yawe. Andika inomero ya WhatsApp hamwe n’ikode y’igihugu (nk’ +971...).",
+    "st_order_history": "📜 Amateka y’amaoda yawe",
+    "st_order_ok": "✅ Oda yakiriwe neza! Turaguhamagara vuba kugira tuyemeze.",
+    "inv_ship_rule_dar": "Dar es Salaam: wishura umaze guhabwa ibicuruzwa (kwishura nyuma yo guhabwa).",
+    "inv_ship_rule_regions": "Mu ntara zindi: kwishura biraba imbere y’uko ibicuruzwa bitumwa (wishura imbere).",
+    "inv_bill_to": "Fagitire kuri:",
+    "inv_phone_label": "Telefone:",
+    "inv_region_label": "Intara/Umujyi:",
+    "wa_review_alt": "Igitekerezo c’umukiriya {name} kuri WhatsApp",
+    "sold_out_badge": "Ntikiriho",
+    "results_count": "{shown} / {total} ibicuruzwa",
+    "pager_label": "Amapaji y’ibicuruzwa",
+    "pager_info": "Ipaji {page} / {pages} · ibicuruzwa {total}",
+    "per_piece_retail": "/ igice (gucuruza)",
+    "wholesale_line": "Mu bwinshi: {w5} (5+) · {w10} (10+)",
+    "region_empty": "Nta ntara/akarere gahuye — ushobora kwandika izina, tuzokwemeza igiciro.",
+    "jeipo_link": "🔎 Irahari? Raba niba ihari",
     "prod_title": "Ibicuruzwa Vyacu Vyose",
     "prod_desc": "Kanda igicuruzwa icarico cose kugira ngo usome ibisobanuro vyose, uhitemwo umubare, hanyuma ukishire mu gikoni cawe.",
     "how_title": "Ukuntu Bikora",
@@ -1539,39 +1774,80 @@ const I18N = {
 };
 
 /* ===================== CORE ENGINE ===================== */
+// v72: injini ya lugha imeimarishwa:
+//  - localStorage ikizuiwa (Safari private / cookies zimezimwa) tovuti HAIVUNJIKI tena —
+//    tunatumia kumbukumbu ya muda (memory) badala yake.
+//  - Kiungo chenye ?lang=fr (au sw/en/zh/rn) kinafungua tovuti kwa lugha hiyo (nzuri kwa matangazo)
+//    na kinaikumbuka.
+//  - Tafsiri ikikosekana: lugha ya mteja → Kiingereza → Kiswahili (si Kiswahili moja kwa moja).
+//  - Maneno yanayobadilika ({jina}) hayavunjiki hata yakiwa na alama ya "$".
+var _ahsMemStore = {};
+function ahsStoreGet(k) {
+  try { var v = localStorage.getItem(k); if (v !== null) return v; } catch (e) { /* storage imezuiwa */ }
+  return Object.prototype.hasOwnProperty.call(_ahsMemStore, k) ? _ahsMemStore[k] : null;
+}
+function ahsStoreSet(k, v) {
+  _ahsMemStore[k] = v;
+  try { localStorage.setItem(k, v); } catch (e) { /* storage imezuiwa — kumbukumbu ya muda inatosha */ }
+}
+// Lugha kutoka kwenye kiungo (?lang=xx), ikihifadhiwa mara moja tu.
+(function ahsReadLangFromUrl() {
+  try {
+    var m = /[?&]lang=([a-z]{2})\b/i.exec(window.location.search || '');
+    if (m && AHS_SUPPORTED_LANGS.indexOf(m[1].toLowerCase()) > -1) ahsStoreSet('ahs_lang', m[1].toLowerCase());
+  } catch (e) { /* si ukurasa wa kivinjari */ }
+})();
 function getLang() {
-  const stored = localStorage.getItem('ahs_lang');
+  const stored = ahsStoreGet('ahs_lang');
   return AHS_SUPPORTED_LANGS.includes(stored) ? stored : 'sw';
 }
 function setLang(lang) {
   if (!AHS_SUPPORTED_LANGS.includes(lang)) return;
-  localStorage.setItem('ahs_lang', lang);
+  ahsStoreSet('ahs_lang', lang);
   applyLang();
+  try { document.dispatchEvent(new CustomEvent('ahs:langchange', { detail: { lang: lang } })); } catch (e) { /* ignore */ }
 }
 // Maps our language codes to BCP-47 locale tags for Intl/date formatting.
 function getLocale(lang) {
   lang = lang || getLang();
-  const map = { sw: 'sw-TZ', en: 'en-GB', fr: 'fr-FR', zh: 'zh-CN', rn: 'sw-TZ' };
+  const map = { sw: 'sw-TZ', en: 'en-GB', fr: 'fr-FR', zh: 'zh-CN', rn: 'fr-BI' };
   return map[lang] || 'sw-TZ';
+}
+// Lugha mbadala ikikosekana tafsiri: Kirundi → Kifaransa (lugha rasmi ya Burundi) → Kiingereza → Kiswahili.
+function ahsLangFallbacks(lang) {
+  if (lang === 'sw') return ['sw', 'en'];
+  if (lang === 'rn') return ['rn', 'fr', 'en', 'sw'];
+  return [lang, 'en', 'sw'];
 }
 // pickLangText(obj, lang) — for content objects that store their own per-language
 // text (e.g. { sw: "...", en: "...", fr: "..." } like real reviews/FAQ_DATA), returns
-// the field for the active language, falling back to Kiswahili if a translation for
-// that specific item hasn't been added yet, so the app never renders "undefined".
+// the field for the active language, falling back (see ahsLangFallbacks) so the app
+// never renders "undefined".
 function pickLangText(obj, lang) {
+  if (!obj) return '';
   lang = lang || getLang();
-  return obj[lang] || obj.sw || '';
+  const chain = ahsLangFallbacks(lang);
+  for (let i = 0; i < chain.length; i++) if (obj[chain[i]]) return obj[chain[i]];
+  return '';
 }
-// t(key, vars) — looks up the string for the active language, falling back to
-// Kiswahili (the store's base language) and finally the raw key if missing,
-// so the UI never silently mixes languages or shows "undefined".
-// vars lets callers fill in {placeholders}, e.g. t('out_of_stock', { name: p.name }).
+function ahsLookup(key, lang) {
+  const chain = ahsLangFallbacks(lang || getLang());
+  for (let i = 0; i < chain.length; i++) {
+    const d = I18N[chain[i]];
+    if (d && d[key]) return d[key];
+  }
+  return null;
+}
+// t(key, vars) — looks up the string for the active language and falls back (see
+// ahsLangFallbacks), finally the raw key if missing. vars fills {placeholders},
+// e.g. t('out_of_stock', { name: p.name }).
 function t(key, vars) {
-  const lang = getLang();
-  let str = (I18N[lang] && I18N[lang][key]) || I18N.sw[key] || key;
+  let str = ahsLookup(key);
+  if (str === null) str = key;
   if (vars) {
     Object.keys(vars).forEach(k => {
-      str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), vars[k]);
+      const val = String(vars[k]);
+      str = str.replace(new RegExp('\\{' + k + '\\}', 'g'), () => val);
     });
   }
   return str;
@@ -1579,27 +1855,22 @@ function t(key, vars) {
 function applyLang() {
   const lang = getLang();
   document.documentElement.setAttribute('lang', lang);
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
-    else if (I18N.sw[key]) el.textContent = I18N.sw[key];
+  const apply = (attr, setter) => {
+    document.querySelectorAll('[' + attr + ']').forEach(el => {
+      const v = ahsLookup(el.getAttribute(attr), lang);
+      if (v !== null) setter(el, v);
+    });
+  };
+  apply('data-i18n', (el, v) => { el.textContent = v; });
+  apply('data-i18n-placeholder', (el, v) => { el.placeholder = v; });
+  apply('data-i18n-title', (el, v) => { el.title = v; });
+  apply('data-i18n-html', (el, v) => { el.innerHTML = v; });
+  apply('data-i18n-aria', (el, v) => { el.setAttribute('aria-label', v); });
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    const on = b.dataset.lang === lang;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-    const key = el.getAttribute('data-i18n-placeholder');
-    if (I18N[lang] && I18N[lang][key]) el.placeholder = I18N[lang][key];
-    else if (I18N.sw[key]) el.placeholder = I18N.sw[key];
-  });
-  document.querySelectorAll('[data-i18n-title]').forEach(el => {
-    const key = el.getAttribute('data-i18n-title');
-    if (I18N[lang] && I18N[lang][key]) el.title = I18N[lang][key];
-    else if (I18N.sw[key]) el.title = I18N.sw[key];
-  });
-  document.querySelectorAll('[data-i18n-html]').forEach(el => {
-    const key = el.getAttribute('data-i18n-html');
-    if (I18N[lang] && I18N[lang][key]) el.innerHTML = I18N[lang][key];
-    else if (I18N.sw[key]) el.innerHTML = I18N.sw[key];
-  });
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   if (typeof onLangChanged === 'function') onLangChanged();
 }
 // Run once as soon as this script loads (in addition to each page's own

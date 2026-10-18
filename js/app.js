@@ -291,51 +291,44 @@ function matchesPrice(p, priceFilter) {
   return true;
 }
 
-// Utafutaji unaotumia MiniSearch (index halisi ya "full-text search" ndani ya
-// kivinjari, kama injini ndogo ya Google) badala ya kuangalia bidhaa moja moja
-// kwa .includes() — hii inafanya kazi haraka hata bidhaa zikifika maelfu, na
-// pia inapanga matokeo kwa umuhimu (relevance), si mfuatano wa awali tu.
-//
-// MiniSearch inapakuliwa kutoka CDN ya nje (jsdelivr). Endapo mteja ana
-// mtandao dhaifu/hafifu (jambo la kawaida) na faili hiyo ishindwe kupakia
-// kabisa, `MiniSearch` inabaki "undefined" — na hapo awali buildSearchIndex()
-// ilikuwa ikitupa error (ReferenceError) ambayo ilikuwa ikivunja KIMYA KIMYA
-// utafutaji WOTE (dropdown na gridi kuu), hata kama neno lililotafutwa
-// (mf. "Prostate") lipo dhahiri kwenye bidhaa. Sasa function hii "haiwezi
-// kushindwa" — ikikwama kwa sababu yoyote inarudisha null, na kila mahali
-// inapoitwa kuna fallback ya utafutaji rahisi (substring, isiyotegemea
-// MiniSearch kabisa) ili matokeo yaonekane papo hapo kila wakati.
+// UTAFUTAJI (v72): sasa unatumia injini mpya ya ndani — js/search-engine.js
+// (ahsSearchProducts). Haitegemei MiniSearch wala CDN yoyote, inatafuta moja kwa moja
+// kwenye bidhaa HALISI (zilizohaririwa na admin, zisizofichwa), na inaelewa Kiswahili,
+// Kiingereza, Kifaransa, Kichina na Kirundi (mf. "kisukari", "chai", "ugumba", "perte de poids").
+// Hakuna "index" ya kuharibika (stale) — kwa hiyo `_searchIndex = null` zilizobaki chini
+// hazina madhara na zimebaki tu kwa usalama.
 let _searchIndex = null;
-let _searchIndexUnavailable = false;
-function buildSearchIndex() {
-  if (_searchIndex) return _searchIndex;
-  if (_searchIndexUnavailable) return null;
-  try {
-    if (typeof MiniSearch === 'undefined') throw new Error('MiniSearch haijapakia (CDN)');
-    _searchIndex = new MiniSearch({
-      idField: 'id',
-      fields: ['name', 'effect', 'category'],
-      storeFields: ['id'],
-    });
-    _searchIndex.addAll(allBaseProducts());
-    return _searchIndex;
-  } catch (e) {
-    console.warn('[search] MiniSearch haipatikani, natumia utafutaji rahisi (fallback):', e);
-    _searchIndexUnavailable = true;
-    return null;
-  }
-}
+function buildSearchIndex() { return null; } // imebaki kwa ulinganifu wa nyuma tu
 
-// Fallback ya utafutaji isiyotegemea MiniSearch kabisa: inalinganisha neno
-// (na kila sehemu yake likiwa na maneno mengi) dhidi ya jina, faida (effect)
-// na category ya kila bidhaa. Hii ndiyo inayohakikisha "Prostate" (au neno
-// lolote lililopo kwenye bidhaa) LAZIMA lionekane hata MiniSearch ikishindwa.
+// Fallback ya mwisho kabisa (ikiwa search-engine.js haikupakia kwa sababu yoyote):
+// substring rahisi dhidi ya jina + faida + kundi. Utafutaji hauwezi kuvunjika.
 function fallbackSearchProducts(query, list) {
   const words = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   if (!words.length) return list.slice();
   return list.filter(p => {
     const hay = (p.name + ' ' + p.effect + ' ' + p.category).toLowerCase();
     return words.every(w => hay.includes(w));
+  });
+}
+// Mlango mmoja wa utafutaji kwa maandishi — unatumiwa na gridi kuu NA dropdown.
+function searchProductsText(query, list) {
+  const q = String(query || '').trim();
+  if (!q) return list.slice();
+  if (typeof ahsSearchProducts === 'function') {
+    try { return ahsSearchProducts(q, list); }
+    catch (e) { console.warn('[search] injini ilishindwa, natumia fallback:', e); }
+  }
+  return fallbackSearchProducts(q, list);
+}
+// Utafutaji kwa orodha ya maneno-funguo (dalili / lengo la afya) — OR, bila kelele ya fuzzy.
+function searchProductsKeywords(keywords, list) {
+  if (typeof ahsKeywordSearch === 'function') {
+    try { return ahsKeywordSearch(keywords, list); } catch (e) { /* fallback chini */ }
+  }
+  const kw = (keywords || []).map(k => String(k).toLowerCase());
+  return list.filter(p => {
+    const hay = (p.name + ' ' + p.effect + ' ' + p.category).toLowerCase();
+    return kw.some(k => hay.includes(k));
   });
 }
 function productSortDate(p) {
@@ -376,30 +369,11 @@ function getFilteredSorted() {
     return list;
   }
   if (filterState.keywordSet && filterState.keywordSet.length) {
-    // Multi-keyword OR match — used by "Search by Symptom" / "Search by Health Goal".
-    const idx = buildSearchIndex();
-    if (idx) {
-      const results = idx.search(filterState.keywordSet.join(' '), { prefix: true, fuzzy: 0.2, combineWith: 'OR' });
-      const idSet = new Set(results.map(r => r.id));
-      list = list.filter(p => idSet.has(p.id));
-    } else {
-      // Fallback: bidhaa yoyote inayolingana na neno LOLOTE kwenye keywordSet (OR).
-      const kw = filterState.keywordSet.map(k => k.toLowerCase());
-      list = list.filter(p => {
-        const hay = (p.name + ' ' + p.effect + ' ' + p.category).toLowerCase();
-        return kw.some(k => hay.includes(k));
-      });
-    }
+    // Multi-keyword OR match — "Search by Symptom" / "Search by Health Goal".
+    list = searchProductsKeywords(filterState.keywordSet, list);
   } else if (filterState.search.trim()) {
-    const idx = buildSearchIndex();
-    if (idx) {
-      const results = idx.search(filterState.search.trim(), { prefix: true, fuzzy: 0.2, combineWith: 'OR' });
-      const order = results.map(r => r.id);
-      const byId = new Map(list.map(p => [p.id, p]));
-      list = order.map(id => byId.get(id)).filter(Boolean);
-    } else {
-      list = fallbackSearchProducts(filterState.search.trim(), list);
-    }
+    // Matokeo yanakuja tayari yamepangwa kwa umuhimu (relevance).
+    list = searchProductsText(filterState.search, list);
   }
   if (filterState.category !== 'all') list = list.filter(p => p.catSlug === filterState.category);
   if (filterState.goal !== 'all' && typeof ahsGoalInfo === 'function' && !ahsGoalInfo(filterState.goal)) filterState.goal = 'all'; // kundi lilifutwa na admin
@@ -568,7 +542,7 @@ function productCardHTML(p) {
   const isNew = (Date.now() - productSortDate(p)) / (1000*60*60*24) < 20 && productSortDate(p) > 0;
   if (!p.dealPct && isNew) badges.push(`<span class="pg-badge new">✨ New</span>`);
   if (typeof p.stock === 'number') {
-    if (p.stock <= 0) badges.push(`<span class="pg-badge stock-out">Imeisha</span>`);
+    if (p.stock <= 0) badges.push(`<span class="pg-badge stock-out">${t('sold_out_badge')}</span>`);
     else if (p.stock <= 5) badges.push(`<span class="pg-badge stock-low">Stock: ${p.stock}</span>`);
   }
   const priceHTML = p.dealPct
@@ -657,7 +631,7 @@ function renderGrid() {
   const wrap = document.getElementById('gallery-wrap');
   const list = getFilteredSorted();
   if (typeof renderCategoryChips === 'function') renderCategoryChips();
-  document.getElementById('resultsCount').textContent = `${list.length} / ${visibleProducts().length} bidhaa`;
+  document.getElementById('resultsCount').textContent = t('results_count', { shown: list.length, total: visibleProducts().length });
   if (list.length === 0) {
     const query = (filterState.keywordSet && filterState.keywordSet.length) ? '' : filterState.search.trim();
     wrap.innerHTML = (typeof svNoResultsGridHTML === 'function')
@@ -693,7 +667,7 @@ function renderGridPager(pages, total) {
     pager = document.createElement('nav');
     pager.id = 'gridPager';
     pager.className = 'grid-pager';
-    pager.setAttribute('aria-label', 'Kurasa za bidhaa');
+    pager.setAttribute('aria-label', t('pager_label'));
     wrap.parentNode.insertBefore(pager, wrap.nextSibling);
     pager.addEventListener('click', (e) => {
       const b = e.target.closest('button[data-page]');
@@ -715,7 +689,7 @@ function renderGridPager(pages, total) {
     btn('‹ Nyuma', Math.max(1, gridPage - 1), gridPage === 1 ? ' disabled' : '') +
     nums.map(n => n === '…' ? '<span class="gp-dots">…</span>' : btn(n, n, n === gridPage ? ' active' : '')).join('') +
     btn('Mbele ›', Math.min(pages, gridPage + 1), gridPage === pages ? ' disabled' : '') +
-    `<span class="gp-info">Ukurasa ${gridPage} / ${pages} · bidhaa ${total}</span>`;
+    `<span class="gp-info">${t('pager_info', { page: gridPage, pages: pages, total: total })}</span>`;
 }
 
 function showSkeletonThenRender() {
@@ -826,11 +800,11 @@ function openProduct(id) {
   document.getElementById('modalName').textContent = currentProduct.name;
   document.getElementById('modalEffect').textContent = translateEffect(currentProduct.effect);
   if (currentProduct.dealPct) {
-    document.getElementById('modalPrice').innerHTML = `<span style="text-decoration:line-through; color:var(--ink-soft); font-size:.8em; margin-right:6px;">${fmt(currentProduct.origPrices.retail)}</span>${fmt(currentProduct.prices.retail)} / kipande (rejareja) <span class="deal-badge" style="position:static; display:inline-block; margin-left:6px;">-${currentProduct.dealPct}%</span>`;
+    document.getElementById('modalPrice').innerHTML = `<span style="text-decoration:line-through; color:var(--ink-soft); font-size:.8em; margin-right:6px;">${fmt(currentProduct.origPrices.retail)}</span>${fmt(currentProduct.prices.retail)} ${t('per_piece_retail')} <span class="deal-badge" style="position:static; display:inline-block; margin-left:6px;">-${currentProduct.dealPct}%</span>`;
   } else {
-    document.getElementById('modalPrice').textContent = fmt(currentProduct.prices.retail) + ' / kipande (rejareja)';
+    document.getElementById('modalPrice').textContent = fmt(currentProduct.prices.retail) + ' ' + t('per_piece_retail');
   }
-  document.getElementById('modalWholesale').textContent = `Jumla: ${fmt(currentProduct.prices.w5)} (5+) · ${fmt(currentProduct.prices.w10)} (10+)`;
+  document.getElementById('modalWholesale').textContent = t('wholesale_line', { w5: fmt(currentProduct.prices.w5), w10: fmt(currentProduct.prices.w10) });
   renderMoqTable(currentProduct);
   const capEl = document.getElementById('pmCaption');
   if (currentProduct.caption) { capEl.textContent = currentProduct.caption; capEl.style.display = 'block'; }
@@ -1654,7 +1628,7 @@ function openRegionDropdown(filterText) {
   const extra = REGIONS_WITHOUT_RATE.filter(k => !SHIPPING_RATES[k] && (!norm || k.includes(norm)));
   const usdKeys = (typeof SHIPPING_USD !== 'undefined' ? Object.keys(SHIPPING_USD) : []).filter(k => !norm || k.includes(norm));
   if (matches.length === 0 && extra.length === 0 && usdKeys.length === 0) {
-    dd.innerHTML = '<div class="ccf-region-empty">Hakuna mkoa/wilaya inayolingana — bado unaweza kuandika jina, tutathibitisha bei.</div>';
+    dd.innerHTML = '<div class="ccf-region-empty">' + escapeHtml(t('region_empty')) + '</div>';
   } else {
     dd.innerHTML = matches.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">Tsh ${SHIPPING_RATES[k].toLocaleString('en-US')}</span></div>`).join('')
       + usdKeys.map(k => `<div class="ccf-region-opt" data-region="${escapeHtml(k)}"><span>${escapeHtml(regionLabel(k))}</span><span class="price">USD ${SHIPPING_USD[k]}</span></div>`).join('')
@@ -1829,8 +1803,8 @@ function showInvoice() {
     dwWrapEl.textContent = parts.length ? ' (' + parts.join(', ') + ')' : '';
   }
   document.getElementById('invShippingRuleText').textContent = shipInfo.isDar
-    ? 'Dar es Salaam: unalipia ukishapokea bidhaa (malipo baada ya kupokea).'
-    : 'Mikoani: malipo hufanyika kabla ya kutuma bidhaa (mkoani unalipia kwanza).';
+    ? t('inv_ship_rule_dar')
+    : t('inv_ship_rule_regions');
   const warnNote = document.getElementById('invShippingWarnNote');
   const warnText = document.getElementById('invShippingWarnText');
   if (shipInfo.isDar) {
@@ -2748,7 +2722,7 @@ function ahsRenderTodayOffer() {
 (function ahsSearchToJeIpo() {
   function go(input) {
     const q = (input.value || '').trim();
-    location.href = 'je-ipo/' + (q ? '?q=' + encodeURIComponent(q) : '');
+    location.href = 'je-ipo/' + (q ? '?q=' + encodeURIComponent(q) : '');  // lugha ya mteja inasomwa na ukurasa huo kutoka 'ahs_lang'
   }
   function init() {
     const input = document.getElementById('searchInput');
@@ -2757,8 +2731,8 @@ function ahsRenderTodayOffer() {
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); e.stopImmediatePropagation(); go(input); }
     }, true);
-    input.placeholder = '🔎 Je, ipo? Tafuta bidhaa...';
-    input.removeAttribute('data-i18n-placeholder');
+    input.setAttribute('data-i18n-placeholder', 'search_placeholder_jeipo');
+    input.placeholder = t('search_placeholder_jeipo');
     ['voiceSearchBtn', 'imgSearchBtn'].forEach(id => { const b = document.getElementById(id); if (b) b.style.display = 'none'; });
     const icon = document.querySelector('#searchWrap .search-icon');
     if (icon) { icon.style.cursor = 'pointer'; icon.style.pointerEvents = 'auto'; icon.setAttribute('role', 'button'); icon.addEventListener('click', () => go(input)); }
